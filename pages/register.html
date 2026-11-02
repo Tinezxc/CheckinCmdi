@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Horizon Vista Homes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/register.css" />
+  </head>
+  <body>
+    <div class="register-container">
+      <!-- Left Side: Register Form -->
+      <div class="register-side">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 12H5V22H19V12H22L12 2Z" stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round" />
+            <path d="M9 22V16H15V22" stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round" />
+          </svg>
+          <div class="logo-text">
+            <span class="logo-title">HORIZON</span>
+            <span class="logo-subtitle">VISTA HOMES</span>
+          </div>
+        </div>
+
+        <div class="register-card">
+          <div class="register-header">
+            <h1>Create an Account</h1>
+            <p>Please enter your details to register</p>
+          </div>
+
+          <form class="register-form" id="registerForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="trainee-id">Trainee / Guest ID <span class="required">*</span></label>
+                <input type="text" id="trainee-id" placeholder="Enter trainee / guest id" />
+                <span class="error-msg" data-error-for="trainee-id"></span>
+              </div>
+              <div class="form-group">
+                <label for="fullname">Full name <span class="required">*</span></label>
+                <input type="text" id="fullname" placeholder="Enter full name" />
+                <span class="error-msg" data-error-for="fullname"></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="institution">Institution <span class="required">*</span></label>
+                <input type="text" id="institution" placeholder="Enter institution" />
+                <span class="error-msg" data-error-for="institution"></span>
+              </div>
+              <div class="form-group">
+                <label for="branch">Branch <span class="required">*</span></label>
+                <input type="text" id="branch" placeholder="Enter branch" />
+                <span class="error-msg" data-error-for="branch"></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="unit">Unit <span class="required">*</span></label>
+                <input type="text" id="unit" placeholder="Enter unit" />
+                <span class="error-msg" data-error-for="unit"></span>
+              </div>
+              <div class="form-group">
+                <label for="contact">Contact number <span class="required">*</span></label>
+                <input type="tel" id="contact" placeholder="Enter contact number" />
+                <span class="error-msg" data-error-for="contact"></span>
+              </div>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="address">Address <span class="required">*</span></label>
+              <input type="text" id="address" placeholder="Enter address" />
+              <span class="error-msg" data-error-for="address"></span>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="checkin">Check-in date <span class="required">*</span></label>
+              <input type="text" id="checkin" placeholder="MM/DD/YYYY" autocomplete="off" />
+              <span class="error-msg" data-error-for="checkin"></span>
+            </div>
+
+            <!-- Passwords -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="password">Create password <span class="required">*</span></label>
+                <div class="input-wrap">
+                  <input type="password" id="password" placeholder="Create a strong password" autocomplete="new-password" />
+                  <button type="button" class="toggle-pw" data-target="password" aria-label="Show password" aria-pressed="false">
+                    <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                    <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12A3 3 0 1 1 9.88 9.88" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
+                  </button>
+                </div>
+                <span class="error-msg" data-error-for="password"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="confirm-password">Confirm password <span class="required">*</span></label>
+                <div class="input-wrap">
+                  <input type="password" id="confirm-password" placeholder="Re-enter your password" autocomplete="new-password" />
+                  <button type="button" class="toggle-pw" data-target="confirm-password" aria-label="Show password" aria-pressed="false">
+                    <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                    <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12A3 3 0 1 1 9.88 9.88" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
+                  </button>
+                </div>
+                <span class="error-msg" data-error-for="confirm-password"></span>
+              </div>
+            </div>
+
+            <!-- Password help: below both fields -->
+            <div class="pw-help" id="pwHelp">
+              <div class="pw-help-head">
+                <span class="pw-help-title">Password strength</span>
+                <small class="pw-label" id="pwStrength"></small>
+              </div>
+              <div class="pw-meter" id="pwMeter" data-level="0" aria-hidden="true"><span></span></div>
+              <ul class="pw-checklist">
+                <li data-rule="len">8+ characters</li>
+                <li data-rule="upper">Uppercase (A–Z)</li>
+                <li data-rule="lower">Lowercase (a–z)</li>
+                <li data-rule="number">Number (0–9)</li>
+                <li data-rule="special">Symbol (! @ # $)</li>
+                <li data-rule="nospace">No spaces</li>
+                <li data-rule="norepeat">No aaa or 111</li>
+                <li data-rule="common">Not common (qwerty)</li>
+              </ul>
+            </div>
+
+            <button type="submit" class="btn-register" id="registerBtn">
+              <span class="btn-label">Create Account</span>
+              <span class="btn-spinner" hidden aria-label="Loading"></span>
+            </button>
+          </form>
+        </div>
+
+        <div class="login-prompt">
+          Already have an account? <a href="index.html">Sign in</a>
+        </div>
+      </div>
+
+      <!-- Right Side: Background Image -->
+      <div class="image-side"></div>
+    </div>
+
+    <script src="/js/register.js" defer></script>
+  </body>
+</html>

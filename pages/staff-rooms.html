@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rooms - Haven Staff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/staff-rooms.css">
+</head>
+<body data-role="front-desk">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Check-in Accommodation System</span>
+        <div class="topbar-avatar">MC</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">STAFF CONSOLE</span>
+            </div>
+        </div>
+
+        <div class="role-switcher">
+            <label for="roleSelect" class="role-label">Signed in as</label>
+            <div class="role-select-wrap">
+                <select id="roleSelect" aria-label="Switch role">
+                    <option value="front-desk" selected>Front desk</option>
+                    <option value="housekeeping">Housekeeping</option>
+                    <option value="manager">Manager</option>
+                </select>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">OPERATIONS</span>
+            <a href="staff-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="staff-guests.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Guests
+            </a>
+            <a href="staff-rooms.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Rooms
+            </a>
+            <a href="staff-checkin.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Check-in / out
+            </a>
+            <a href="staff-requests.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Service requests
+                <span class="badge">5</span>
+            </a>
+            <a href="staff-reports.html" class="nav-item" data-role-required="manager" aria-disabled="true" title="Manager access only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Reports
+            </a>
+            <a href="staff-settings.html" class="nav-item" data-role-required="manager" aria-disabled="true" title="Manager access only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Staff & settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">MC</div>
+                <div class="staff-info">
+                    <span class="staff-name">Marco Cruz</span>
+                    <span class="staff-role" id="staffRoleLabel">Front desk</span>
+                </div>
+            </div>
+            <a href="../index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1 class="app-title">Check-in Accommodation System</h1>
+                <p class="app-subtitle">Staff console · <span id="roleBreadcrumb">Front desk</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search room or guest…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Staff profile menu">MC</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">Rooms</h2>
+                    <span class="page-count" id="roomCount">24 total</span>
+                    <span class="last-updated" id="lastUpdated">Last updated just now</span>
+                </div>
+                <div class="page-header-actions">
+                    <div class="view-toggle" role="tablist" aria-label="View mode">
+                        <button class="view-btn active" role="tab" aria-selected="true" data-view="board">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            Board
+                        </button>
+                        <button class="view-btn" role="tab" aria-selected="false" data-view="list">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                            List
+                        </button>
+                    </div>
+                    <button class="btn btn-primary" id="addRoomBtn" data-requires="manager">
+    Add room
+</button>
+                </div>
+            </section>
+
+            <!-- Status summary strip -->
+            <section class="status-strip" role="group" aria-label="Status summary">
+                <button class="status-chip" data-status="all">
+                    <span class="status-chip-count" id="cAll">24</span>
+                    <span class="status-chip-label">All rooms</span>
+                </button>
+                <button class="status-chip st-occupied" data-status="occupied">
+                    <span class="status-chip-icon" aria-hidden="true">●</span>
+                    <span class="status-chip-count" id="cOccupied">14</span>
+                    <span class="status-chip-label">Occupied</span>
+                </button>
+                <button class="status-chip st-vacant-clean" data-status="vacant-clean">
+                    <span class="status-chip-icon" aria-hidden="true">✓</span>
+                    <span class="status-chip-count" id="cVacantClean">3</span>
+                    <span class="status-chip-label">Vacant clean</span>
+                </button>
+                <button class="status-chip st-vacant-dirty" data-status="vacant-dirty">
+                    <span class="status-chip-icon" aria-hidden="true">⚠</span>
+                    <span class="status-chip-count" id="cVacantDirty">3</span>
+                    <span class="status-chip-label">Vacant dirty</span>
+                </button>
+                <button class="status-chip st-cleaning" data-status="cleaning">
+                    <span class="status-chip-icon" aria-hidden="true">✦</span>
+                    <span class="status-chip-count" id="cCleaning">1</span>
+                    <span class="status-chip-label">Cleaning</span>
+                </button>
+                <button class="status-chip st-maintenance" data-status="maintenance">
+                    <span class="status-chip-icon" aria-hidden="true">⚙</span>
+                    <span class="status-chip-count" id="cMaintenance">2</span>
+                    <span class="status-chip-label">Maintenance</span>
+                </button>
+                <button class="status-chip st-reserved" data-status="reserved">
+                    <span class="status-chip-icon" aria-hidden="true">◆</span>
+                    <span class="status-chip-count" id="cReserved">2</span>
+                    <span class="status-chip-label">Reserved</span>
+                </button>
+                <button class="status-chip st-overdue" data-status="overdue">
+                    <span class="status-chip-icon" aria-hidden="true">⏰</span>
+                    <span class="status-chip-count" id="cOverdue">1</span>
+                    <span class="status-chip-label">Overdue</span>
+                </button>
+            </section>
+
+            <!-- Filters -->
+            <section class="filters-bar" aria-label="Filters">
+                <div class="filter-search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="filterSearch" placeholder="Search by room number or guest name…" aria-label="Search rooms">
+                </div>
+
+                <div class="filter-chips">
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Floor</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="floor" data-value="all">All floors</button></li>
+                            <li><button data-filter="floor" data-value="1">Floor 1</button></li>
+                            <li><button data-filter="floor" data-value="2">Floor 2</button></li>
+                            <li><button data-filter="floor" data-value="3">Floor 3</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Capacity</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="capacity" data-value="all">Any capacity</button></li>
+                            <li><button data-filter="capacity" data-value="3">Up to 3 guests</button></li>
+                            <li><button data-filter="capacity" data-value="5">Up to 5 guests</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Room type</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="type" data-value="all">All types</button></li>
+                            <li><button data-filter="type" data-value="Standard Shared">Standard Shared</button></li>
+                            <li><button data-filter="type" data-value="Deluxe Shared">Deluxe Shared</button></li>
+                            <li><button data-filter="type" data-value="Single">Single</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Status</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="status" data-value="all">Any status</button></li>
+                            <li><button data-filter="status" data-value="occupied">Occupied</button></li>
+                            <li><button data-filter="status" data-value="vacant-clean">Vacant clean</button></li>
+                            <li><button data-filter="status" data-value="vacant-dirty">Vacant dirty</button></li>
+                            <li><button data-filter="status" data-value="cleaning">Cleaning</button></li>
+                            <li><button data-filter="status" data-value="maintenance">Maintenance</button></li>
+                            <li><button data-filter="status" data-value="reserved">Reserved</button></li>
+                            <li><button data-filter="status" data-value="overdue">Overdue</button></li>
+                        </ul>
+                    </div>
+
+                    <button class="chip-clear" id="clearFilters" hidden>Clear filters</button>
+                </div>
+            </section>
+
+            <!-- Board view -->
+            <section class="view-panel active" data-view="board">
+                <div class="board" id="roomBoard"></div>
+                <div class="empty-state" id="boardEmpty" hidden>
+                    <div class="empty-icon">🔍</div>
+                    <p class="empty-title">No rooms match your filters</p>
+                    <p class="empty-sub">Try adjusting your search or clearing the filters.</p>
+                    <button class="btn btn-outline" id="boardClearBtn">Clear filters</button>
+                </div>
+            </section>
+
+            <!-- List view -->
+            <section class="view-panel" data-view="list">
+                <div class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="rooms-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-select">
+                                            <label class="checkbox">
+                                                <input type="checkbox" id="selectAll" aria-label="Select all rooms">
+                                                <span></span>
+                                            </label>
+                                        </th>
+                                        <th class="sortable" data-sort="num" scope="col">Room</th>
+                                        <th class="sortable hide-sm" data-sort="floor" scope="col">Floor</th>
+                                        <th class="sortable hide-md" data-sort="type" scope="col">Type</th>
+                                        <th class="sortable hide-md" data-sort="capacity" scope="col">Capacity</th>
+                                        <th class="sortable" data-sort="status" scope="col">Status</th>
+                                        <th class="sortable hide-md" data-sort="guest" scope="col">Current guest</th>
+                                        <th class="sortable hide-sm" data-sort="checkout" scope="col">Expected check-out</th>
+                                        <th class="sortable hide-md" data-sort="nextArrival" scope="col">Next arrival</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="roomsBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="listEmpty" hidden>
+                                <div class="empty-icon">🔍</div>
+                                <p class="empty-title">No rooms match your filters</p>
+                                <p class="empty-sub">Try adjusting your search or clearing the filters.</p>
+                                <button class="btn btn-outline" id="listClearBtn">Clear filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Staff console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ BULK BAR ============ -->
+<div class="bulk-bar" id="bulkBar" hidden>
+    <span class="bulk-info"><span id="bulkCount">0</span> room<span id="bulkPlural">s</span> selected</span>
+    <div class="bulk-actions">
+        <button class="btn btn-outline btn-sm" id="bulkAssign">Assign housekeeper</button>
+        <button class="btn btn-primary btn-sm" id="bulkClean">Mark clean</button>
+        <button class="btn btn-ghost btn-sm" id="bulkClear">Clear</button>
+    </div>
+</div>
+
+<!-- ============ ROOM DRAWER ============ -->
+<div class="drawer-overlay" id="roomDrawerOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="roomDrawer" role="dialog" aria-modal="true" aria-labelledby="roomDrawerTitle" hidden>
+    <header class="drawer-header">
+        <div>
+            <h3 id="roomDrawerTitle">Room 201</h3>
+            <p class="drawer-sub" id="roomDrawerSub">Floor 2 · Standard Shared · Max 5 guests</p>
+            <span class="status-pill occupied" id="roomDrawerStatus"><span class="dot"></span> Occupied</span>
+        </div>
+        <button class="drawer-close" id="roomDrawerClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <div class="drawer-quick-actions" role="toolbar" aria-label="Quick actions">
+        <button class="quick-btn" data-action="checkout" data-role="front-desk manager">
+            <span aria-hidden="true">🚪</span> Check out
+        </button>
+        <button class="quick-btn" data-action="extend" data-role="front-desk manager">
+            <span aria-hidden="true">⏰</span> Extend stay
+        </button>
+        <button class="quick-btn" data-action="change-room" data-role="front-desk manager">
+            <span aria-hidden="true">🔁</span> Change room
+        </button>
+        <button class="quick-btn" data-action="mark-clean" data-requires="front-desk,housekeeping,manager">
+            <span aria-hidden="true">✓</span> Mark clean
+        </button>
+        <button class="quick-btn" data-action="request-cleaning" data-role="front-desk housekeeping manager">
+            <span aria-hidden="true">🧹</span> Request cleaning
+        </button>
+        <button class="quick-btn" data-action="report-issue" data-role="front-desk housekeeping manager">
+            <span aria-hidden="true">🛠️</span> Report issue
+        </button>
+        <button class="quick-btn" data-action="out-of-service" data-requires="front-desk,manager">
+    🚫 Mark out of service
+</button>
+    </div>
+
+    <nav class="drawer-tabs" role="tablist" aria-label="Room details">
+        <button class="drawer-tab active" role="tab" aria-selected="true" data-dtab="overview">Overview</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="stay">Current stay</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="housekeeping">Housekeeping</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="maintenance">Maintenance</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="history">History</button>
+    </nav>
+
+    <div class="drawer-body">
+        <!-- Overview -->
+        <div class="drawer-panel active" data-panel="overview">
+            <div class="drawer-section">
+                <h4>Room details</h4>
+                <dl class="drawer-details">
+                    <div><dt>Floor</dt><dd id="dFloor">Floor 2</dd></div>
+                    <div><dt>Type</dt><dd id="dType">Standard Shared</dd></div>
+                    <div><dt>Capacity</dt><dd id="dCap">Max 5 guests</dd></div>
+                    <div><dt>Beds</dt><dd>2 Bunk beds</dd></div>
+                    <div><dt>View</dt><dd>City courtyard</dd></div>
+                    <div><dt>Size</dt><dd>28 m²</dd></div>
+                </dl>
+            </div>
+            <div class="drawer-section">
+                <h4>Amenities</h4>
+                <div class="amenities">
+                    <span class="amenity-chip">❄️ A/C</span>
+                    <span class="amenity-chip">📶 Wi-Fi</span>
+                    <span class="amenity-chip">🚿 Shared bath</span>
+                    <span class="amenity-chip">📚 Study desk</span>
+                    <span class="amenity-chip">🔒 Locker</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current stay -->
+        <div class="drawer-panel" data-panel="stay">
+            <div class="drawer-section" id="drawerStaySection">
+                <h4>Current guest</h4>
+                <div class="drawer-guest">
+                    <div class="guest-avatar" id="dGuestAvatar">SR</div>
+                    <div>
+                        <p class="drawer-guest-name" id="dGuestName">Sofia Reyes</p>
+                        <p class="drawer-guest-meta" id="dGuestMeta">Guest ID TR-1001 · In-house</p>
+                    </div>
+                </div>
+                <dl class="drawer-details" style="margin-top:16px">
+                    <div><dt>Check-in</dt><dd id="dCheckin">Oct 2, 2026</dd></div>
+                    <div><dt>Expected check-out</dt><dd id="dCheckout">Oct 9, 2026</dd></div>
+                    <div><dt>Guests</dt><dd id="dGuests">3 of 5</dd></div>
+                    <div><dt>Balance</dt><dd>₱ 0.00</dd></div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Housekeeping -->
+        <div class="drawer-panel" data-panel="housekeeping">
+            <div class="drawer-section">
+                <h4>Last clean</h4>
+                <p class="drawer-text">Today · 6:30 AM · by <strong>Joy Lim</strong></p>
+            </div>
+            <div class="drawer-section">
+                <h4>Tasks</h4>
+                <ul class="task-list">
+                    <li><span class="status-pill done"><span class="dot"></span> Done</span> Deep clean · Oct 1, 2026</li>
+                    <li><span class="status-pill done"><span class="dot"></span> Done</span> Standard clean · Oct 2, 2026</li>
+                    <li><span class="status-pill pending"><span class="dot"></span> Pending</span> Room tidy-up · Scheduled 10:30 AM</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Maintenance -->
+        <div class="drawer-panel" data-panel="maintenance">
+            <div class="drawer-section">
+                <h4>Open issues</h4>
+                <div class="empty-state small">
+                    <p class="empty-title">No open issues</p>
+                    <p class="empty-sub">All systems working.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="drawer-panel" data-panel="history">
+            <ul class="drawer-history">
+                <li>
+                    <span class="history-dot" aria-hidden="true"></span>
+                    <div>
+                        <p><strong>Joy Lim</strong> marked room vacant dirty</p>
+                        <span>Today · 10:42 AM · Housekeeping</span>
+                    </div>
+                </li>
+                <li>
+                    <span class="history-dot" aria-hidden="true"></span>
+                    <div>
+                        <p><strong>Marco Cruz</strong> checked in <strong>Sofia Reyes</strong></p>
+                        <span>Oct 2, 2026 · 3:40 PM · Front desk</span>
+                    </div>
+                </li>
+                <li>
+                    <span class="history-dot" aria-hidden="true"></span>
+                    <div>
+                        <p><strong>Ravi Batra</strong> marked room out of service</p>
+                        <span>Sep 30, 2026 · Reason: A/C unit repair</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</aside>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please provide a reason.</p>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/rbac.js" defer></script>
+
+<script src="/js/staff-rooms.js" defer></script>
+</body>
+</html>

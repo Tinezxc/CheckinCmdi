@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data and backups - Haven Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin-data.css">
+</head>
+<body data-role="super-admin">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Haven · Admin</span>
+        <span class="env-badge env-prod">Production</span>
+        <div class="topbar-avatar">SV</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-admin" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">ADMIN CONSOLE</span>
+            </div>
+        </div>
+
+        
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">SYSTEM</span>
+            <a href="admin-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="admin-users.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Users and roles
+            </a>
+            <a href="admin-security.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Security
+            </a>
+            <a href="admin-audit.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Audit logs
+            </a>
+            <a href="admin-integrations.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Integrations
+            </a>
+            <a href="admin-data.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+                Data and backups
+            </a>
+            <a href="admin-health.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                System health
+            </a>
+            <a href="admin-settings.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">SV</div>
+                <div class="staff-info">
+                    <span class="staff-name">Sarah Villanueva</span>
+                    <span class="staff-role" id="staffRoleLabel">admin</span>
+                </div>
+            </div>
+            <a href="../index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar topbar-admin">
+            <div class="topbar-accent-strip" aria-hidden="true"></div>
+            <div class="topbar-title">
+                <div class="topbar-title-row">
+                    <h1 class="app-title">Check-in Accommodation System <span class="admin-divider">·</span> Admin</h1>
+                    <span class="admin-badge">ADMIN</span>
+                    <span class="env-badge env-prod">Production</span>
+                </div>
+                <p class="app-subtitle">Data and backups · <span id="roleBreadcrumb">Super admin</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search backups, requests, exports…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Admin profile menu">SV</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">Data and backups</h2>
+                    <span class="posture-pill" id="healthPill">
+                        <span class="posture-dot"></span>
+                        <span id="healthText">Last backup succeeded 2:00 AM · next 2:00 PM</span>
+                    </span>
+                    <span class="env-badge env-prod" id="envLabel">Production</span>
+                </div>
+                <div class="page-header-actions">
+                    <button class="btn btn-primary" id="backupNowBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9"></path>
+                            <polyline points="21 3 21 9 15 9"></polyline>
+                        </svg>
+                        Back up now
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="Data sections">
+                <button class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="backups">Backups <span class="tab-count">30</span></button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="restore">Restore</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="retention">Retention</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="requests">
+                    Guest data requests <span class="tab-count tab-count-red" id="requestsTabCount">5</span>
+                </button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="exports">Exports</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="storage">Storage</button>
+            </nav>
+
+            <!-- ============ OVERVIEW TAB ============ -->
+            <div class="tab-panel active" data-panel="overview">
+
+                <section class="stats-row">
+                    <button class="stat-card" data-stat="last-backup">
+                        <span class="stat-label">Last backup</span>
+                        <span class="stat-value">2:00 AM</span>
+                        <span class="stat-sub up">✓ Succeeded · verified</span>
+                    </button>
+                    <button class="stat-card" data-stat="next-backup">
+                        <span class="stat-label">Next backup</span>
+                        <span class="stat-value">2:00 PM</span>
+                        <span class="stat-sub">In 3 hours 48 min</span>
+                    </button>
+                    <button class="stat-card" data-stat="size">
+                        <span class="stat-label">Backup size</span>
+                        <span class="stat-value">4.2 GB</span>
+                        <span class="stat-sub up">▲ +8% vs last week</span>
+                    </button>
+                    <button class="stat-card" data-stat="storage">
+                        <span class="stat-label">Storage used</span>
+                        <span class="stat-value">128 GB</span>
+                        <span class="stat-sub">of 500 GB · 26%</span>
+                    </button>
+                    <button class="stat-card stat-warn" data-stat="restore-test">
+                        <span class="stat-label">Last restore test</span>
+                        <span class="stat-value stat-warn">41 days</span>
+                        <span class="stat-sub">⚠ Stale (recommended &lt; 30)</span>
+                    </button>
+                    <button class="stat-card" data-stat="requests">
+                        <span class="stat-label">Open data requests</span>
+                        <span class="stat-value">2</span>
+                        <span class="stat-sub">1 overdue · 1 due in 3 days</span>
+                    </button>
+                </section>
+
+                <div class="card attention-card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Needs attention</h3>
+                            <span class="card-sub">2 items require action</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="attention-list" id="attentionList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ BACKUPS TAB ============ -->
+            <div class="tab-panel" data-panel="backups">
+                <form class="card form-card" id="backupScheduleForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Backup schedule</h3>
+                            <span class="card-sub">Automated schedule that runs outside peak hours</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="backupFreq">Frequency</label>
+                                <select id="backupFreq">
+                                    <option>Every 6 hours</option>
+                                    <option selected>Every 12 hours</option>
+                                    <option>Daily</option>
+                                    <option>Weekly</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="backupWindow">Time window</label>
+                                <select id="backupWindow">
+                                    <option selected>2:00 AM &amp; 2:00 PM (off-peak)</option>
+                                    <option>3:00 AM only</option>
+                                    <option>Custom…</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h4 class="subsection-title">Included data</h4>
+                        <div class="included-grid">
+                            <label class="toggle-row">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                                <span>Database (guest profiles, stays, requests)</span>
+                            </label>
+                            <label class="toggle-row">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                                <span>Documents (receipts, ID verification)</span>
+                            </label>
+                            <label class="toggle-row">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                                <span>Audit logs (append-only)</span>
+                            </label>
+                            <label class="toggle-row">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                                <span>Settings (branding, policy, templates)</span>
+                            </label>
+                        </div>
+
+                        <h4 class="subsection-title">Encryption</h4>
+                        <ul class="encryption-list">
+                            <li><span class="status-pill pass"><span class="dot"></span> At rest</span> AES-256 with a separate backup key</li>
+                            <li><span class="status-pill pass"><span class="dot"></span> In transit</span> TLS 1.3 forced for all transfers</li>
+                            <li><span class="status-pill pass"><span class="dot"></span> Verification</span> SHA-256 checksum on every backup</li>
+                        </ul>
+                    </div>
+                </form>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Backup history</h3>
+                            <span class="card-sub">30 backups across 15 days · 1 failed · 1 partial · 2 pre-change</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date / time</th>
+                                        <th>Type</th>
+                                        <th class="hide-md">Size</th>
+                                        <th>Result</th>
+                                        <th class="hide-sm">Location</th>
+                                        <th class="hide-sm">Checksum</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="backupsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ RESTORE TAB ============ -->
+            <div class="tab-panel" data-panel="restore">
+                <section class="restore-stepper" aria-label="Restore flow">
+                    <ol class="stepper-list">
+                        <li class="stepper-item active" data-step="1"><span class="stepper-num">1</span><span class="stepper-label">Restore point</span></li>
+                        <li class="stepper-item" data-step="2"><span class="stepper-num">2</span><span class="stepper-label">Scope</span></li>
+                        <li class="stepper-item" data-step="3"><span class="stepper-num">3</span><span class="stepper-label">Preview copy</span></li>
+                        <li class="stepper-item" data-step="4"><span class="stepper-num">4</span><span class="stepper-label">Impact</span></li>
+                        <li class="stepper-item" data-step="5"><span class="stepper-num">5</span><span class="stepper-label">Confirm</span></li>
+                        <li class="stepper-item" data-step="6"><span class="stepper-num">6</span><span class="stepper-label">Progress</span></li>
+                    </ol>
+
+                    <div class="restore-body">
+                        <div class="restore-step active" data-rstep="1">
+                            <h3 class="restore-title">Choose a restore point</h3>
+                            <p class="card-sub">Select a verified backup from the list. Pre-change snapshots are safest.</p>
+                            <ul class="restore-list" id="restorePointList"></ul>
+                        </div>
+
+                        <div class="restore-step" data-rstep="2">
+                            <h3 class="restore-title">Choose scope</h3>
+                            <p class="card-sub">Restoring the full system is slower and has a bigger impact.</p>
+                            <div class="scope-options">
+                                <label class="scope-option">
+                                    <input type="radio" name="scope" value="full" checked>
+                                    <div>
+                                        <strong>Full restore</strong>
+                                        <span class="scope-desc">Overwrites every table. Only use for disasters.</span>
+                                    </div>
+                                </label>
+                                <label class="scope-option">
+                                    <input type="radio" name="scope" value="area">
+                                    <div>
+                                        <strong>One area</strong>
+                                        <span class="scope-desc">Restore a single table (e.g., stays, requests, settings).</span>
+                                    </div>
+                                </label>
+                                <label class="scope-option">
+                                    <input type="radio" name="scope" value="record">
+                                    <div>
+                                        <strong>One record</strong>
+                                        <span class="scope-desc">Restore a single row. Fastest and lowest impact.</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="restore-step" data-rstep="3">
+                            <h3 class="restore-title">Restore to a preview copy first</h3>
+                            <p class="card-sub">We restore into an isolated preview so you can inspect data before applying to production.</p>
+                            <button class="btn btn-outline" id="previewBtn">Create preview copy</button>
+                            <div class="preview-result" id="previewResult" hidden>
+                                <span class="status-pill pass"><span class="dot"></span> Preview ready</span>
+                                <p class="preview-detail" id="previewDetail">Preview at <code>preview-2026-10-11T14:00</code> — browse it before continuing.</p>
+                            </div>
+                        </div>
+
+                        <div class="restore-step" data-rstep="4">
+                            <h3 class="restore-title">Impact summary</h3>
+                            <ul class="impact-list">
+                                <li>
+                                    <strong>Records overwritten</strong>
+                                    <span id="impactOverwrite">1,842 records</span>
+                                </li>
+                                <li>
+                                    <strong>Activity after restore point lost</strong>
+                                    <span id="impactLost">12 check-ins, 8 check-outs, 43 service requests</span>
+                                </li>
+                                <li>
+                                    <strong>Deletions re-applied after restore</strong>
+                                    <span>3 guest data deletions will be re-applied automatically</span>
+                                </li>
+                                <li>
+                                    <strong>Pre-restore snapshot</strong>
+                                    <span>Automatic · stored off-site for 90 days</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="restore-step" data-rstep="5">
+                            <h3 class="restore-title">Confirm restore</h3>
+                            <p class="card-sub">This action cannot be undone. A pre-restore snapshot will be taken automatically.</p>
+                            <div class="form-group">
+                                <label for="restoreWord">Type <strong>RESTORE PRODUCTION</strong> to confirm <span class="required">*</span></label>
+                                <input type="text" id="restoreWord" placeholder="RESTORE PRODUCTION">
+                                <span class="error-msg" id="restoreWordErr"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="restoreReason">Reason <span class="required">*</span></label>
+                                <textarea id="restoreReason" rows="3" placeholder="Why are you restoring? (min 10 chars)"></textarea>
+                                <span class="error-msg" id="restoreReasonErr"></span>
+                            </div>
+                            <button class="btn btn-danger" id="restoreStartBtn" data-role="super-admin">Re-authenticate &amp; start restore</button>
+                        </div>
+
+                        <div class="restore-step" data-rstep="6">
+                            <div class="maintenance-banner" role="status" aria-live="polite">
+                                <span class="maintenance-icon">🔧</span>
+                                <div>
+                                    <p><strong>Restore in progress</strong> — the system is in maintenance mode.</p>
+                                    <p class="maintenance-sub" id="restoreProgress">Restoring database… 34%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="restore-footer">
+                        <button class="btn btn-ghost" id="restoreBack" hidden>← Back</button>
+                        <div class="restore-footer-right">
+                            <button class="btn btn-outline" id="restoreCancel">Cancel</button>
+                            <button class="btn btn-primary" id="restoreNext">Next →</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ RETENTION TAB ============ -->
+            <div class="tab-panel" data-panel="retention">
+                <form class="card form-card" id="retentionForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Retention rules</h3>
+                            <span class="card-sub">Single source of truth shared with Security and guest-facing pages</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data type</th>
+                                        <th>Retention</th>
+                                        <th class="hide-md">End of period</th>
+                                        <th class="hide-sm">Next purge</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="retentionBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="matrix-hint" id="retentionDirtyHint">No changes</span>
+                        <div class="matrix-actions">
+                            <button class="btn btn-ghost btn-sm" id="retentionDiscard" disabled>Discard</button>
+                            <button class="btn btn-primary btn-sm" id="retentionSave" disabled>Preview &amp; save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ============ GUEST DATA REQUESTS TAB ============ -->
+            <div class="tab-panel" data-panel="requests">
+                <section class="filters-bar">
+                    <div class="filter-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="search" id="reqSearch" placeholder="Search requester, Guest ID, room…" aria-label="Search requests">
+                    </div>
+                    <div class="filter-chips">
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Type</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="reqType" data-value="all">Any type</button></li>
+                                <li><button data-filter="reqType" data-value="Export">Export</button></li>
+                                <li><button data-filter="reqType" data-value="Deletion">Deletion</button></li>
+                            </ul>
+                        </div>
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Status</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="reqStatus" data-value="all">Any status</button></li>
+                                <li><button data-filter="reqStatus" data-value="New">New</button></li>
+                                <li><button data-filter="reqStatus" data-value="Verifying identity">Verifying identity</button></li>
+                                <li><button data-filter="reqStatus" data-value="In progress">In progress</button></li>
+                                <li><button data-filter="reqStatus" data-value="Completed">Completed</button></li>
+                                <li><button data-filter="reqStatus" data-value="Rejected">Rejected</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Requester</th>
+                                        <th>Type</th>
+                                        <th class="hide-md">Received</th>
+                                        <th>Due</th>
+                                        <th>Status</th>
+                                        <th class="hide-sm">Assignee</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="requestsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ EXPORTS TAB ============ -->
+            <div class="tab-panel" data-panel="exports">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Export history</h3>
+                            <span class="card-sub">Every export is logged with filters and row count</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Admin</th>
+                                        <th>What</th>
+                                        <th class="hide-md">Filters</th>
+                                        <th>Rows</th>
+                                        <th class="hide-sm">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="exportHistoryBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Expiring download links</h3>
+                            <span class="card-sub">Links expire 24 hours after generation</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="link-list" id="linkList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ STORAGE TAB ============ -->
+            <div class="tab-panel" data-panel="storage">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Usage by category</h3>
+                            <span class="card-sub">128 GB of 500 GB used · 26%</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <ul class="storage-list">
+                            <li class="storage-item">
+                                <span class="storage-label">Database</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:34%"></div></div>
+                                <span class="quota-value">44 GB</span>
+                            </li>
+                            <li class="storage-item">
+                                <span class="storage-label">Documents</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:24%"></div></div>
+                                <span class="quota-value">31 GB</span>
+                            </li>
+                            <li class="storage-item">
+                                <span class="storage-label">Backups</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:20%"></div></div>
+                                <span class="quota-value">26 GB</span>
+                            </li>
+                            <li class="storage-item">
+                                <span class="storage-label">Audit logs</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:8%"></div></div>
+                                <span class="quota-value">10 GB</span>
+                            </li>
+                            <li class="storage-item">
+                                <span class="storage-label">Exports</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:13%"></div></div>
+                                <span class="quota-value">17 GB</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <h3>Locations</h3>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="location-list">
+                            <li class="location-item">
+                                <span class="location-icon">🏢</span>
+                                <div class="location-body">
+                                    <p class="location-title">Primary — AWS ap-southeast-1 (Singapore)</p>
+                                    <p class="location-meta">128 GB · last write 2 minutes ago</p>
+                                </div>
+                                <span class="status-pill pass"><span class="dot"></span> Healthy</span>
+                            </li>
+                            <li class="location-item">
+                                <span class="location-icon">🌏</span>
+                                <div class="location-body">
+                                    <p class="location-title">Secondary — AWS ap-northeast-1 (Tokyo)</p>
+                                    <p class="location-meta">128 GB · last write 6 minutes ago</p>
+                                </div>
+                                <span class="status-pill pass"><span class="dot"></span> Healthy</span>
+                            </li>
+                            <li class="location-item">
+                                <span class="location-icon">❄️</span>
+                                <div class="location-body">
+                                    <p class="location-title">Off-site — Glacier Deep Archive</p>
+                                    <p class="location-meta">26 GB (backups only) · 90-day retention</p>
+                                </div>
+                                <span class="status-pill pass"><span class="dot"></span> Healthy</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Admin console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ BACKUP ROW MENU ============ -->
+<div id="rowMenuHost"></div>
+
+<!-- ============ REQUEST DRAWER ============ -->
+<div class="drawer-overlay" id="reqOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="reqDrawer" role="dialog" aria-modal="true" aria-labelledby="reqTitle" hidden>
+    <header class="drawer-header">
+        <div class="drawer-identity">
+            <div class="drawer-avatar" id="reqAvatar">SR</div>
+            <div>
+                <h3 id="reqTitle">Sofia Reyes</h3>
+                <p class="drawer-sub" id="reqSub">Deletion request · Guest ID TR-1001 / HV-1001</p>
+                <span class="status-pill fail" id="reqStatusPill"><span class="dot"></span> Blocked · overdue stay</span>
+            </div>
+        </div>
+        <button class="drawer-close" id="reqClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <nav class="drawer-tabs" role="tablist" aria-label="Request details">
+        <button class="drawer-tab active" role="tab" aria-selected="true" data-dtab="details">Details</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="included">Data included</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="kept">Data kept</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="verify">Verify identity</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="send">Send to guest</button>
+    </nav>
+
+    <div class="drawer-body">
+        <div class="drawer-panel active" data-panel="details">
+            <div class="drawer-section">
+                <h4>Request</h4>
+                <dl class="drawer-details">
+                    <div><dt>Type</dt><dd id="dType">Deletion (right to be forgotten)</dd></div>
+                    <div><dt>Received</dt><dd id="dReceived">Oct 8, 2026 · 3:14 PM</dd></div>
+                    <div><dt>Due date</dt><dd id="dDue">Oct 22, 2026 · 11 days remaining</dd></div>
+                    <div><dt>Assignee</dt><dd id="dAssignee">Sarah Villanueva</dd></div>
+                    <div class="dt-full"><dt>Requester</dt><dd id="dRequester">Sofia Reyes · sofia@example.com</dd></div>
+                </dl>
+            </div>
+            <div class="drawer-section" id="blockedWarning" hidden>
+                <div class="warning-box">
+                    <p><strong>⚠ Request blocked — overdue stay</strong></p>
+                    <p>Room 201 · Sofia Reyes (TR-1001 / HV-1001) is still checked in and overdue by 2 days (expected check-out Oct 9, 2026). The deletion request cannot proceed until the stay is closed.</p>
+                    <button class="btn btn-outline btn-sm" id="resolveStayBtn">Resolve stay first</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-panel" data-panel="included">
+            <div class="drawer-section">
+                <h4>Data included in the export</h4>
+                <ul class="data-list" id="dIncludedList"></ul>
+            </div>
+        </div>
+
+        <div class="drawer-panel" data-panel="kept">
+            <div class="drawer-section">
+                <h4>Data that must be kept, and why</h4>
+                <ul class="kept-list" id="dKeptList"></ul>
+                <p class="drawer-note">Kept records are anonymised — they no longer identify the guest but preserve the audit trail.</p>
+            </div>
+        </div>
+
+        <div class="drawer-panel" data-panel="verify">
+            <div class="drawer-section">
+                <h4>Identity verification</h4>
+                <p class="drawer-summary">We must verify the requester's identity before any export or deletion. This action is logged in the audit trail.</p>
+                <div class="verify-steps">
+                    <label class="toggle-row">
+                        <input type="checkbox" id="v1">
+                        <span class="toggle-slider"></span>
+                        <span>Confirm email ownership</span>
+                    </label>
+                    <label class="toggle-row">
+                        <input type="checkbox" id="v2">
+                        <span class="toggle-slider"></span>
+                        <span>Confirm last 4 digits of ID number</span>
+                    </label>
+                    <label class="toggle-row">
+                        <input type="checkbox" id="v3">
+                        <span class="toggle-slider"></span>
+                        <span>Confirm room number or last stay date</span>
+                    </label>
+                </div>
+                <button class="btn btn-primary btn-sm" id="markVerified" disabled>Mark identity verified</button>
+            </div>
+        </div>
+
+        <div class="drawer-panel" data-panel="send">
+            <div class="drawer-section">
+                <h4>Send to guest</h4>
+                <p class="drawer-summary">The export link will be sent to the guest's verified email and expires in 24 hours. Delivery is logged.</p>
+                <div class="form-group">
+                    <label for="guestEmail">Verified email</label>
+                    <input type="email" id="guestEmail" value="sofia@example.com" readonly>
+                </div>
+                <button class="btn btn-primary btn-sm" id="sendToGuestBtn" data-role="super-admin">Send export link</button>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- ============ STEP-UP MODAL ============ -->
+<div class="modal-overlay" id="stepupOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stepupTitle">
+        <header class="modal-header">
+            <h3 id="stepupTitle">Re-authenticate to continue</h3>
+            <button class="modal-close" id="stepupClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="stepupText">This action requires step-up authentication.</p>
+            <div class="form-group">
+                <label for="stepupPassword">Password</label>
+                <input type="password" id="stepupPassword" placeholder="Enter your password">
+                <span class="error-msg" id="stepupPasswordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="stepupCode">2FA code</label>
+                <input type="text" id="stepupCode" inputmode="numeric" maxlength="6" placeholder="6-digit code">
+                <span class="error-msg" id="stepupCodeErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="stepupCancel">Cancel</button>
+            <button class="btn btn-primary" id="stepupVerify">Verify</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ IMPACT PREVIEW MODAL ============ -->
+<div class="modal-overlay" id="impactOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="impactTitle">
+        <header class="modal-header">
+            <h3 id="impactTitle">Impact preview</h3>
+            <button class="modal-close" id="impactClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <ul class="impact-list" id="impactList"></ul>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="impactCancel">Cancel</button>
+            <button class="btn btn-primary" id="impactContinue">Continue to step-up</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please confirm this action.</p>
+            <div class="form-group">
+                <label for="confirmWord">Type <strong id="confirmWordPrompt">CONFIRM</strong> <span class="required">*</span></label>
+                <input type="text" id="confirmWord" autocomplete="off" placeholder="CONFIRM">
+                <span class="error-msg" id="confirmWordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/admin-data.js" defer></script>
+</body>
+</html>

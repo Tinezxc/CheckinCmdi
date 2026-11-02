@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit logs - Haven Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin-audit.css">
+</head>
+<body data-role="super-admin">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Haven · Admin</span>
+        <span class="env-badge env-prod">Production</span>
+        <div class="topbar-avatar">SV</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-admin" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">ADMIN CONSOLE</span>
+            </div>
+        </div>
+
+        
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">SYSTEM</span>
+            <a href="admin-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="admin-users.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Users and roles
+            </a>
+            <a href="admin-security.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Security
+            </a>
+            <a href="admin-audit.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Audit logs
+            </a>
+            <a href="admin-integrations.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Integrations
+            </a>
+            <a href="admin-data.html" class="nav-item" data-role-required="super-admin" aria-disabled="true" title="Super admin only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+                Data and backups
+            </a>
+            <a href="admin-health.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                System health
+            </a>
+            <a href="admin-settings.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">SV</div>
+                <div class="staff-info">
+                    <span class="staff-name">Sarah Villanueva</span>
+                    <span class="staff-role" id="staffRoleLabel">admin</span>
+                </div>
+            </div>
+            <a href="../index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar topbar-admin">
+            <div class="topbar-accent-strip" aria-hidden="true"></div>
+            <div class="topbar-title">
+                <div class="topbar-title-row">
+                    <h1 class="app-title">Check-in Accommodation System <span class="admin-divider">·</span> Admin</h1>
+                    <span class="admin-badge">ADMIN</span>
+                    <span class="env-badge env-prod">Production</span>
+                </div>
+                <p class="app-subtitle">Audit logs · <span id="roleBreadcrumb">Super admin</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search user, Guest ID, room, action…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Admin profile menu">SV</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">Audit logs</h2>
+                    <span class="page-count" id="eventCount">60 events</span>
+                    <span class="last-reviewed" id="lastEvent">Last event: 8s ago</span>
+                </div>
+                <div class="page-header-actions">
+                    <div class="live-toggle">
+                        <button class="live-btn active" id="liveBtn">
+                            <span class="live-dot"></span> Live
+                        </button>
+                        <button class="live-btn" id="pauseBtn">Paused</button>
+                    </div>
+                    <button class="btn btn-outline" id="exportBtn" data-role="super-admin">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export
+                    </button>
+                </div>
+            </section>
+
+            <p class="append-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Append-only. Entries cannot be edited or deleted. Corrections appear as new entries referencing the original.
+            </p>
+
+            <!-- Integrity banner -->
+            <div class="integrity-banner" id="integrityBanner">
+                <div class="integrity-icon" aria-hidden="true">🛡</div>
+                <div class="integrity-body">
+                    <p><strong>Chain verified</strong> at <span id="verifiedAt">Oct 11, 2026 · 10:32 AM</span> (Asia/Manila, GMT+8)</p>
+                    <p class="integrity-sub">Hash-chained entries · last entry hash <code id="lastHash">a91f…3d4e</code></p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="Audit sections">
+                <button class="tab active" role="tab" aria-selected="true" data-tab="log">Log</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="timeline">Timeline</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="exports">Exports & retention</button>
+            </nav>
+
+            <!-- ============ LOG TAB ============ -->
+            <div class="tab-panel active" data-panel="log">
+
+                <!-- Filters -->
+                <section class="filters-bar">
+                    <div class="filter-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="search" id="logSearch" placeholder="Search user, Guest ID, Registration ID, room, action, request ID…" aria-label="Search log">
+                    </div>
+
+                    <div class="filter-chips">
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Date range</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="range" data-value="1">Last 24 hours</button></li>
+                                <li><button data-filter="range" data-value="7">Last 7 days</button></li>
+                                <li><button data-filter="range" data-value="30">Last 30 days</button></li>
+                                <li><button data-filter="range" data-value="90">Last 90 days</button></li>
+                                <li><button data-filter="range" data-value="custom">Custom range…</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Actor</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="actor" data-value="all">Any actor</button></li>
+                                <li><button data-filter="actor" data-value="Admin">Admins</button></li>
+                                <li><button data-filter="actor" data-value="Staff">Staff</button></li>
+                                <li><button data-filter="actor" data-value="Guest">Guests</button></li>
+                                <li><button data-filter="actor" data-value="System">System</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Category</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="category" data-value="all">Any category</button></li>
+                                <li><button data-filter="category" data-value="Privileged">Privileged</button></li>
+                                <li><button data-filter="category" data-value="Data">Data reveals & exports</button></li>
+                                <li><button data-filter="category" data-value="Roles">Role & permission changes</button></li>
+                                <li><button data-filter="category" data-value="Guest">Guest actions</button></li>
+                                <li><button data-filter="category" data-value="System">System</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Severity</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="severity" data-value="all">Any</button></li>
+                                <li><button data-filter="severity" data-value="info">Info</button></li>
+                                <li><button data-filter="severity" data-value="warning">Warning</button></li>
+                                <li><button data-filter="severity" data-value="critical">Critical</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Result</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="result" data-value="all">Any result</button></li>
+                                <li><button data-filter="result" data-value="success">Success</button></li>
+                                <li><button data-filter="result" data-value="failed">Failed</button></li>
+                                <li><button data-filter="result" data-value="blocked">Blocked</button></li>
+                            </ul>
+                        </div>
+
+                        <button class="chip-clear" id="clearFilters" hidden>Clear filters</button>
+                    </div>
+                </section>
+
+                <!-- Saved views -->
+                <section class="saved-views" role="tablist" aria-label="Saved views">
+                    <button class="saved-tab active" role="tab" aria-selected="true" data-view="all">All <span class="saved-count" id="cvAll">60</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="privileged">Privileged actions <span class="saved-count" id="cvPrivileged">18</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="data">Data reveals & exports <span class="saved-count" id="cvData">9</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="roles">Role & permission changes <span class="saved-count" id="cvRoles">6</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="failed">Failed & blocked <span class="saved-count" id="cvFailed">8</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="guest">Guest-affecting <span class="saved-count" id="cvGuest">12</span></button>
+                </section>
+
+                <!-- Summary strip -->
+                <section class="summary-strip">
+                    <button class="summary-chip" data-summary="all">
+                        <span class="summary-count">60</span>
+                        <span class="summary-label">Total events</span>
+                    </button>
+                    <button class="summary-chip" data-summary="privileged">
+                        <span class="summary-count">18</span>
+                        <span class="summary-label">Privileged actions</span>
+                    </button>
+                    <button class="summary-chip" data-summary="data">
+                        <span class="summary-count">9</span>
+                        <span class="summary-label">Data reveals</span>
+                    </button>
+                    <button class="summary-chip" data-summary="exports">
+                        <span class="summary-count">3</span>
+                        <span class="summary-label">Exports</span>
+                    </button>
+                    <button class="summary-chip summary-warn" data-summary="failed">
+                        <span class="summary-count">8</span>
+                        <span class="summary-label">Failed / blocked</span>
+                    </button>
+                    <button class="summary-chip summary-system" data-summary="system">
+                        <span class="summary-count">5</span>
+                        <span class="summary-label">System events</span>
+                    </button>
+                </section>
+
+                <!-- Log table -->
+                <section class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap" id="logScroll">
+                            <table class="audit-table" aria-label="Audit log">
+                                <thead>
+                                    <tr>
+                                        <th class="sortable" data-sort="time" scope="col">Time</th>
+                                        <th scope="col">Actor</th>
+                                        <th scope="col">Action</th>
+                                        <th class="hide-md" scope="col">Target</th>
+                                        <th scope="col">Result</th>
+                                        <th class="hide-sm" scope="col">Severity</th>
+                                        <th class="hide-md" scope="col">IP / device</th>
+                                        <th class="hide-md" scope="col">Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logBody" aria-live="polite" aria-relevant="additions"></tbody>
+                            </table>
+                            <div class="empty-state" id="logEmpty" hidden>
+                                <div class="empty-icon">🔍</div>
+                                <p class="empty-title">No events match your filters</p>
+                                <p class="empty-sub">Try a different search or clear the filters.</p>
+                                <button class="btn btn-outline" id="emptyClearBtn">Clear filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Create alert from filter -->
+                <div class="create-alert-row">
+                    <button class="btn btn-outline btn-sm" id="createAlertBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        Create alert from this filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============ TIMELINE TAB ============ -->
+            <div class="tab-panel" data-panel="timeline">
+                <div class="timeline-day">
+                    <h3 class="timeline-day-header">Today</h3>
+                    <ul class="timeline-events" id="timelineToday"></ul>
+                </div>
+                <div class="timeline-day">
+                    <h3 class="timeline-day-header">Yesterday</h3>
+                    <ul class="timeline-events" id="timelineYesterday"></ul>
+                </div>
+                <div class="timeline-day">
+                    <h3 class="timeline-day-header">Oct 9, 2026</h3>
+                    <ul class="timeline-events" id="timelineOlder"></ul>
+                </div>
+            </div>
+
+            <!-- ============ EXPORTS TAB ============ -->
+            <div class="tab-panel" data-panel="exports">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Export history</h3>
+                            <span class="card-sub">Every export is logged as an audit event</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Admin</th>
+                                        <th>Filters</th>
+                                        <th>Rows</th>
+                                        <th class="hide-md">Format</th>
+                                        <th class="hide-sm">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="exportHistoryBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Retention</h3>
+                        </header>
+                        <div class="card-body">
+                            <dl class="retention-list">
+                                <div>
+                                    <dt>Active retention</dt>
+                                    <dd><strong>730 days</strong> (2 years)</dd>
+                                </div>
+                                <div>
+                                    <dt>Archive tier</dt>
+                                    <dd>After 90 days · cold storage</dd>
+                                </div>
+                                <div>
+                                    <dt>Oldest retained event</dt>
+                                    <dd>Oct 9, 2024</dd>
+                                </div>
+                                <div>
+                                    <dt>Compliance</dt>
+                                    <dd>Meets internal policy · reviewed Oct 5, 2026</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Scheduled exports</h3>
+                        </header>
+                        <div class="card-body no-pad">
+                            <ul class="scheduled-list" id="scheduledList"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Admin console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ EVENT DRAWER ============ -->
+<div class="drawer-overlay" id="eventOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="eventDrawer" role="dialog" aria-modal="true" aria-labelledby="eventDrawerTitle" hidden>
+    <header class="drawer-header">
+        <div>
+            <h3 id="eventDrawerTitle">Event detail</h3>
+            <p class="drawer-sub" id="eventDrawerSub">Force check-out · Room 201 · Sofia Reyes</p>
+        </div>
+        <button class="drawer-close" id="eventClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <div class="drawer-body">
+        <div class="drawer-section">
+            <h4>Summary</h4>
+            <p class="drawer-summary" id="dSummary">Ana Cruz (Front desk) force checked out Sofia Reyes (TR-1001 / HV-1001) from room 201. Reason: Guest unreachable. Step-up authentication was used.</p>
+        </div>
+
+        <div class="drawer-section">
+            <h4>Changes</h4>
+            <table class="changes-table" id="dChanges"></table>
+        </div>
+
+        <div class="drawer-section">
+            <h4>Context</h4>
+            <dl class="drawer-details">
+                <div><dt>IP address</dt><dd id="dIP">192.168.1.31</dd></div>
+                <div><dt>Device</dt><dd id="dDevice">Chrome 130 · macOS</dd></div>
+                <div><dt>Session ID</dt><dd><code id="dSession">ses_8a4f3c12</code></dd></div>
+                <div><dt>Request ID</dt><dd><code id="dRequest">req_9c2b7e14</code></dd></div>
+                <div><dt>Step-up used</dt><dd id="dStepup">Yes · 2FA verified</dd></div>
+                <div><dt>Time zone</dt><dd>Asia/Manila (GMT+8)</dd></div>
+            </dl>
+        </div>
+
+        <div class="drawer-section">
+            <h4>Related events</h4>
+            <ul class="drawer-history" id="dRelated"></ul>
+        </div>
+
+        <div class="drawer-section">
+            <h4>Integrity</h4>
+            <div class="integrity-mini">
+                <div class="integrity-mini-row">
+                    <span>Event ID</span>
+                    <code id="dEventId">evt_2a4f8c91</code>
+                </div>
+                <div class="integrity-mini-row">
+                    <span>Previous hash</span>
+                    <code id="dPrevHash">7c1e…9b02</code>
+                </div>
+                <div class="integrity-mini-row">
+                    <span>This hash</span>
+                    <code id="dThisHash">a91f…3d4e</code>
+                </div>
+                <div class="integrity-mini-row">
+                    <span>Chain status</span>
+                    <span class="status-pill pass"><span class="dot"></span> Verified</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- ============ EXPORT MODAL ============ -->
+<div class="modal-overlay" id="exportOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+        <header class="modal-header">
+            <h3 id="exportTitle">Export audit log</h3>
+            <button class="modal-close" id="exportClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="exportText">You are about to export <strong>60 events</strong> matching the current filters (last 7 days).</p>
+            <div class="form-group">
+                <label for="exportLimit">Row limit</label>
+                <select id="exportLimit">
+                    <option>500 rows</option>
+                    <option selected>1,000 rows</option>
+                    <option>5,000 rows</option>
+                    <option>10,000 rows (large)</option>
+                </select>
+            </div>
+            <div class="export-warning" id="exportWarning" hidden>
+                ⚠ Large export — this may take up to 5 minutes. You will be notified when ready.
+            </div>
+            <div class="form-group">
+                <label for="exportReason">Reason <span class="required">*</span></label>
+                <textarea id="exportReason" rows="3" placeholder="Why are you exporting this log? (min 5 chars)"></textarea>
+                <span class="error-msg" id="exportReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="exportCancel">Cancel</button>
+            <button class="btn btn-primary" id="exportSubmit">Re-authenticate & export</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ STEP-UP MODAL ============ -->
+<div class="modal-overlay" id="stepupOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stepupTitle">
+        <header class="modal-header">
+            <h3 id="stepupTitle">Re-authenticate to continue</h3>
+            <button class="modal-close" id="stepupClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text">This export includes sensitive audit data. Confirm your identity.</p>
+            <div class="form-group">
+                <label for="stepupPassword">Password</label>
+                <input type="password" id="stepupPassword" placeholder="Enter your password">
+                <span class="error-msg" id="stepupPasswordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="stepupCode">2FA code</label>
+                <input type="text" id="stepupCode" inputmode="numeric" maxlength="6" placeholder="6-digit code">
+                <span class="error-msg" id="stepupCodeErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="stepupCancel">Cancel</button>
+            <button class="btn btn-primary" id="stepupVerify">Verify</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/admin-audit.js" defer></script>
+</body>
+</html>

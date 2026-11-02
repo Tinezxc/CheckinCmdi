@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security - Haven Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin-security.css">
+</head>
+<body data-role="super-admin">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Haven · Admin</span>
+        <span class="env-badge env-prod">Production</span>
+        <div class="topbar-avatar">SV</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-admin" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">ADMIN CONSOLE</span>
+            </div>
+        </div>
+
+        
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">SYSTEM</span>
+            <a href="admin-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="admin-users.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Users and roles
+            </a>
+            <a href="admin-security.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Security
+            </a>
+            <a href="admin-audit.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Audit logs
+            </a>
+            <a href="admin-integrations.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Integrations
+            </a>
+            <a href="admin-data.html" class="nav-item" data-role-required="super-admin" aria-disabled="true" title="Super admin only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+                Data and backups
+            </a>
+            <a href="admin-health.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                System health
+            </a>
+            <a href="admin-settings.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">SV</div>
+                <div class="staff-info">
+                    <span class="staff-name">Sarah Villanueva</span>
+                    <span class="staff-role" id="staffRoleLabel">admin</span>
+                </div>
+            </div>
+            <a href="index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar topbar-admin">
+            <div class="topbar-accent-strip" aria-hidden="true"></div>
+            <div class="topbar-title">
+                <div class="topbar-title-row">
+                    <h1 class="app-title">Check-in Accommodation System <span class="admin-divider">·</span> Admin</h1>
+                    <span class="admin-badge">ADMIN</span>
+                    <span class="env-badge env-prod">Production</span>
+                </div>
+                <p class="app-subtitle">Security · <span id="roleBreadcrumb">Super admin</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search settings, sessions, logs…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Admin profile menu">SV</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">Security</h2>
+                    <span class="posture-pill" id="posturePill">
+                        <span class="posture-dot"></span>
+                        <span id="postureText">2 issues need attention</span>
+                    </span>
+                    <span class="last-reviewed" id="lastReviewed">Last reviewed: Oct 5, 2026</span>
+                </div>
+                <div class="page-header-actions">
+                    <button class="btn btn-outline" id="exportReportBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export report
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="Security sections">
+                <button class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="authentication">Authentication</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="sessions">Sessions</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="access">Access controls</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="data">Data protection</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="login">Login activity</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="alerts">
+                    Alerts <span class="tab-count tab-count-red" id="alertTabCount">2</span>
+                </button>
+            </nav>
+
+            <!-- ============ OVERVIEW ============ -->
+            <div class="tab-panel active" data-panel="overview">
+
+                <!-- Quick stats -->
+                <section class="stats-row" aria-label="Security quick stats">
+                    <button class="stat-card" data-stat="failed">
+                        <span class="stat-label">Failed logins · 24h</span>
+                        <span class="stat-value">14</span>
+                        <span class="stat-sub up">▲ 6 vs yesterday</span>
+                    </button>
+                    <button class="stat-card" data-stat="locked">
+                        <span class="stat-label">Locked accounts</span>
+                        <span class="stat-value">1</span>
+                        <span class="stat-sub">Omar Haddad</span>
+                    </button>
+                    <button class="stat-card" data-stat="sessions">
+                        <span class="stat-label">Active sessions</span>
+                        <span class="stat-value">12</span>
+                        <span class="stat-sub">1 from unusual location</span>
+                    </button>
+                    <button class="stat-card" data-stat="no2fa">
+                        <span class="stat-label">Accounts without 2FA</span>
+                        <span class="stat-value stat-warn">4</span>
+                        <span class="stat-sub">1 manager affected</span>
+                    </button>
+                    <button class="stat-card" data-stat="alerts">
+                        <span class="stat-label">Open alerts</span>
+                        <span class="stat-value stat-critical">2</span>
+                        <span class="stat-sub">1 critical · 1 warning</span>
+                    </button>
+                </section>
+
+                <!-- Posture checklist -->
+                <section class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Security posture checklist</h3>
+                            <span class="card-sub">Fix the two failing items to reach a passing posture</span>
+                        </div>
+                        <span class="posture-summary" id="postureSummary">4 pass · 2 warnings · 1 fail</span>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="posture-list" id="postureList"></ul>
+                    </div>
+                </section>
+
+                <!-- Posture details row -->
+                <div class="info-grid">
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Privileged accounts</h3>
+                        </header>
+                        <div class="card-body no-pad">
+                            <div class="table-wrap">
+                                <table class="data-table compact">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Role</th>
+                                            <th>2FA</th>
+                                            <th class="hide-sm">Last login</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="privilegedBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Recent break-glass reveals</h3>
+                        </header>
+                        <div class="card-body no-pad">
+                            <ul class="reveal-list" id="revealList"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ AUTHENTICATION ============ -->
+            <div class="tab-panel" data-panel="authentication">
+                <form class="card form-card" id="authForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Password policy</h3>
+                            <span class="card-sub">Applies to every staff and admin account</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pwMin">Minimum length</label>
+                                <input type="number" id="pwMin" value="10" min="8" max="64">
+                                <span class="form-hint">NIST recommends 12+</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="pwExpiry">Expiry (days)</label>
+                                <input type="number" id="pwExpiry" value="90" min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pwHistory">History depth</label>
+                                <input type="number" id="pwHistory" value="5" min="0">
+                                <span class="form-hint">Prevents reuse of the last N passwords</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="pwLockout">Lockout after N failures</label>
+                                <input type="number" id="pwLockout" value="5" min="1">
+                            </div>
+                        </div>
+                        <label class="toggle-row">
+                            <input type="checkbox" id="pwComplexity" checked>
+                            <span class="toggle-slider"></span>
+                            <span>Require complexity (upper, lower, number, symbol)</span>
+                        </label>
+                        <label class="toggle-row">
+                            <input type="checkbox" id="pwBreached" checked>
+                            <span class="toggle-slider"></span>
+                            <span>Reject passwords found in known breach databases</span>
+                        </label>
+                    </div>
+
+                    <header class="card-header">
+                        <div>
+                            <h3>Two-factor authentication</h3>
+                            <span class="card-sub">Enforce 2FA by role and allowed methods</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <ul class="role-2fa-list" id="role2faList"></ul>
+                        <p class="impact-note" id="impact2fa">2FA enforced for 3 of 7 roles · 1 manager without 2FA</p>
+                    </div>
+
+                    <header class="card-header">
+                        <div>
+                            <h3>Recovery and lockout</h3>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="recoveryCount">Recovery codes per user</label>
+                                <input type="number" id="recoveryCount" value="10" min="5" max="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="lockoutDuration">Lockout duration (minutes)</label>
+                                <input type="number" id="lockoutDuration" value="30" min="5">
+                            </div>
+                        </div>
+                        <label class="toggle-row">
+                            <input type="checkbox" id="selfUnlock" checked>
+                            <span class="toggle-slider"></span>
+                            <span>Allow self-unlock via email</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ============ SESSIONS ============ -->
+            <div class="tab-panel" data-panel="sessions">
+                <form class="card form-card" id="sessionForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Session policy</h3>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="idleTimeout">Idle timeout (minutes)</label>
+                                <input type="number" id="idleTimeout" value="30" min="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="absTimeout">Absolute timeout (hours)</label>
+                                <input type="number" id="absTimeout" value="12" min="1">
+                            </div>
+                        </div>
+                        <label class="toggle-row">
+                            <input type="checkbox" id="rememberDevice">
+                            <span class="toggle-slider"></span>
+                            <span>Allow "remember this device" for 30 days</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Active sessions</h3>
+                            <span class="card-sub">12 active sessions across all users</span>
+                        </div>
+                        <button class="btn btn-danger btn-sm" id="signOutAllUsers" data-role="super-admin">
+                            Sign out all users
+                        </button>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th class="hide-md">Role</th>
+                                        <th>Device</th>
+                                        <th class="hide-sm">Location</th>
+                                        <th class="hide-md">Started</th>
+                                        <th class="hide-sm">Last active</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sessionsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ ACCESS CONTROLS ============ -->
+            <div class="tab-panel" data-panel="access">
+                <form class="card form-card" id="accessForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>IP allowlist</h3>
+                            <span class="card-sub">Restrict sign-in to specific IP ranges by role</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <ul class="allowlist-list" id="allowlistList"></ul>
+                        <div class="test-ip-block">
+                            <label for="testIp">Your current IP</label>
+                            <div class="test-ip-row">
+                                <input type="text" id="testIp" value="192.168.1.24" readonly>
+                                <button type="button" class="btn btn-outline btn-sm" id="testIpBtn">Test my IP</button>
+                            </div>
+                            <p class="test-ip-result" id="testIpResult">✓ Your IP is in the Super admin allowlist.</p>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Break-glass reveal log</h3>
+                            <span class="card-sub">Read-only for everyone</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Target</th>
+                                        <th class="hide-sm">Reason</th>
+                                        <th class="hide-md">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="breakGlassBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Temporary elevation</h3>
+                            <span class="card-sub">Roles that expire automatically</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="elevation-list" id="elevationList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ DATA PROTECTION ============ -->
+            <div class="tab-panel" data-panel="data">
+                <form class="card form-card" id="dataForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Masking rules</h3>
+                            <span class="card-sub">Fields masked by default across all pages</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <ul class="mask-list" id="maskList"></ul>
+                        <div class="form-group" style="margin-top:24px">
+                            <label for="revealDuration">Reveal duration (seconds)</label>
+                            <input type="number" id="revealDuration" value="30" min="5" max="300">
+                            <span class="form-hint">How long unmasked data stays visible before re-masking.</span>
+                        </div>
+                    </div>
+
+                    <header class="card-header">
+                        <div>
+                            <h3>Retention</h3>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="retGuest">Guest data (days)</label>
+                                <input type="number" id="retGuest" value="365" min="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="retAudit">Audit logs (days)</label>
+                                <input type="number" id="retAudit" value="730" min="365">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="retLogin">Login activity (days)</label>
+                            <input type="number" id="retLogin" value="180" min="30">
+                        </div>
+                    </div>
+
+                    <header class="card-header">
+                        <div>
+                            <h3>Encryption</h3>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <ul class="encryption-list">
+                            <li><span class="status-pill pass"><span class="dot"></span> At rest</span> AES-256 · verified Oct 5, 2026</li>
+                            <li><span class="status-pill pass"><span class="dot"></span> In transit</span> TLS 1.3 · forced for all endpoints</li>
+                            <li><span class="status-pill pass"><span class="dot"></span> Backups</span> Encrypted with separate key</li>
+                        </ul>
+                    </div>
+                </form>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Guest data requests</h3>
+                            <span class="card-sub">Export, correction and deletion requests</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="data-request-list" id="dataRequestList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ LOGIN ACTIVITY ============ -->
+            <div class="tab-panel" data-panel="login">
+                <section class="filters-bar" aria-label="Login activity filters">
+                    <div class="filter-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="search" id="loginSearch" placeholder="Search user, IP, event type…" aria-label="Search login activity">
+                    </div>
+                    <div class="filter-chips">
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Result</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="result" data-value="all">Any</button></li>
+                                <li><button data-filter="result" data-value="success">Success</button></li>
+                                <li><button data-filter="result" data-value="failure">Failure</button></li>
+                                <li><button data-filter="result" data-value="lockout">Lockout</button></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-outline btn-sm" id="exportLogin" style="margin-left:auto">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Export
+                        </button>
+                    </div>
+                </section>
+
+                <div class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Event</th>
+                                        <th>Result</th>
+                                        <th class="hide-sm">IP / Location</th>
+                                        <th class="hide-md">Device</th>
+                                        <th class="hide-sm">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loginBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="loginEmpty" hidden>
+                                <div class="empty-icon">🔍</div>
+                                <p class="empty-title">No activity matches your filters</p>
+                                <p class="empty-sub">Try a different search or clear the filters.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ ALERTS ============ -->
+            <div class="tab-panel" data-panel="alerts">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Alert rules</h3>
+                            <span class="card-sub">Trigger alerts when these conditions are met</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="rules-list" id="rulesList"></ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Recent alerts</h3>
+                            <span class="card-sub">Acknowledge, investigate or dismiss</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="alert-list" id="alertList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Admin console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ STICKY SAVE BAR ============ -->
+<div class="save-bar" id="saveBar" hidden>
+    <span class="save-bar-text">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Unsaved changes
+    </span>
+    <div class="save-bar-actions">
+        <button class="btn btn-ghost" id="discardAll">Discard</button>
+        <button class="btn btn-primary" id="saveAll">Save changes</button>
+    </div>
+</div>
+
+<!-- ============ STEP-UP MODAL ============ -->
+<div class="modal-overlay" id="stepupOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stepupTitle">
+        <header class="modal-header">
+            <h3 id="stepupTitle">Re-authenticate to continue</h3>
+            <button class="modal-close" id="stepupClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text">This action affects security policy. Please confirm your identity.</p>
+            <div class="form-group">
+                <label for="stepupPassword">Password</label>
+                <input type="password" id="stepupPassword" placeholder="Enter your password">
+                <span class="error-msg" id="stepupPasswordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="stepupCode">2FA code</label>
+                <input type="text" id="stepupCode" inputmode="numeric" maxlength="6" placeholder="6-digit code">
+                <span class="error-msg" id="stepupCodeErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="stepupCancel">Cancel</button>
+            <button class="btn btn-primary" id="stepupVerify">Verify</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ TYPED CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please confirm this action.</p>
+            <div class="form-group">
+                <label for="confirmWord">Type <strong id="confirmWordPrompt">CONFIRM</strong> <span class="required">*</span></label>
+                <input type="text" id="confirmWord" autocomplete="off" placeholder="CONFIRM">
+                <span class="error-msg" id="confirmWordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ IMPACT PREVIEW MODAL ============ -->
+<div class="modal-overlay" id="impactOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="impactTitle">
+        <header class="modal-header">
+            <h3 id="impactTitle">Impact preview</h3>
+            <button class="modal-close" id="impactClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <ul class="impact-list" id="impactList"></ul>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="impactCancel">Cancel</button>
+            <button class="btn btn-primary" id="impactConfirm">Continue to step-up</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/admin-security.js" defer></script>
+</body>
+</html>

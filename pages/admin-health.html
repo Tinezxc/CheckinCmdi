@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System health - Haven Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin-health.css">
+</head>
+<body data-role="super-admin">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Haven · Admin</span>
+        <span class="env-badge env-prod">Production</span>
+        <div class="topbar-avatar">SV</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-admin" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">ADMIN CONSOLE</span>
+            </div>
+        </div>
+
+        
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">SYSTEM</span>
+            <a href="admin-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="admin-users.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Users and roles
+            </a>
+            <a href="admin-security.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Security
+            </a>
+            <a href="admin-audit.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Audit logs
+            </a>
+            <a href="admin-integrations.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Integrations
+            </a>
+            <a href="admin-data.html" class="nav-item" data-role-required="super-admin" aria-disabled="true" title="Super admin only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+                Data and backups
+            </a>
+            <a href="admin-health.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                System health
+            </a>
+            <a href="admin-settings.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">SV</div>
+                <div class="staff-info">
+                    <span class="staff-name">Sarah Villanueva</span>
+                    <span class="staff-role" id="staffRoleLabel">admin</span>
+                </div>
+            </div>
+            <a href="../index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar topbar-admin">
+            <div class="topbar-accent-strip" aria-hidden="true"></div>
+            <div class="topbar-title">
+                <div class="topbar-title-row">
+                    <h1 class="app-title">Check-in Accommodation System <span class="admin-divider">·</span> Admin</h1>
+                    <span class="admin-badge">ADMIN</span>
+                    <span class="env-badge env-prod">Production</span>
+                </div>
+                <p class="app-subtitle">System health · <span id="roleBreadcrumb">Super admin</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search services, jobs, incidents…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Admin profile menu">SV</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">System health</h2>
+                    <span class="posture-pill warn" id="overallPill">
+                        <span class="posture-dot"></span>
+                        <span id="overallText">2 services degraded · 1 open incident</span>
+                    </span>
+                    <span class="last-reviewed" id="lastUpdated">Last updated 8s ago</span>
+                    <span class="env-badge env-prod">Production</span>
+                </div>
+                <div class="page-header-actions">
+                    <div class="live-toggle">
+                        <button class="live-btn active" id="autoRefreshOn">
+                            <span class="live-dot"></span> Auto
+                        </button>
+                        <button class="live-btn" id="autoRefreshOff">Paused</button>
+                    </div>
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false" id="rangeBtn">
+                            <span class="chip-label">Last 24 hours</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden id="rangeMenu">
+                            <li><button data-range="1h">Last 1 hour</button></li>
+                            <li><button data-range="24h">Last 24 hours</button></li>
+                            <li><button data-range="7d">Last 7 days</button></li>
+                            <li><button data-range="30d">Last 30 days</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- External uptime -->
+            <div class="external-uptime">
+                <span class="external-dot"></span>
+                <span>Independent external monitor: <strong>All regions responding</strong></span>
+                <a href="#" class="link-muted">View external status →</a>
+            </div>
+
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="System health sections">
+                <button class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="services">Services</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="performance">Performance</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="errors">Errors <span class="tab-count tab-count-red" id="errorsTabCount">12</span></button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="jobs">Jobs & queues <span class="tab-count tab-count-amber" id="jobsTabCount">1</span></button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="incidents">Incidents <span class="tab-count" id="incidentsTabCount">3</span></button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="maintenance">Maintenance</button>
+            </nav>
+
+            <!-- ============ OVERVIEW TAB ============ -->
+            <div class="tab-panel active" data-panel="overview">
+
+                <section class="stats-row">
+                    <button class="stat-card" data-stat="uptime">
+                        <span class="stat-label">Uptime · 30 days</span>
+                        <span class="stat-value">99.98%</span>
+                        <span class="stat-sub up">Target 99.9%</span>
+                    </button>
+                    <button class="stat-card" data-stat="error-rate">
+                        <span class="stat-label">Error rate</span>
+                        <span class="stat-value">0.42%</span>
+                        <span class="stat-sub up">▼ 0.12 vs prev</span>
+                    </button>
+                    <button class="stat-card" data-stat="response">
+                        <span class="stat-label">Response time</span>
+                        <span class="stat-value">218<span class="stat-suffix">ms</span></span>
+                        <span class="stat-sub">p95 640ms</span>
+                    </button>
+                    <button class="stat-card" data-stat="users">
+                        <span class="stat-label">Active users</span>
+                        <span class="stat-value">128</span>
+                        <span class="stat-sub up">▲ 12 today</span>
+                    </button>
+                    <button class="stat-card stat-warn" data-stat="jobs">
+                        <span class="stat-label">Failed jobs · 24h</span>
+                        <span class="stat-value stat-warn">1</span>
+                        <span class="stat-sub">Reminder emails missed</span>
+                    </button>
+                    <button class="stat-card stat-warn" data-stat="incidents">
+                        <span class="stat-label">Open incidents</span>
+                        <span class="stat-value stat-warn">1</span>
+                        <span class="stat-sub">Major · door-lock sync</span>
+                    </button>
+                </section>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Service status</h3>
+                            <span class="card-sub">10 services · 8 operational · 2 degraded</span>
+                        </div>
+                        <span class="freshness-pill pass">Fresh · updated 8s ago</span>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="service-grid" id="serviceGrid"></ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Needs attention</h3>
+                            <span class="card-sub">Surfaced from this page and the dashboard</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="attention-list" id="attentionList"></ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Alert rules</h3>
+                            <span class="card-sub">3 active rules · grouped into incidents to avoid alert fatigue</span>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" data-role="super-admin">Edit</button>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="rule-list" id="ruleList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ SERVICES TAB ============ -->
+            <div class="tab-panel" data-panel="services">
+                <div class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table" aria-label="Services">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                        <th>Uptime 30d</th>
+                                        <th class="hide-md">Latency p95</th>
+                                        <th class="hide-sm">Last incident</th>
+                                        <th class="hide-md">Dependencies</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="servicesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PERFORMANCE TAB ============ -->
+            <div class="tab-panel" data-panel="performance">
+                <div class="chart-grid">
+                    <div class="card chart-card">
+                        <header class="card-header">
+                            <div>
+                                <h3>Response time · median & p95</h3>
+                                <span class="card-sub">Last 24 hours · peak hours shaded</span>
+                            </div>
+                            <button class="btn btn-ghost btn-sm" data-view="table" data-chart="response">View as table</button>
+                        </header>
+                        <div class="card-body chart-body">
+                            <div class="chart-placeholder" id="chartResponse"></div>
+                            <table class="data-table compact" id="tableResponse" hidden>
+                                <thead><tr><th>Hour</th><th>Median</th><th>p95</th></tr></thead>
+                                <tbody>
+                                    <tr><td>00:00</td><td>180 ms</td><td>420 ms</td></tr>
+                                    <tr><td>03:00</td><td>165 ms</td><td>390 ms</td></tr>
+                                    <tr><td>06:00</td><td>195 ms</td><td>450 ms</td></tr>
+                                    <tr><td>09:00 (peak)</td><td>310 ms</td><td>780 ms</td></tr>
+                                    <tr><td>12:00</td><td>220 ms</td><td>510 ms</td></tr>
+                                    <tr><td>15:00 (peak)</td><td>340 ms</td><td>820 ms</td></tr>
+                                    <tr><td>18:00</td><td>240 ms</td><td>560 ms</td></tr>
+                                    <tr><td>21:00</td><td>200 ms</td><td>470 ms</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card chart-card">
+                        <header class="card-header">
+                            <div>
+                                <h3>Requests per minute</h3>
+                                <span class="card-sub">Last 24 hours</span>
+                            </div>
+                            <button class="btn btn-ghost btn-sm" data-view="table" data-chart="rpm">View as table</button>
+                        </header>
+                        <div class="card-body chart-body">
+                            <div class="chart-placeholder" id="chartRpm"></div>
+                            <table class="data-table compact" id="tableRpm" hidden>
+                                <thead><tr><th>Hour</th><th>Requests/min</th></tr></thead>
+                                <tbody>
+                                    <tr><td>00:00</td><td>42</td></tr>
+                                    <tr><td>06:00</td><td>88</td></tr>
+                                    <tr><td>09:00</td><td>310</td></tr>
+                                    <tr><td>12:00</td><td>240</td></tr>
+                                    <tr><td>15:00</td><td>380</td></tr>
+                                    <tr><td>18:00</td><td>190</td></tr>
+                                    <tr><td>21:00</td><td>88</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="card chart-card">
+                        <header class="card-header">
+                            <div>
+                                <h3>Database query time</h3>
+                                <span class="card-sub">Median · last 24 hours</span>
+                            </div>
+                            <button class="btn btn-ghost btn-sm" data-view="table" data-chart="db">View as table</button>
+                        </header>
+                        <div class="card-body chart-body">
+                            <div class="chart-placeholder" id="chartDb"></div>
+                            <table class="data-table compact" id="tableDb" hidden>
+                                <thead><tr><th>Hour</th><th>Median query (ms)</th></tr></thead>
+                                <tbody>
+                                    <tr><td>00:00</td><td>14 ms</td></tr>
+                                    <tr><td>06:00</td><td>18 ms</td></tr>
+                                    <tr><td>09:00</td><td>32 ms</td></tr>
+                                    <tr><td>12:00</td><td>24 ms</td></tr>
+                                    <tr><td>15:00</td><td>38 ms</td></tr>
+                                    <tr><td>18:00</td><td>26 ms</td></tr>
+                                    <tr><td>21:00</td><td>18 ms</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Slowest pages</h3>
+                        </header>
+                        <div class="card-body no-pad">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Page</th><th>Median</th><th>p95</th><th class="hide-sm">Requests</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Staff · Check-in wizard</td><td>420 ms</td><td>980 ms</td><td class="hide-sm">1,240</td></tr>
+                                    <tr><td>Admin · Audit logs</td><td>380 ms</td><td>840 ms</td><td class="hide-sm">142</td></tr>
+                                    <tr><td>Guest · Accommodation</td><td>290 ms</td><td>620 ms</td><td class="hide-sm">3,410</td></tr>
+                                    <tr><td>Staff · Rooms board</td><td>260 ms</td><td>580 ms</td><td class="hide-sm">2,180</td></tr>
+                                    <tr><td>Guest · Dashboard</td><td>210 ms</td><td>440 ms</td><td class="hide-sm">4,820</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ ERRORS TAB ============ -->
+            <div class="tab-panel" data-panel="errors">
+                <section class="filters-bar">
+                    <div class="filter-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="search" id="errSearch" placeholder="Search error message, page, request ID…" aria-label="Search errors">
+                    </div>
+                    <div class="filter-chips">
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Status</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="errStatus" data-value="all">Any status</button></li>
+                                <li><button data-filter="errStatus" data-value="New">New</button></li>
+                                <li><button data-filter="errStatus" data-value="Investigating">Investigating</button></li>
+                                <li><button data-filter="errStatus" data-value="Resolved">Resolved</button></li>
+                                <li><button data-filter="errStatus" data-value="Ignored">Ignored</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table" aria-label="Error groups">
+                                <thead>
+                                    <tr>
+                                        <th>Error</th>
+                                        <th class="hide-md">Count</th>
+                                        <th class="hide-sm">First / last seen</th>
+                                        <th class="hide-md">Affected</th>
+                                        <th>Status</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="errorsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ JOBS & QUEUES TAB ============ -->
+            <div class="tab-panel" data-panel="jobs">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Scheduled jobs</h3>
+                            <span class="card-sub">10 jobs · 9 on time · 1 missed</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table" aria-label="Scheduled jobs">
+                                <thead>
+                                    <tr>
+                                        <th>Job</th>
+                                        <th class="hide-md">Schedule</th>
+                                        <th>Last run</th>
+                                        <th>Result</th>
+                                        <th class="hide-sm">Next run</th>
+                                        <th class="hide-md">Queue</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="jobsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Queue depth</h3>
+                            <span class="card-sub">Pending items across workers</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <ul class="queue-list">
+                            <li class="queue-item">
+                                <span class="queue-label">Emails</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:8%"></div></div>
+                                <span class="quota-value">42 pending</span>
+                            </li>
+                            <li class="queue-item queue-warn">
+                                <span class="queue-label">SMS</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:34%"></div></div>
+                                <span class="quota-value">148 pending</span>
+                            </li>
+                            <li class="queue-item">
+                                <span class="queue-label">Webhooks</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:6%"></div></div>
+                                <span class="quota-value">12 pending</span>
+                            </li>
+                            <li class="queue-item">
+                                <span class="queue-label">Reports</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:3%"></div></div>
+                                <span class="quota-value">3 pending</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ INCIDENTS TAB ============ -->
+            <div class="tab-panel" data-panel="incidents">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Open incident</h3>
+                            <span class="card-sub">Major · door-lock sync · started 3 hours ago</span>
+                        </div>
+                        <button class="btn btn-danger btn-sm" id="declareIncidentBtn" data-role="super-admin">Declare new incident</button>
+                    </header>
+                    <div class="card-body">
+                        <ul class="incident-timeline" id="openIncidentTimeline"></ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Resolved incidents</h3>
+                            <span class="card-sub">2 incidents · last 30 days</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="resolved-list" id="resolvedList"></ul>
+                    </div>
+                </div>
+
+                <div class="card help-card">
+                    <header class="card-header">
+                        <h3>Severity definitions</h3>
+                    </header>
+                    <div class="card-body">
+                        <dl class="severity-list">
+                            <div><dt><span class="status-pill fail"><span class="dot"></span> Critical</span></dt><dd>Guest-facing outage or data loss. Immediate response, all-hands.</dd></div>
+                            <div><dt><span class="status-pill fail"><span class="dot"></span> Major</span></dt><dd>Core function degraded (check-in, payments). Response within 15 min.</dd></div>
+                            <div><dt><span class="status-pill warn"><span class="dot"></span> Minor</span></dt><dd>Partial feature degraded. Response within 1 hour.</dd></div>
+                            <div><dt><span class="status-pill info"><span class="dot"></span> Advisory</span></dt><dd>Non-urgent. Tracked during business hours.</dd></div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ MAINTENANCE TAB ============ -->
+            <div class="tab-panel" data-panel="maintenance">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Planned maintenance windows</h3>
+                            <span class="card-sub">Schedule outside peak hours (11 PM – 6 AM)</span>
+                        </div>
+                        <button class="btn btn-outline btn-sm" id="addWindowBtn" data-role="super-admin">+ Add window</button>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="window-list" id="windowList"></ul>
+                    </div>
+                </div>
+
+                <form class="card form-card" id="maintenanceForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Maintenance mode</h3>
+                            <span class="card-sub">Blocks all guest and staff actions until disabled</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="env-warning">
+                            ⚠ Maintenance mode is disruptive. It requires step-up authentication, a typed keyword, and a reason. It will be logged and announced on all user-facing banners.
+                        </div>
+                        <label class="toggle-row">
+                            <input type="checkbox" id="maintenanceToggle" data-role="super-admin">
+                            <span class="toggle-slider"></span>
+                            <span>Enable maintenance mode</span>
+                        </label>
+                    </div>
+                </form>
+
+                <form class="card form-card" id="statusMessageForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Status message</h3>
+                            <span class="card-sub">Appears in the banner shown to staff and guests</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="statusLevel">Severity</label>
+                            <select id="statusLevel">
+                                <option value="info">Information (blue)</option>
+                                <option value="warning" selected>Warning (amber)</option>
+                                <option value="critical">Critical (red)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="statusMessage">Message</label>
+                            <textarea id="statusMessage" rows="3">We are investigating slow door-lock syncing. Check-ins are unaffected. Updates every 30 minutes.</textarea>
+                            <span class="form-hint">Visible to all signed-in users. Be specific and honest.</span>
+                        </div>
+                        <div class="status-preview" id="statusPreview">
+                            <span class="status-preview-icon">⚠</span>
+                            <span id="statusPreviewText">We are investigating slow door-lock syncing. Check-ins are unaffected. Updates every 30 minutes.</span>
+                        </div>
+                        <div class="form-actions-row">
+                            <button type="button" class="btn btn-outline btn-sm" id="clearStatus">Clear message</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="postStatus">Post status message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Admin console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ SERVICE DRAWER ============ -->
+<div class="drawer-overlay" id="serviceOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="serviceDrawer" role="dialog" aria-modal="true" aria-labelledby="serviceTitle" hidden>
+    <header class="drawer-header">
+        <div class="drawer-identity">
+            <div class="drawer-avatar" id="serviceIcon">🔒</div>
+            <div>
+                <h3 id="serviceTitle">Door locks</h3>
+                <p class="drawer-sub" id="serviceSub">Depends on: database, authentication, external provider (Salto)</p>
+                <span class="status-pill warn" id="serviceStatus"><span class="dot"></span> ⚠ Degraded</span>
+            </div>
+        </div>
+        <button class="drawer-close" id="serviceClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <nav class="drawer-tabs" role="tablist" aria-label="Service details">
+        <button class="drawer-tab active" role="tab" aria-selected="true" data-dtab="overview">Overview</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="checks">Recent checks</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="history">90-day history</button>
+    </nav>
+
+    <div class="drawer-body">
+        <div class="drawer-panel active" data-panel="overview">
+            <div class="drawer-section">
+                <h4>Current status</h4>
+                <dl class="drawer-details">
+                    <div><dt>Status</dt><dd id="sStatus">Degraded · since 3h ago</dd></div>
+                    <div><dt>Uptime 30d</dt><dd id="sUptime">99.2%</dd></div>
+                    <div><dt>Latency p95</dt><dd id="sLatency">1.8 s</dd></div>
+                    <div><dt>User impact</dt><dd id="sImpact">12 staff affected</dd></div>
+                </dl>
+            </div>
+            <div class="drawer-section">
+                <h4>Alert context</h4>
+                <p class="drawer-summary" id="sSummary">Sync from Salto is timing out. 3 key revocations are queued for retry. Check-ins are unaffected (new keys are issued faster).</p>
+            </div>
+            <div class="drawer-section">
+                <h4>Related logs</h4>
+                <a href="#" class="link-muted">View integration logs (Door locks) →</a>
+            </div>
+        </div>
+
+        <div class="drawer-panel" data-panel="checks">
+            <ul class="drawer-history" id="sChecks"></ul>
+        </div>
+
+        <div class="drawer-panel" data-panel="history">
+            <div class="status-history-bar" id="sHistory"></div>
+            <p class="drawer-note">90 days · green = operational · amber = degraded · red = down · gray = no data</p>
+        </div>
+    </div>
+</aside>
+
+<!-- ============ ERROR DRAWER ============ -->
+<div class="drawer-overlay" id="errorOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="errorDrawer" role="dialog" aria-modal="true" aria-labelledby="errorTitle" hidden>
+    <header class="drawer-header">
+        <div>
+            <h3 id="errorTitle">Webhook delivery failed</h3>
+            <p class="drawer-sub" id="errorSub">POST /api/stripe/webhook · 502 Bad Gateway</p>
+            <span class="status-pill warn" id="errorStatus"><span class="dot"></span> Investigating</span>
+        </div>
+        <button class="drawer-close" id="errorClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+    <div class="drawer-body">
+        <div class="drawer-section">
+            <h4>Plain-language summary</h4>
+            <p class="drawer-summary" id="eSummary">Payment provider webhooks were intermittently failing because the delivery endpoint was returning 502 responses. 3 charges did not update their status and were resolved by the retry queue.</p>
+        </div>
+        <div class="drawer-section">
+            <h4>Technical details (masked)</h4>
+            <dl class="drawer-details">
+                <div><dt>Count</dt><dd id="eCount">142</dd></div>
+                <div><dt>First seen</dt><dd id="eFirst">Today · 02:14 AM</dd></div>
+                <div><dt>Last seen</dt><dd id="eLast">Today · 03:02 AM</dd></div>
+                <div><dt>Affected</dt><dd id="eUsers">3 payments</dd></div>
+                <div class="dt-full"><dt>Request ID</dt><dd><code id="eRequest">req_9c2b7e14</code></dd></div>
+                <div class="dt-full"><dt>Audit reference</dt><dd><code id="eAudit">evt_8a4f3c12</code></dd></div>
+                <div class="dt-full"><dt>Trace</dt><dd><code id="eTrace">trace_a91f3d4e</code></dd></div>
+            </dl>
+            <p class="drawer-note">Personal data is stored as references. Reveals require a reason and are logged in the audit trail.</p>
+        </div>
+    </div>
+</aside>
+
+<!-- ============ STEP-UP MODAL ============ -->
+<div class="modal-overlay" id="stepupOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stepupTitle">
+        <header class="modal-header">
+            <h3 id="stepupTitle">Re-authenticate to continue</h3>
+            <button class="modal-close" id="stepupClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="stepupText">This action affects the whole system. Confirm your identity.</p>
+            <div class="form-group">
+                <label for="stepupPassword">Password</label>
+                <input type="password" id="stepupPassword" placeholder="Enter your password">
+                <span class="error-msg" id="stepupPasswordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="stepupCode">2FA code</label>
+                <input type="text" id="stepupCode" inputmode="numeric" maxlength="6" placeholder="6-digit code">
+                <span class="error-msg" id="stepupCodeErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="stepupCancel">Cancel</button>
+            <button class="btn btn-primary" id="stepupVerify">Verify</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ TYPED CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please confirm this action.</p>
+            <div class="form-group">
+                <label for="confirmWord">Type <strong id="confirmWordPrompt">CONFIRM</strong> <span class="required">*</span></label>
+                <input type="text" id="confirmWord" autocomplete="off" placeholder="CONFIRM">
+                <span class="error-msg" id="confirmWordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/admin-health.js" defer></script>
+</body>
+</html>

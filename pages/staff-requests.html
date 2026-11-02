@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Requests - Haven Staff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/staff-requests.css">
+</head>
+<body data-role="front-desk">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Check-in Accommodation System</span>
+        <div class="topbar-avatar">MC</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">STAFF CONSOLE</span>
+            </div>
+        </div>
+
+        <div class="role-switcher">
+            <label for="roleSelect" class="role-label">Signed in as</label>
+            <div class="role-select-wrap">
+                <select id="roleSelect" aria-label="Switch role">
+                    <option value="front-desk" selected>Front desk</option>
+                    <option value="housekeeping">Housekeeping</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="manager">Manager</option>
+                </select>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">OPERATIONS</span>
+            <a href="staff-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="staff-guests.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Guests
+            </a>
+            <a href="staff-rooms.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Rooms
+            </a>
+            <a href="staff-checkin.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Check-in / out
+            </a>
+            <a href="staff-requests.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Service requests
+                <span class="badge" id="navReqBadge">5</span>
+            </a>
+            <a href="staff-reports.html" class="nav-item" data-role-required="manager" aria-disabled="true" title="Manager access only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Reports
+            </a>
+            <a href="staff-settings.html" class="nav-item" data-role-required="manager" aria-disabled="true" title="Manager access only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Staff & settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">MC</div>
+                <div class="staff-info">
+                    <span class="staff-name">Marco Cruz</span>
+                    <span class="staff-role" id="staffRoleLabel">Front desk</span>
+                </div>
+            </div>
+            <a href="../index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1 class="app-title">Check-in Accommodation System</h1>
+                <p class="app-subtitle">Staff console · <span id="roleBreadcrumb">Front desk</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search guest, room, or request…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Staff profile menu">MC</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">Service requests</h2>
+                    <span class="page-count" id="openCount">5 open</span>
+                    <span class="last-updated" id="lastUpdated">Last updated just now</span>
+                </div>
+                <div class="page-header-actions">
+                    <div class="view-toggle" role="tablist" aria-label="View mode">
+                        <button class="view-btn active" role="tab" aria-selected="true" data-view="queue">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                            Queue
+                        </button>
+                        <button class="view-btn" role="tab" aria-selected="false" data-view="board">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="18"></rect>
+                                <rect x="14" y="3" width="7" height="18"></rect>
+                            </svg>
+                            Board
+                        </button>
+                    </div>
+                    <button class="btn btn-primary" id="newRequestBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        New request
+                    </button>
+                </div>
+            </section>
+
+            <!-- Summary strip -->
+            <section class="status-strip" role="group" aria-label="Request status summary">
+                <button class="status-chip" data-status="all">
+                    <span class="status-chip-count" id="cAll">15</span>
+                    <span class="status-chip-label">All requests</span>
+                </button>
+                <button class="status-chip st-new" data-status="new">
+                    <span class="status-chip-icon" aria-hidden="true">✦</span>
+                    <span class="status-chip-count" id="cNew">5</span>
+                    <span class="status-chip-label">New</span>
+                </button>
+                <button class="status-chip st-assigned" data-status="assigned">
+                    <span class="status-chip-icon" aria-hidden="true">●</span>
+                    <span class="status-chip-count" id="cAssigned">4</span>
+                    <span class="status-chip-label">Assigned</span>
+                </button>
+                <button class="status-chip st-in-progress" data-status="in-progress">
+                    <span class="status-chip-icon" aria-hidden="true">↻</span>
+                    <span class="status-chip-count" id="cInProgress">3</span>
+                    <span class="status-chip-label">In progress</span>
+                </button>
+                <button class="status-chip st-waiting" data-status="waiting">
+                    <span class="status-chip-icon" aria-hidden="true">◐</span>
+                    <span class="status-chip-count" id="cWaiting">1</span>
+                    <span class="status-chip-label">Waiting on guest</span>
+                </button>
+                <button class="status-chip st-done" data-status="done">
+                    <span class="status-chip-icon" aria-hidden="true">✓</span>
+                    <span class="status-chip-count" id="cDoneToday">2</span>
+                    <span class="status-chip-label">Done today</span>
+                </button>
+                <button class="status-chip st-breached" data-status="breached">
+                    <span class="status-chip-icon" aria-hidden="true">⏰</span>
+                    <span class="status-chip-count" id="cBreached">1</span>
+                    <span class="status-chip-label">Overdue (SLA)</span>
+                </button>
+            </section>
+
+            <!-- Filters + saved views -->
+            <section class="filters-bar" aria-label="Filters">
+                <div class="filter-search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="filterSearch" placeholder="Search by guest, room, or request…" aria-label="Search requests">
+                </div>
+
+                <div class="filter-chips">
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Type</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="type" data-value="all">All types</button></li>
+                            <li><button data-filter="type" data-value="Housekeeping">Housekeeping</button></li>
+                            <li><button data-filter="type" data-value="Maintenance">Maintenance</button></li>
+                            <li><button data-filter="type" data-value="Extra bedding">Extra bedding</button></li>
+                            <li><button data-filter="type" data-value="Late check-out">Late check-out</button></li>
+                            <li><button data-filter="type" data-value="Room change">Room change</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Priority</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="priority" data-value="all">Any priority</button></li>
+                            <li><button data-filter="priority" data-value="urgent">Urgent</button></li>
+                            <li><button data-filter="priority" data-value="high">High</button></li>
+                            <li><button data-filter="priority" data-value="normal">Normal</button></li>
+                            <li><button data-filter="priority" data-value="low">Low</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Assignee</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="assignee" data-value="all">Anyone</button></li>
+                            <li><button data-filter="assignee" data-value="me">Assigned to me</button></li>
+                            <li><button data-filter="assignee" data-value="unassigned">Unassigned</button></li>
+                            <li><button data-filter="assignee" data-value="joy">Joy Lim</button></li>
+                            <li><button data-filter="assignee" data-value="ravi">Ravi Batra</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="chip-select">
+                        <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="chip-label">Floor / Room</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <ul class="chip-menu" hidden>
+                            <li><button data-filter="floor" data-value="all">All floors</button></li>
+                            <li><button data-filter="floor" data-value="1">Floor 1</button></li>
+                            <li><button data-filter="floor" data-value="2">Floor 2</button></li>
+                            <li><button data-filter="floor" data-value="3">Floor 3</button></li>
+                        </ul>
+                    </div>
+
+                    <button class="chip-clear" id="clearFilters" hidden>Clear filters</button>
+                </div>
+            </section>
+
+            <!-- Saved views -->
+            <section class="saved-views" role="tablist" aria-label="Saved views">
+                <button class="saved-tab active" role="tab" aria-selected="true" data-view="all-open">All open <span class="saved-count" id="countAllOpen">11</span></button>
+                <button class="saved-tab" role="tab" aria-selected="false" data-view="mine">Assigned to me <span class="saved-count" id="countMine">3</span></button>
+                <button class="saved-tab" role="tab" aria-selected="false" data-view="unassigned">Unassigned <span class="saved-count" id="countUnassigned">2</span></button>
+                <button class="saved-tab" role="tab" aria-selected="false" data-view="urgent">Urgent <span class="saved-count" id="countUrgent">2</span></button>
+            </section>
+
+            <!-- Queue view -->
+            <section class="view-panel active" data-view="queue">
+                <div class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="requests-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-priority sortable" data-sort="priority" scope="col">Priority</th>
+                                        <th class="sortable" data-sort="type" scope="col">Type</th>
+                                        <th class="sortable" data-sort="room" scope="col">Room</th>
+                                        <th class="sortable hide-md" data-sort="guest" scope="col">Guest</th>
+                                        <th class="sortable" data-sort="summary" scope="col">Summary</th>
+                                        <th class="sortable hide-sm" data-sort="created" scope="col">Created</th>
+                                        <th class="sortable hide-md" data-sort="assignee" scope="col">Assignee</th>
+                                        <th scope="col">Status</th>
+                                        <th class="col-actions" scope="col"><span class="sr-only">Actions</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="requestsBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="queueEmpty" hidden>
+                                <div class="empty-icon">🔍</div>
+                                <p class="empty-title">No requests match your filters</p>
+                                <p class="empty-sub">Try adjusting your search or clearing the filters.</p>
+                                <button class="btn btn-outline" id="queueClearBtn">Clear filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Board view -->
+            <section class="view-panel" data-view="board">
+                <div class="board" id="requestsBoard">
+                    <div class="board-col" data-col="new">
+                        <header class="board-col-header">
+                            <span class="board-col-title">New <span class="board-col-count" id="bcNew">5</span></span>
+                        </header>
+                        <div class="board-col-body" data-col="new"></div>
+                    </div>
+                    <div class="board-col" data-col="assigned">
+                        <header class="board-col-header">
+                            <span class="board-col-title">Assigned <span class="board-col-count" id="bcAssigned">4</span></span>
+                        </header>
+                        <div class="board-col-body" data-col="assigned"></div>
+                    </div>
+                    <div class="board-col" data-col="in-progress">
+                        <header class="board-col-header">
+                            <span class="board-col-title">In progress <span class="board-col-count" id="bcInProgress">3</span></span>
+                        </header>
+                        <div class="board-col-body" data-col="in-progress"></div>
+                    </div>
+                    <div class="board-col" data-col="done">
+                        <header class="board-col-header">
+                            <span class="board-col-title">Done <span class="board-col-count" id="bcDone">2</span></span>
+                        </header>
+                        <div class="board-col-body" data-col="done"></div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Staff console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ REQUEST DRAWER ============ -->
+<div class="drawer-overlay" id="reqDrawerOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="reqDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+    <header class="drawer-header">
+        <div class="drawer-identity">
+            <span class="status-pill" id="drawerStatusPill"><span class="dot"></span> New</span>
+            <div>
+                <h3 id="drawerTitle">Housekeeping</h3>
+                <p class="drawer-sub" id="drawerSub">Room 201 · Sofia Reyes</p>
+            </div>
+        </div>
+        <button class="drawer-close" id="reqDrawerClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <div class="drawer-quick-actions" role="toolbar" aria-label="Quick actions">
+        <button class="quick-btn" data-action="assign-me" data-role="front-desk housekeeping maintenance manager">
+            <span aria-hidden="true">👤</span> Assign to me
+        </button>
+        <button class="quick-btn" data-action="start" data-role="front-desk housekeeping maintenance manager">
+            <span aria-hidden="true">▶</span> Start
+        </button>
+        <button class="quick-btn" data-action="waiting" data-role="front-desk housekeeping maintenance manager">
+            <span aria-hidden="true">◐</span> Waiting on guest
+        </button>
+        <button class="quick-btn" data-action="done" data-role="front-desk housekeeping maintenance manager">
+            <span aria-hidden="true">✓</span> Mark done
+        </button>
+        <button class="quick-btn" data-action="priority" data-role="front-desk manager">
+            <span aria-hidden="true">⚑</span> Change priority
+        </button>
+        <button class="quick-btn" data-action="reassign" data-role="front-desk manager">
+            <span aria-hidden="true">🔁</span> Reassign
+        </button>
+        <button class="quick-btn" data-action="cancel" data-role="front-desk manager">
+            <span aria-hidden="true">✕</span> Cancel
+        </button>
+    </div>
+
+    <nav class="drawer-tabs" role="tablist" aria-label="Request details">
+        <button class="drawer-tab active" role="tab" aria-selected="true" data-dtab="details">Details</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="activity">Activity</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="notes">Notes</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="reply" data-role="front-desk manager">Reply to guest</button>
+    </nav>
+
+    <div class="drawer-body">
+
+        <!-- Details panel -->
+        <div class="drawer-panel active" data-panel="details">
+            <div class="drawer-section">
+                <h4>Guest message</h4>
+                <p class="drawer-message" id="dMessage">Requesting a room tidy-up, please.</p>
+            </div>
+
+            <div class="drawer-section">
+                <h4>Context</h4>
+                <dl class="drawer-details">
+                    <div><dt>Room</dt><dd id="dRoom">Room 201</dd></div>
+                    <div><dt>Floor</dt><dd id="dFloor">Floor 2</dd></div>
+                    <div><dt>Stay</dt><dd id="dStay">Oct 2 – Oct 9, 2026</dd></div>
+                    <div><dt>Guest</dt><dd id="dGuest">Sofia Reyes</dd></div>
+                    <div class="dt-full"><dt>Target</dt><dd id="dTarget">Respond within 30 minutes</dd></div>
+                </dl>
+            </div>
+
+            <div class="drawer-section">
+                <h4>Attachments</h4>
+                <div class="empty-state small">
+                    <p class="empty-title">No attachments</p>
+                    <p class="empty-sub">Guest did not upload any photos.</p>
+                </div>
+            </div>
+
+            <!-- Type-specific block: rendered dynamically -->
+            <div class="drawer-section" id="typeSpecificSection"></div>
+        </div>
+
+        <!-- Activity panel -->
+        <div class="drawer-panel" data-panel="activity">
+            <ul class="drawer-history" id="dActivity"></ul>
+        </div>
+
+        <!-- Notes panel -->
+        <div class="drawer-panel" data-panel="notes">
+            <div class="form-group">
+                <label for="staffNote">Internal note <span class="optional">(visible to staff only)</span></label>
+                <textarea id="staffNote" rows="4" placeholder="Add a note visible only to staff…"></textarea>
+            </div>
+            <button class="btn btn-primary btn-sm" id="saveNote">Save note</button>
+            <ul class="notes-list" id="notesList"></ul>
+        </div>
+
+        <!-- Reply panel -->
+        <div class="drawer-panel" data-panel="reply">
+            <div class="form-group">
+                <label for="replyText">Message to guest <span class="optional">(appears in their Notifications)</span></label>
+                <textarea id="replyText" rows="4" placeholder="Let the guest know what's happening…"></textarea>
+            </div>
+            <button class="btn btn-primary btn-sm" id="sendReply">Send reply</button>
+        </div>
+    </div>
+</aside>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please provide a reason.</p>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/rbac.js" defer></script>
+<script src="/js/staff-requests.js" defer></script>
+</body>
+</html>

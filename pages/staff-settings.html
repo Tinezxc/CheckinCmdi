@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff & Settings - Haven Staff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/staff-settings.css">
+</head>
+<body data-role="manager">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Check-in Accommodation System</span>
+        <div class="topbar-avatar">RB</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">STAFF CONSOLE</span>
+            </div>
+        </div>
+
+        <div class="role-switcher">
+            <label for="roleSelect" class="role-label">Signed in as</label>
+            <div class="role-select-wrap">
+                <select id="roleSelect" aria-label="Switch role">
+                    <option value="front-desk">Front desk</option>
+                    <option value="housekeeping">Housekeeping</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="manager" selected>Manager</option>
+                </select>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">OPERATIONS</span>
+            <a href="staff-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="staff-guests.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Guests
+            </a>
+            <a href="staff-rooms.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Rooms
+            </a>
+            <a href="staff-checkin.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Check-in / out
+            </a>
+            <a href="staff-requests.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Service requests
+                <span class="badge">5</span>
+            </a>
+            <a href="staff-reports.html" class="nav-item" data-role-required="manager">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Reports
+            </a>
+            <a href="staff-settings.html" class="nav-item active" aria-current="page" data-role-required="manager">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Staff & settings
+            </a>
+            
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">RB</div>
+                <div class="staff-info">
+                    <span class="staff-name">Ravi Batra</span>
+                    <span class="staff-role" id="staffRoleLabel">Manager</span>
+                </div>
+            </div>
+            <a href="../index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <!-- Access Denied -->
+        <section class="access-denied" id="accessDenied" hidden>
+            <div class="access-card">
+                <div class="access-icon" aria-hidden="true">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <h2 class="access-title">Manager access only</h2>
+                <p class="access-sub">Staff & settings contains sensitive configuration and permissions. Ask a manager for access, or switch role below.</p>
+                <div class="access-actions">
+                    <button class="btn btn-primary" id="switchToManager">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Switch to Manager role
+                    </button>
+                    <a href="staff-dashboard.html" class="btn btn-outline">Back to Dashboard</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main settings content -->
+        <div id="settingsContent">
+            <header class="topbar">
+                <div class="topbar-title">
+                    <h1 class="app-title">Check-in Accommodation System</h1>
+                    <p class="app-subtitle">Staff & settings · <span id="roleBreadcrumb">Manager</span></p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="icon-badge">3</span>
+                    </button>
+                    <button class="topbar-avatar" aria-label="Staff profile menu">RB</button>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+
+                <!-- Page header -->
+                <section class="page-header">
+                    <div class="page-header-left">
+                        <h2 class="page-title">Staff & settings</h2>
+                        <span class="page-count">Manager only</span>
+                    </div>
+                    <div class="page-header-actions">
+                        <div class="settings-search">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="search" id="settingsSearch" placeholder="Search settings…" aria-label="Search settings">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sub-navigation -->
+                <nav class="subnav" aria-label="Settings sections">
+                    <button class="subnav-item active" data-section="staff">Staff accounts</button>
+                    <button class="subnav-item" data-section="roles">Roles & permissions</button>
+                    <button class="subnav-item" data-section="hotel">Hotel & rooms</button>
+                    <button class="subnav-item" data-section="requests">Service request rules</button>
+                    <button class="subnav-item" data-section="notifications">Notifications</button>
+                    <button class="subnav-item" data-section="overdue">Overdue & stay policy</button>
+                    <button class="subnav-item" data-section="security">Security & privacy</button>
+                    <button class="subnav-item" data-section="history">Change history</button>
+                </nav>
+
+                <!-- ========== STAFF ACCOUNTS ========== -->
+                <section class="settings-panel active" data-panel="staff">
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Staff accounts</h3>
+                            <div class="card-header-actions">
+                                <span class="table-info" id="staffCount">10 staff · 1 pending invite</span>
+                                <button class="btn btn-primary btn-sm" id="inviteBtn">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Invite staff
+                                </button>
+                            </div>
+                        </header>
+                        <div class="card-body no-pad">
+                            <div class="table-wrap">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col" class="hide-md">Email</th>
+                                            <th scope="col">Role</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col" class="hide-sm">Last active</th>
+                                            <th class="col-actions" scope="col"><span class="sr-only">Actions</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="staffBody"></tbody>
+                                </table>
+                                <div class="empty-state" id="staffEmpty" hidden>
+                                    <p class="empty-title">No staff match your search</p>
+                                    <p class="empty-sub">Try a different name, email or role.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending invites -->
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Pending invites</h3>
+                        </header>
+                        <div class="card-body no-pad">
+                            <ul class="invite-list" id="inviteList"></ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== ROLES & PERMISSIONS ========== -->
+                <section class="settings-panel" data-panel="roles">
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Roles & permissions</h3>
+                            <span class="table-info">Check a cell to grant. Preview changes before saving.</span>
+                        </header>
+                        <div class="card-body no-pad">
+                            <div class="table-wrap">
+                                <table class="perm-matrix">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Permission</th>
+                                            <th scope="col">Front desk</th>
+                                            <th scope="col">Housekeeping</th>
+                                            <th scope="col">Maintenance</th>
+                                            <th scope="col">Manager</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="matrixBody"></tbody>
+                                </table>
+                            </div>
+                            <div class="matrix-footer">
+                                <span class="matrix-hint" id="matrixDirtyHint">No changes</span>
+                                <div class="matrix-actions">
+                                    <button class="btn btn-ghost btn-sm" id="matrixDiscard" disabled>Discard</button>
+                                    <button class="btn btn-primary btn-sm" id="matrixSave" disabled>Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== HOTEL & ROOMS ========== -->
+                <section class="settings-panel" data-panel="hotel">
+                    <form class="card form-card" id="hotelForm">
+                        <header class="card-header">
+                            <h3>Hotel information</h3>
+                        </header>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="hotelName">Hotel name</label>
+                                    <input type="text" id="hotelName" value="Haven Training Hotel">
+                                </div>
+                                <div class="form-group">
+                                    <label for="hotelPhone">Contact phone</label>
+                                    <input type="tel" id="hotelPhone" value="+63 2 8888 0000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="hotelAddress">Address</label>
+                                <input type="text" id="hotelAddress" value="142 Katipunan Ave, Quezon City, Metro Manila">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="hotelEmail">Contact email</label>
+                                    <input type="email" id="hotelEmail" value="frontdesk@haven.app">
+                                </div>
+                                <div class="form-group">
+                                    <label for="hotelTimezone">Timezone</label>
+                                    <select id="hotelTimezone">
+                                        <option selected>Asia/Manila (GMT+8)</option>
+                                        <option>Asia/Tokyo (GMT+9)</option>
+                                        <option>Asia/Singapore (GMT+8)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="checkinTime">Default check-in time</label>
+                                    <input type="time" id="checkinTime" value="15:00">
+                                </div>
+                                <div class="form-group">
+                                    <label for="checkoutTime">Default check-out time</label>
+                                    <input type="time" id="checkoutTime" value="11:00">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quietStart">Quiet hours start</label>
+                                    <input type="time" id="quietStart" value="22:00">
+                                </div>
+                                <div class="form-group">
+                                    <label for="quietEnd">Quiet hours end</label>
+                                    <input type="time" id="quietEnd" value="06:00">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="houseRules">House rules shown to guests</label>
+                                <textarea id="houseRules" rows="4">1. Respect quiet hours (10 PM – 6 AM).
+2. Keep shared spaces clean.
+3. Visitors must register at the front desk.
+4. No smoking inside rooms.
+5. Report damages or issues immediately.</textarea>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Room types</h3>
+                            <button class="btn btn-outline btn-sm" id="addRoomType">+ Add room type</button>
+                        </header>
+                        <div class="card-body no-pad">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Type</th><th>Capacity</th><th class="hide-md">Amenities</th><th class="col-actions"></th></tr>
+                                </thead>
+                                <tbody id="roomTypesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== SERVICE REQUEST RULES ========== -->
+                <section class="settings-panel" data-panel="requests">
+                    <form class="card form-card" id="requestsForm">
+                        <header class="card-header">
+                            <h3>Service request rules</h3>
+                        </header>
+                        <div class="card-body">
+                            <h4 class="subsection-title">SLA targets by priority</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="slaUrgent">Urgent (minutes)</label>
+                                    <input type="number" id="slaUrgent" value="15" min="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slaHigh">High (minutes)</label>
+                                    <input type="number" id="slaHigh" value="30" min="5">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="slaNormal">Normal (minutes)</label>
+                                    <input type="number" id="slaNormal" value="60" min="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slaLow">Low (minutes)</label>
+                                    <input type="number" id="slaLow" value="240" min="5">
+                                </div>
+                            </div>
+
+                            <h4 class="subsection-title">Auto-urgent keywords</h4>
+                            <div class="form-group">
+                                <label for="urgentKeywords">Comma-separated keywords</label>
+                                <input type="text" id="urgentKeywords" value="leak, no power, broken lock, flood, fire, smoke, gas, electrical">
+                                <span class="form-hint">Requests whose summary or message contains any of these will be auto-flagged urgent.</span>
+                            </div>
+
+                            <h4 class="subsection-title">Default assignee per type</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="assignHousekeeping">Housekeeping</label>
+                                    <select id="assignHousekeeping">
+                                        <option>Joy Lim</option>
+                                        <option>Ana Torres</option>
+                                        <option>Unassigned</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="assignMaintenance">Maintenance</label>
+                                    <select id="assignMaintenance">
+                                        <option>Ravi Batra</option>
+                                        <option>Unassigned</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="assignExtra">Extra bedding</label>
+                                    <select id="assignExtra">
+                                        <option>Joy Lim</option>
+                                        <option>Unassigned</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="assignLate">Late check-out</label>
+                                    <select id="assignLate">
+                                        <option>Marco Cruz</option>
+                                        <option>Unassigned</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- ========== NOTIFICATIONS ========== -->
+                <section class="settings-panel" data-panel="notifications">
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Guest message templates</h3>
+                            <button class="btn btn-outline btn-sm" id="restoreDefaults">Restore default</button>
+                        </header>
+                        <div class="card-body no-pad">
+                            <div class="template-tabs" role="tablist">
+                                <button class="template-tab active" role="tab" aria-selected="true" data-template="checkin">Check-in confirmation</button>
+                                <button class="template-tab" role="tab" aria-selected="false" data-template="overdue">Overdue reminder</button>
+                                <button class="template-tab" role="tab" aria-selected="false" data-template="status">Request status update</button>
+                            </div>
+
+                            <div class="template-editor">
+                                <div class="template-editor-body">
+                                    <div class="form-group">
+                                        <label for="templateSubject">Subject</label>
+                                        <input type="text" id="templateSubject" value="Welcome to Haven, {guest_name}!">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="templateBody">Message</label>
+                                        <textarea id="templateBody" rows="6">Hi {guest_name},
+
+Your room {room} is ready. Check-in begins at {checkin_time}.
+We're glad you're here.
+
+— Haven</textarea>
+                                        <span class="form-hint">Variables: {guest_name}, {room}, {checkin_time}, {checkout_time}, {request_type}, {status}</span>
+                                    </div>
+                                    <div class="template-toggles">
+                                        <label class="toggle-row">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                            <span>Email</span>
+                                        </label>
+                                        <label class="toggle-row">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                            <span>In-app</span>
+                                        </label>
+                                    </div>
+                                    <div class="template-actions">
+                                        <button class="btn btn-outline btn-sm" id="sendTest">Send test</button>
+                                    </div>
+                                </div>
+                                <div class="template-preview">
+                                    <h5 class="template-preview-title">Live preview</h5>
+                                    <div class="preview-card">
+                                        <div class="preview-head">
+                                            <span class="preview-from">Haven Training Hotel</span>
+                                            <span class="preview-to">to Sofia Reyes</span>
+                                        </div>
+                                        <p class="preview-subject" id="previewSubject">Welcome to Haven, Sofia!</p>
+                                        <p class="preview-body" id="previewBody">Hi Sofia,<br><br>Your room 201 is ready. Check-in begins at 3:00 PM.<br>We're glad you're here.<br><br>— Haven</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== OVERDUE & STAY POLICY ========== -->
+                <section class="settings-panel" data-panel="overdue">
+                    <form class="card form-card" id="overdueForm">
+                        <header class="card-header">
+                            <h3>Overdue & stay policy</h3>
+                        </header>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="overdueGrace">Overdue grace period (hours)</label>
+                                    <input type="number" id="overdueGrace" value="4" min="0" max="48">
+                                    <span class="form-hint">Time after check-out before a guest is marked overdue.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="maxExtension">Maximum extension (nights)</label>
+                                    <input type="number" id="maxExtension" value="14" min="1">
+                                </div>
+                            </div>
+
+                            <h4 class="subsection-title">Reminder schedule</h4>
+                            <div class="reminder-list">
+                                <label class="toggle-row">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span>Send reminder 24 hours before check-out</span>
+                                </label>
+                                <label class="toggle-row">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span>Send reminder at check-out time</span>
+                                </label>
+                                <label class="toggle-row">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span>Send reminder every 24 hours while overdue</span>
+                                </label>
+                            </div>
+
+                            <h4 class="subsection-title">Example</h4>
+                            <div class="example-card">
+                                <div class="example-row">
+                                    <span class="example-label">Guest</span>
+                                    <span class="example-value">Sofia Reyes · TR-1001 / HV-1001</span>
+                                </div>
+                                <div class="example-row">
+                                    <span class="example-label">Room</span>
+                                    <span class="example-value">201 · Floor 2</span>
+                                </div>
+                                <div class="example-row">
+                                    <span class="example-label">Expected check-out</span>
+                                    <span class="example-value">Oct 9, 2026 · 11:00 AM</span>
+                                </div>
+                                <div class="example-row">
+                                    <span class="example-label">Status</span>
+                                    <span class="example-value">
+                                        <span class="status-pill overdue"><span class="dot"></span> Overdue · 2 days</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- ========== SECURITY & PRIVACY ========== -->
+                <section class="settings-panel" data-panel="security">
+                    <form class="card form-card" id="securityForm">
+                        <header class="card-header">
+                            <h3>Security & privacy</h3>
+                        </header>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="sessionTimeout">Session timeout (minutes)</label>
+                                    <input type="number" id="sessionTimeout" value="60" min="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="revealDuration">Reveal duration for masked data (seconds)</label>
+                                    <input type="number" id="revealDuration" value="30" min="5">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="passwordMin">Password minimum length</label>
+                                    <input type="number" id="passwordMin" value="10" min="8">
+                                </div>
+                                <div class="form-group">
+                                    <label for="passwordRotation">Password rotation (days)</label>
+                                    <input type="number" id="passwordRotation" value="90" min="0">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="dataRetention">Data retention (days)</label>
+                                    <input type="number" id="dataRetention" value="365" min="30">
+                                </div>
+                            </div>
+
+                            <h4 class="subsection-title">Requirements</h4>
+                            <div class="reminder-list">
+                                <label class="toggle-row">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span>Two-factor authentication required for managers</span>
+                                </label>
+                                <label class="toggle-row">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span>Log every reveal of masked guest data</span>
+                                </label>
+                                <label class="toggle-row">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span>Auto-export audit log monthly to compliance@haven.app</span>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- ========== CHANGE HISTORY ========== -->
+                <section class="settings-panel" data-panel="history">
+                    <div class="card">
+                        <header class="card-header">
+                            <h3>Change history</h3>
+                            <span class="table-info">Every settings change, with reason</span>
+                        </header>
+                        <div class="card-body no-pad">
+                            <div class="table-wrap">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Staff</th>
+                                            <th scope="col">Setting</th>
+                                            <th scope="col" class="hide-sm">Old value</th>
+                                            <th scope="col">New value</th>
+                                            <th scope="col" class="hide-md">Reason</th>
+                                            <th scope="col" class="hide-sm">Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="dashboard-footer">
+                    <span>Haven · Staff console</span>
+                    <span>© 2026 Check-in Accommodation System</span>
+                </footer>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ============ STICKY SAVE BAR ============ -->
+<div class="save-bar" id="saveBar" hidden>
+    <span class="save-bar-text">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Unsaved changes
+    </span>
+    <div class="save-bar-actions">
+        <button class="btn btn-ghost" id="discardAll">Discard</button>
+        <button class="btn btn-primary" id="saveAll">Save changes</button>
+    </div>
+</div>
+
+<!-- ============ INVITE MODAL ============ -->
+<div class="modal-overlay" id="inviteOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="inviteTitle">
+        <header class="modal-header">
+            <h3 id="inviteTitle">Invite staff</h3>
+            <button class="modal-close" id="inviteClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="inviteEmail">Email <span class="required">*</span></label>
+                <input type="email" id="inviteEmail" placeholder="name@example.com" required>
+                <span class="error-msg" id="inviteEmailErr"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="inviteRole">Role <span class="required">*</span></label>
+                    <select id="inviteRole">
+                        <option>Front desk</option>
+                        <option>Housekeeping</option>
+                        <option>Maintenance</option>
+                        <option>Manager</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inviteStart">Start date (optional)</label>
+                    <input type="date" id="inviteStart">
+                </div>
+            </div>
+            <p class="modal-hint">Invites expire after 7 days. New accounts start with least-privilege defaults.</p>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="inviteCancel">Cancel</button>
+            <button class="btn btn-primary" id="inviteSubmit">Send invite</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please type the required word and provide a reason.</p>
+            <div class="form-group">
+                <label for="confirmWord">Type <strong id="confirmWordPrompt">CONFIRM</strong> to proceed <span class="required">*</span></label>
+                <input type="text" id="confirmWord" autocomplete="off" placeholder="CONFIRM">
+                <span class="error-msg" id="confirmWordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/rbac.js" defer></script>
+
+<script src="/js/staff-settings.js" defer></script>
+</body>
+</html>

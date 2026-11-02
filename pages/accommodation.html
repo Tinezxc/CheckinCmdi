@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accommodation - Haven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/client-accommodation.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="mobile-brand">Check-in Accommodation System</span>
+        <div class="topbar-avatar" data-avatar></div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">A PLACE TO BELONG</span>
+            </div>
+        </div>
+
+        <div class="guest-chip">
+            <div class="guest-chip-avatar" data-avatar></div>
+            <div class="guest-chip-info">
+                <span class="guest-chip-name" data-bind="fullname"></span>
+                <span class="guest-chip-role">Guest · HV-1001</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">Your stay</span>
+            <a href="client-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </a>
+            <a href="profile.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Profile
+            </a>
+            <a href="accommodation.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Accommodation
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="nav-item logout" id="logoutLink">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="client-dashboard.html">Dashboard</a>
+                <span class="sep">/</span>
+                <span class="current" aria-current="page">Accommodation</span>
+            </nav>
+            <div class="topbar-actions">
+                <button type="button" class="icon-btn" aria-label="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span class="icon-dot" id="bellDot" hidden></span>
+                </a>
+                
+            </div>
+        </header>
+
+        <div class="page">
+
+            <!-- Page header -->
+            <header class="page-header">
+                <div>
+                    <h1 class="page-title">Dorm 201</h1>
+                    <p class="page-sub">Floor 2 · Shared dormitory · Max 5 trainees</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn" id="extendBtn" type="button">Extend stay</button>
+                    <button class="btn" id="checkoutBtn" type="button">Request check-out</button>
+                </div>
+            </header>
+
+            <!-- Stay -->
+            <section class="panel" aria-labelledby="stayTitle">
+                <div class="panel-head">
+                    <h2 id="stayTitle">Your stay</h2>
+                    <span class="status" id="statusLabel"></span>
+                </div>
+                <div class="panel-body">
+                    <dl class="facts">
+                        <div><dt>Check-in</dt><dd data-bind="checkIn"></dd></div>
+                        <div><dt>Expected check-out</dt><dd id="factCheckOut" data-bind="checkOut"></dd></div>
+                        <div><dt>Nights</dt><dd id="factNights"></dd></div>
+                        <div><dt>Status</dt><dd id="factRemaining"></dd></div>
+                    </dl>
+                    <div class="bar" role="progressbar" id="stayBar" aria-label="Stay progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="stayBarFill"></span></div>
+                    <ol class="steps" aria-label="Stay timeline">
+                        <li class="step done"><span class="step-name">Registered</span><span class="step-date">Sep 18, 2026</span></li>
+                        <li class="step" id="stepIn"><span class="step-name">Checked in</span><span class="step-date" data-bind="checkIn"></span></li>
+                        <li class="step" id="stepOut"><span class="step-name">Check-out</span><span class="step-date" id="stepOutDate"></span></li>
+                    </ol>
+                </div>
+            </section>
+
+            <div class="two-col">
+
+                <div class="col">
+                    <!-- Dorm details -->
+                    <section class="panel" aria-labelledby="detailsTitle">
+                        <div class="panel-head"><h2 id="detailsTitle">Dorm details</h2></div>
+                        <div class="panel-body">
+                            <dl class="rows">
+                                <div><dt>Type</dt><dd>Shared dormitory</dd></div>
+                                <div><dt>Beds</dt><dd>2 bunk beds</dd></div>
+                                <div><dt>Size</dt><dd>28 m²</dd></div>
+                                <div><dt>View</dt><dd>City courtyard</dd></div>
+                                <div><dt>Floor</dt><dd>2</dd></div>
+                                <div><dt>Capacity</dt><dd>5 trainees</dd></div>
+                                <div><dt>Includes</dt><dd>Air-conditioning, Wi-Fi, shared bathroom, study desk, locker, weekly housekeeping</dd></div>
+                            </dl>
+                            <p class="note">Dorm details are managed by the accommodation team.</p>
+                        </div>
+                    </section>
+
+                    <!-- Wi-Fi -->
+                    <section class="panel" aria-labelledby="wifiTitle">
+                        <div class="panel-head"><h2 id="wifiTitle">Wi-Fi</h2></div>
+                        <div class="panel-body">
+                            <dl class="rows">
+                                <div><dt>Network</dt><dd><span>Haven-Dorm-Guest</span> <button class="link" type="button" data-copy-key="ssid">Copy</button></dd></div>
+                                <div><dt>Password</dt><dd><span id="wifiPass" class="mono">••••••••••</span>
+                                    <button class="link" type="button" id="wifiToggle" aria-pressed="false">Show</button>
+                                    <button class="link" type="button" data-copy-key="wifiPassword">Copy</button></dd></div>
+                            </dl>
+                        </div>
+                    </section>
+
+                    <!-- Dormmates -->
+                    <section class="panel" aria-labelledby="mateTitle">
+                        <div class="panel-head"><h2 id="mateTitle">Dormmates</h2><span class="muted">2 of 4 beds taken</span></div>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead><tr><th scope="col">Name</th><th scope="col">Institution</th><th scope="col">Stay</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Jamie Dela Cruz</td><td>Polytechnic University</td><td>Oct 2 – Oct 9</td></tr>
+                                    <tr><td>Aiko Tanaka</td><td>Osaka Institute</td><td>Oct 3 – Oct 10</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col">
+                    <!-- Requests -->
+                    <section class="panel" aria-labelledby="reqTitle">
+                        <div class="panel-head">
+                            <h2 id="reqTitle">Service requests</h2>
+                            <button class="btn btn-primary btn-sm" type="button" id="newRequestBtn">New request</button>
+                        </div>
+                        <div class="filter-row" role="group" aria-label="Filter requests">
+                            <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">All <span id="cntAll">0</span></button>
+                            <button class="filter" type="button" data-filter="open" aria-pressed="false">Open <span id="cntOpen">0</span></button>
+                            <button class="filter" type="button" data-filter="closed" aria-pressed="false">Closed <span id="cntClosed">0</span></button>
+                        </div>
+                        <ul class="req-list" id="requestList"></ul>
+                        <p class="empty" id="requestsEmpty" hidden>No requests here.</p>
+                    </section>
+
+                    <!-- Charges -->
+                    <section class="panel" aria-labelledby="chargeTitle">
+                        <div class="panel-head"><h2 id="chargeTitle">Charges</h2><span class="status warn" id="payStatus">Not settled</span></div>
+                        <div class="panel-body">
+                            <dl class="rows money">
+                                <div><dt id="chargeStayLabel">Accommodation</dt><dd id="chargeStay"></dd></div>
+                                <div><dt>Additional services</dt><dd id="chargeServices"></dd></div>
+                                <div><dt>Taxes and fees (12%)</dt><dd id="chargeTax"></dd></div>
+                                <div class="total"><dt>Total</dt><dd id="chargeTotal"></dd></div>
+                            </dl>
+                            <button class="btn btn-block" type="button" id="receiptBtn">Download statement</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Rules -->
+            <section class="panel" aria-labelledby="rulesTitle">
+                <div class="panel-head"><h2 id="rulesTitle">Dorm rules and contacts</h2></div>
+                <div class="table-wrap">
+                    <table class="table">
+                        <tbody>
+                            <tr><th scope="row">Quiet hours</th><td>10:00 PM – 6:00 AM</td></tr>
+                            <tr><th scope="row">Building access</th><td>6:00 AM – 10:00 PM, keycard required</td></tr>
+                            <tr><th scope="row">Dorm office</th><td>Daily 7:00 AM – 9:00 PM, ground floor</td></tr>
+                            <tr><th scope="row">Emergency</th><td>+63 2 8888 0000 · Dial 911</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="page-footer">
+                <span>Haven · A place to belong</span>
+                <span>© 2026 Check-in Accommodation System · <button class="link" type="button" id="resetDemo">Reset demo data</button></span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<dialog class="modal" id="modal" aria-labelledby="modalTitle">
+    <form class="modal-form" id="modalForm" novalidate>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <p class="modal-intro" id="modalIntro" hidden></p>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-actions">
+            <button type="button" class="btn" id="modalCancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="modalConfirm">Confirm</button>
+        </div>
+    </form>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="/js/accommodation.js" defer></script>
+</body>
+</html>

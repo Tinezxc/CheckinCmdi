@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Login - Horizon Vista Homes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <div class="login-container">
+
+        <!-- Left Side: Login Form -->
+        <div class="login-side">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 12H5V22H19V12H22L12 2Z" stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round"/>
+                    <path d="M9 22V16H15V22" stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+                <div class="logo-text">
+                    <span class="logo-title">HORIZON</span>
+                    <span class="logo-subtitle">VISTA HOMES</span>
+                </div>
+            </div>
+
+            <div class="login-card" id="loginCard">
+                <div class="login-header">
+                    <h1>Login</h1>
+                    <p>Please enter your details</p>
+                </div>
+
+                <!-- Shown after a successful registration -->
+                <div class="alert alert-success" id="registeredNotice" hidden role="status">
+                    Account created! Please sign in with your Trainee / Guest ID.
+                </div>
+
+                <!-- Shown when sign-in fails -->
+                <div class="alert alert-error" id="loginAlert" hidden role="alert"></div>
+
+                <form class="login-form" id="loginForm" novalidate>
+                    <div class="form-group">
+                        <label for="registration-id">ID / Username</label>
+                        <input type="text" id="registration-id" placeholder="e.g. HV-1001" autocomplete="username">
+                        <span class="error-msg" data-error-for="registration-id"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrap">
+                            <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+                            <button type="button" class="toggle-pw" data-target="password" aria-label="Show password" aria-pressed="false">
+                                <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12A3 3 0 1 1 9.88 9.88"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </button>
+                        </div>
+                        <span class="error-msg" data-error-for="password"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="#" class="forgot-password" onclick="openModal(event)">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-signin" id="loginBtn">
+                        <span class="btn-label">Sign in</span>
+                        <span class="btn-spinner" hidden aria-label="Loading"></span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="signup-prompt">
+                Are you new? <a href="register.html">Create an Account</a>
+            </div>
+        </div>
+
+        <!-- Right Side: Background Image -->
+        <div class="image-side"></div>
+
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+
+            <div class="modal-header">
+                <div class="modal-icon">✦</div>
+                <h2>Forgot Password?</h2>
+                <p>Enter your registered email or Guest ID and we'll send you a link to reset your password.</p>
+            </div>
+
+            <form class="modal-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="reset-email">Email Address / Guest ID</label>
+                    <input type="text" id="reset-email" placeholder="e.g. HV-1001 or you@example.com" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
+    <script src="/js/pop-up.js" defer></script>
+    <script src="/js/login.js" defer></script>
+</body>
+</html>

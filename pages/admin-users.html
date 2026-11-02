@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Users and roles - Haven Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin-users.css">
+</head>
+<body data-role="super-admin">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Haven · Admin</span>
+        <span class="env-badge env-prod">Production</span>
+        <div class="topbar-avatar">SV</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-admin" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">ADMIN CONSOLE</span>
+            </div>
+        </div>
+
+        
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">SYSTEM</span>
+            <a href="admin-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="admin-users.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Users and roles
+            </a>
+            <a href="admin-security.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Security
+            </a>
+            <a href="admin-audit.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Audit logs
+            </a>
+            <a href="admin-integrations.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Integrations
+            </a>
+            <a href="admin-data.html" class="nav-item" data-role-required="super-admin" aria-disabled="true" title="Super admin only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+                Data and backups
+            </a>
+            <a href="admin-health.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                System health
+            </a>
+            <a href="admin-settings.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">SV</div>
+                <div class="staff-info">
+                    <span class="staff-name">Sarah Villanueva</span>
+                    <span class="staff-role" id="staffRoleLabel">admin</span>
+                </div>
+            </div>
+            <a href="index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar topbar-admin">
+            <div class="topbar-accent-strip" aria-hidden="true"></div>
+            <div class="topbar-title">
+                <div class="topbar-title-row">
+                    <h1 class="app-title">Check-in Accommodation System <span class="admin-divider">·</span> Admin</h1>
+                    <span class="admin-badge">ADMIN</span>
+                    <span class="env-badge env-prod">Production</span>
+                </div>
+                <p class="app-subtitle">Users and roles · <span id="roleBreadcrumb">Super admin</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search users, guest ID, email…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Admin profile menu">SV</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">Users and roles</h2>
+                    <span class="page-count" id="totalCount">24 users</span>
+                </div>
+                <div class="page-header-actions">
+                    <button class="btn btn-outline" id="exportBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export
+                    </button>
+                    <button class="btn btn-outline" id="createUserBtn">Create user</button>
+                    <button class="btn btn-primary" id="createAdminBtn" data-role-required="super-admin">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Create admin
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="Users and roles sections">
+                <button class="tab active" role="tab" aria-selected="true" data-tab="users">Users</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="roles">Roles</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="permissions">Permissions</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="requests">Access requests <span class="tab-count tab-count-blue" id="reqTabCount">2</span></button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="history">Role history</button>
+            </nav>
+
+            <!-- ============ USERS TAB ============ -->
+            <div class="tab-panel active" data-panel="users">
+
+                <!-- Filters -->
+                <section class="filters-bar" aria-label="Filters">
+                    <div class="filter-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="search" id="filterSearch" placeholder="Search by name, email, Guest ID, Registration ID…" aria-label="Search users">
+                    </div>
+
+                    <div class="filter-chips">
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Role</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="role" data-value="all">All roles</button></li>
+                                <li><button data-filter="role" data-value="Guest">Guest</button></li>
+                                <li><button data-filter="role" data-value="Front desk">Front desk</button></li>
+                                <li><button data-filter="role" data-value="Housekeeping">Housekeeping</button></li>
+                                <li><button data-filter="role" data-value="Maintenance">Maintenance</button></li>
+                                <li><button data-filter="role" data-value="Manager">Manager</button></li>
+                                <li><button data-filter="role" data-value="Support admin">Support admin</button></li>
+                                <li><button data-filter="role" data-value="Super admin">Super admin</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Status</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="status" data-value="all">All statuses</button></li>
+                                <li><button data-filter="status" data-value="active">Active</button></li>
+                                <li><button data-filter="status" data-value="invited">Invited</button></li>
+                                <li><button data-filter="status" data-value="locked">Locked</button></li>
+                                <li><button data-filter="status" data-value="suspended">Suspended</button></li>
+                                <li><button data-filter="status" data-value="expired">Expired</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">2FA</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="twofa" data-value="all">Any</button></li>
+                                <li><button data-filter="twofa" data-value="on">Enabled</button></li>
+                                <li><button data-filter="twofa" data-value="off">Not enabled</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Last active</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="lastActive" data-value="all">Any</button></li>
+                                <li><button data-filter="lastActive" data-value="today">Today</button></li>
+                                <li><button data-filter="lastActive" data-value="week">This week</button></li>
+                                <li><button data-filter="lastActive" data-value="month">This month</button></li>
+                            </ul>
+                        </div>
+
+                        <button class="chip-clear" id="clearFilters" hidden>Clear filters</button>
+                    </div>
+                </section>
+
+                <!-- Saved views -->
+                <section class="saved-views" role="tablist" aria-label="Saved views">
+                    <button class="saved-tab active" role="tab" aria-selected="true" data-view="all">All <span class="saved-count" id="cvAll">24</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="admins">Admins <span class="saved-count" id="cvAdmins">3</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="staff">Staff <span class="saved-count" id="cvStaff">12</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="guests">Guests <span class="saved-count" id="cvGuests">9</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="locked">Locked <span class="saved-count" id="cvLocked">1</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="no2fa">No 2FA <span class="saved-count" id="cvNo2fa">4</span></button>
+                    <button class="saved-tab" role="tab" aria-selected="false" data-view="expiring">Expiring access <span class="saved-count" id="cvExpiring">1</span></button>
+                </section>
+
+                <!-- Table -->
+                <section class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table users-table" aria-label="Users">
+                                <thead>
+                                    <tr>
+                                        <th class="col-select">
+                                            <label class="checkbox">
+                                                <input type="checkbox" id="selectAll" aria-label="Select all">
+                                                <span></span>
+                                            </label>
+                                        </th>
+                                        <th class="sortable" data-sort="name" scope="col">Name</th>
+                                        <th class="sortable hide-md" data-sort="email" scope="col">Email</th>
+                                        <th class="sortable" data-sort="role" scope="col">Role</th>
+                                        <th class="sortable" data-sort="status" scope="col">Status</th>
+                                        <th class="sortable" data-sort="twofa" scope="col">2FA</th>
+                                        <th class="sortable hide-sm" data-sort="lastActive" scope="col">Last active</th>
+                                        <th class="col-actions" scope="col"><span class="sr-only">Actions</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="usersEmpty" hidden>
+                                <div class="empty-icon">🔍</div>
+                                <p class="empty-title">No users match your filters</p>
+                                <p class="empty-sub">Try adjusting your search or clearing the filters.</p>
+                                <button class="btn btn-outline" id="emptyClearBtn">Clear filters</button>
+                            </div>
+                        </div>
+
+                        <div class="table-footer">
+                            <span class="table-info" id="tableInfo">Showing 1–24 of 24</span>
+                            <div class="pagination">
+                                <button class="page-btn" aria-label="Previous page" disabled>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn" aria-label="Next page">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ ROLES TAB ============ -->
+            <div class="tab-panel" data-panel="roles">
+                <section class="role-grid" id="roleGrid"></section>
+            </div>
+
+            <!-- ============ PERMISSIONS TAB ============ -->
+            <div class="tab-panel" data-panel="permissions">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Permissions matrix</h3>
+                            <span class="card-sub">Single source of truth — changes affect every page</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="perm-matrix">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Permission</th>
+                                        <th scope="col">Guest</th>
+                                        <th scope="col">Front desk</th>
+                                        <th scope="col">Housekeeping</th>
+                                        <th scope="col">Maintenance</th>
+                                        <th scope="col">Manager</th>
+                                        <th scope="col">Support admin</th>
+                                        <th scope="col">Super admin</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrixBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="matrix-footer">
+                            <span class="matrix-hint" id="matrixDirtyHint">No changes</span>
+                            <div class="matrix-actions">
+                                <button class="btn btn-ghost btn-sm" id="matrixDiscard" disabled>Discard</button>
+                                <button class="btn btn-primary btn-sm" id="matrixPreview" disabled>Preview changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ ACCESS REQUESTS TAB ============ -->
+            <div class="tab-panel" data-panel="requests">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Access requests</h3>
+                            <span class="card-sub">Requesters cannot approve their own request</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <ul class="request-list" id="requestList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ ROLE HISTORY TAB ============ -->
+            <div class="tab-panel" data-panel="history">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Role history</h3>
+                            <span class="card-sub">Append-only · read-only for everyone</span>
+                        </div>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Admin</th>
+                                        <th scope="col">Target user</th>
+                                        <th scope="col" class="hide-sm">Old role</th>
+                                        <th scope="col">New role</th>
+                                        <th scope="col" class="hide-md">Reason</th>
+                                        <th scope="col" class="hide-sm">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Admin console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ BULK BAR ============ -->
+<div class="bulk-bar" id="bulkBar" hidden>
+    <span class="bulk-info"><span id="bulkCount">0</span> user<span id="bulkPlural">s</span> selected</span>
+    <div class="bulk-actions">
+        <button class="btn btn-outline btn-sm" id="bulkExport">Export</button>
+        <button class="btn btn-outline btn-sm" id="bulkRemind">Send invite reminder</button>
+        <button class="btn btn-primary btn-sm" id="bulkSuspend" data-role="super-admin">Suspend</button>
+        <button class="btn btn-ghost btn-sm" id="bulkClear">Clear</button>
+    </div>
+</div>
+
+<!-- ============ USER DRAWER ============ -->
+<div class="drawer-overlay" id="userDrawerOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="userDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+    <header class="drawer-header">
+        <div class="drawer-identity">
+            <div class="drawer-avatar" id="drawerAvatar">MC</div>
+            <div>
+                <h3 id="drawerTitle">Marco Cruz</h3>
+                <p class="drawer-sub" id="drawerSub">Front desk · marco@haven.app</p>
+                <span class="status-pill active" id="drawerStatusPill"><span class="dot"></span> Active</span>
+            </div>
+        </div>
+        <button class="drawer-close" id="drawerClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <nav class="drawer-tabs" role="tablist" aria-label="User details">
+        <button class="drawer-tab active" role="tab" aria-selected="true" data-dtab="profile">Profile</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="access">Access</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="security">Sessions and security</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="activity">Activity</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="history">History</button>
+    </nav>
+
+    <div class="drawer-body">
+
+        <!-- Profile -->
+        <div class="drawer-panel active" data-panel="profile">
+            <div class="drawer-section">
+                <h4>Account</h4>
+                <dl class="drawer-details">
+                    <div><dt>Role</dt><dd id="pRole">Front desk</dd></div>
+                    <div><dt>Status</dt><dd id="pStatus">Active</dd></div>
+                    <div><dt>2FA</dt><dd id="p2FA">Enabled</dd></div>
+                    <div><dt>Last active</dt><dd id="pLastActive">Today · 4:21 PM</dd></div>
+                    <div class="dt-full"><dt>Email</dt><dd id="pEmail">marco@haven.app</dd></div>
+                </dl>
+            </div>
+            <div class="drawer-section" id="pGuestSection" hidden>
+                <h4>Guest details</h4>
+                <dl class="drawer-details">
+                    <div><dt>Guest ID</dt><dd id="pGuestId">TR-1001</dd></div>
+                    <div><dt>Registration ID</dt><dd id="pRegId">HV-1001</dd></div>
+                    <div><dt>Room</dt><dd id="pRoom">201 · Floor 2</dd></div>
+                    <div><dt>Expected check-out</dt><dd id="pCheckout">Oct 9, 2026</dd></div>
+                    <div class="dt-full"><dt>Overdue</dt><dd id="pOverdue" class="text-overdue">2 days</dd></div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Access -->
+        <div class="drawer-panel" data-panel="access">
+            <div class="drawer-section">
+                <h4>Effective permissions</h4>
+                <ul class="perm-list" id="pPermList"></ul>
+            </div>
+            <div class="drawer-section">
+                <h4>Temporary elevation</h4>
+                <div class="form-group">
+                    <label for="elevRole">Grant temporary role</label>
+                    <select id="elevRole">
+                        <option>Support admin</option>
+                        <option>Manager</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="elevUntil">Expires at</label>
+                    <input type="datetime-local" id="elevUntil" value="2026-10-11T18:00">
+                </div>
+                <button class="btn btn-primary btn-sm" id="elevApply" data-role="super-admin">Apply elevation</button>
+            </div>
+        </div>
+
+        <!-- Security -->
+        <div class="drawer-panel" data-panel="security">
+            <div class="drawer-section">
+                <h4>Security actions</h4>
+                <div class="security-grid">
+                    <button class="btn btn-outline btn-sm" id="resetPasswordBtn">Reset password</button>
+                    <button class="btn btn-outline btn-sm" id="reset2faBtn">Reset 2FA</button>
+                    <button class="btn btn-outline btn-sm" id="unlockBtn" data-role="super-admin">Unlock account</button>
+                    <button class="btn btn-danger btn-sm" id="signOutAllBtn" data-role="super-admin">Sign out everywhere</button>
+                </div>
+            </div>
+            <div class="drawer-section">
+                <h4>Active sessions</h4>
+                <ul class="session-list" id="sessionList">
+                    <li class="session-item">
+                        <span class="session-icon">💻</span>
+                        <div>
+                            <p class="session-title">Chrome · macOS</p>
+                            <span class="session-meta">Manila, PH · 192.168.1.24 · Active now</span>
+                        </div>
+                    </li>
+                    <li class="session-item">
+                        <span class="session-icon">📱</span>
+                        <div>
+                            <p class="session-title">Safari · iPhone</p>
+                            <span class="session-meta">Manila, PH · Last seen 2h ago</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Activity -->
+        <div class="drawer-panel" data-panel="activity">
+            <ul class="drawer-history" id="pActivity"></ul>
+        </div>
+
+        <!-- History -->
+        <div class="drawer-panel" data-panel="history">
+            <ul class="drawer-history" id="pHistory"></ul>
+        </div>
+
+    </div>
+</aside>
+
+<!-- ============ CREATE USER / ADMIN STEPPER DRAWER ============ -->
+<div class="drawer-overlay" id="createOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="createDrawer" role="dialog" aria-modal="true" aria-labelledby="createTitle" hidden>
+    <header class="drawer-header">
+        <div>
+            <h3 id="createTitle">Create user</h3>
+            <p class="drawer-sub" id="createSub">Step 1 of 3 · Details</p>
+        </div>
+        <button class="drawer-close" id="createClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <nav class="stepper" aria-label="Create user steps">
+        <ol class="stepper-list">
+            <li class="stepper-item active" data-step="1"><span class="stepper-num">1</span><span class="stepper-label">Details</span></li>
+            <li class="stepper-item" data-step="2"><span class="stepper-num">2</span><span class="stepper-label">Access</span></li>
+            <li class="stepper-item" data-step="3"><span class="stepper-num">3</span><span class="stepper-label">Review</span></li>
+        </ol>
+    </nav>
+
+    <div class="drawer-body">
+        <div class="wizard-step active" data-wstep="1">
+            <div class="form-group">
+                <label for="cuName">Full name <span class="required">*</span></label>
+                <input type="text" id="cuName" placeholder="Jane Doe">
+                <span class="error-msg" id="cuNameErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="cuEmail">Email <span class="required">*</span></label>
+                <input type="email" id="cuEmail" placeholder="jane@example.com">
+                <span class="error-msg" id="cuEmailErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="cuRole">Role <span class="required">*</span></label>
+                <select id="cuRole">
+                    <option>Guest</option>
+                    <option>Front desk</option>
+                    <option>Housekeeping</option>
+                    <option>Maintenance</option>
+                    <option>Manager</option>
+                </select>
+                <span class="form-hint">Admins are created separately via "Create admin".</span>
+            </div>
+        </div>
+
+        <div class="wizard-step" data-wstep="2">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cuStart">Access start date</label>
+                    <input type="date" id="cuStart" value="2026-10-11">
+                </div>
+                <div class="form-group">
+                    <label for="cuExpiry">Access expiry date</label>
+                    <input type="date" id="cuExpiry" value="2027-04-11">
+                </div>
+            </div>
+            <label class="toggle-row">
+                <input type="checkbox" id="cu2fa">
+                <span class="toggle-slider"></span>
+                <span>Require 2FA setup on first sign-in</span>
+            </label>
+        </div>
+
+        <div class="wizard-step" data-wstep="3">
+            <div class="summary-block">
+                <h4>What will this person be able to do?</h4>
+                <ul class="perm-list" id="cuSummaryList"></ul>
+                <p class="summary-note">They will receive an invite email and must set up 2FA on first sign-in. Their access will expire on <strong id="cuSummaryExpiry">Apr 11, 2027</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="drawer-footer wizard-footer">
+        <button class="btn btn-ghost" id="createBack" hidden>← Back</button>
+        <div class="wizard-footer-right">
+            <button class="btn btn-outline" id="createCancel">Cancel</button>
+            <button class="btn btn-primary" id="createNext">Next →</button>
+            <button class="btn btn-primary" id="createSubmit" hidden>
+                <span class="btn-label">Send invite</span>
+                <span class="btn-spinner" hidden></span>
+            </button>
+        </div>
+    </footer>
+</aside>
+
+<!-- ============ STEP-UP MODAL ============ -->
+<div class="modal-overlay" id="stepupOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stepupTitle">
+        <header class="modal-header">
+            <h3 id="stepupTitle">Re-authenticate to continue</h3>
+            <button class="modal-close" id="stepupClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text">This action requires step-up authentication.</p>
+            <div class="form-group">
+                <label for="stepupPassword">Password</label>
+                <input type="password" id="stepupPassword" autocomplete="current-password" placeholder="Enter your password">
+                <span class="error-msg" id="stepupPasswordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="stepupCode">2FA code</label>
+                <input type="text" id="stepupCode" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="6-digit code">
+                <span class="error-msg" id="stepupCodeErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="stepupCancel">Cancel</button>
+            <button class="btn btn-primary" id="stepupVerify">Verify</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ TYPED CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please confirm this action.</p>
+            <div class="form-group">
+                <label for="confirmWord">Type <strong id="confirmWordPrompt">CONFIRM</strong> <span class="required">*</span></label>
+                <input type="text" id="confirmWord" autocomplete="off" placeholder="CONFIRM">
+                <span class="error-msg" id="confirmWordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ IMPACT PREVIEW MODAL ============ -->
+<div class="modal-overlay" id="impactOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="impactTitle">
+        <header class="modal-header">
+            <h3 id="impactTitle">Who is affected</h3>
+            <button class="modal-close" id="impactClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body" id="impactBody">
+            <ul class="impact-list" id="impactList"></ul>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="impactCancel">Cancel</button>
+            <button class="btn btn-danger" id="impactConfirm">Save permissions</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="/js/admin-users.js" defer></script>
+</body>
+</html>
