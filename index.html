@@ -34,7 +34,7 @@
 
                 <!-- Shown after a successful registration -->
                 <div class="alert alert-success" id="registeredNotice" hidden role="status">
-                    Account created! Please sign in with your Trainee / Guest ID.
+                    Account created! Please sign in with your email and password.
                 </div>
 
                 <!-- Shown when sign-in fails -->
@@ -42,8 +42,8 @@
 
                 <form class="login-form" id="loginForm" novalidate>
                     <div class="form-group">
-                        <label for="registration-id">ID / Username</label>
-                        <input type="text" id="registration-id" placeholder="e.g. HV-1001" autocomplete="username">
+                        <label for="registration-id">Email</label>
+                        <input type="email" id="registration-id" placeholder="you@example.com" autocomplete="email">
                         <span class="error-msg" data-error-for="registration-id"></span>
                     </div>
 
@@ -88,13 +88,13 @@
             <div class="modal-header">
                 <div class="modal-icon">✦</div>
                 <h2>Forgot Password?</h2>
-                <p>Enter your registered email or Guest ID and we'll send you a link to reset your password.</p>
+                <p>Enter your registered email and we'll send you a link to reset your password.</p>
             </div>
 
             <form class="modal-form" onsubmit="handleSubmit(event)">
                 <div class="form-group">
-                    <label for="reset-email">Email Address / Guest ID</label>
-                    <input type="text" id="reset-email" placeholder="e.g. HV-1001 or you@example.com" required>
+                    <label for="reset-email">Email Address</label>
+                    <input type="email" id="reset-email" placeholder="you@example.com" required>
                 </div>
 
                 <button type="submit" class="btn-submit">Send Reset Link</button>
@@ -103,5 +103,7 @@
     </div>
     <script src="js/pop-up.js" defer></script>
     <script src="js/login.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
 </body>
 </html>

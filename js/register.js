@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================
-       6) FORM SUBMIT — SUPABASE AUTH (GMAIL)
+       6) FORM SUBMIT — SUPABASE AUTH (GMAIL) + REDIRECT TO OTP
        ========================================== */
     form?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -356,43 +356,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const getPw = () => f?.querySelector('#password')?.value || '';
 
             const loginId = get('trainee-id');
-            const email = get('email'); // Grab the real Gmail!
+            const email = get('email'); 
             
             const numMatch = /(\d+)$/.exec(loginId);
             const guestId = numMatch ? `TR-${numMatch[1].padStart(4, '0')}` : `TR-${Date.now()}`;
 
-            // Parse date
             let checkIn = get('checkin');
             const mdY = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(checkIn);
             if (mdY) {
                 checkIn = `${mdY[3]}-${mdY[1].padStart(2, '0')}-${mdY[2].padStart(2, '0')}`;
             }
 
-            // 1. Create the user in Supabase Auth using the REAL email
+            // 1. Create the user in Supabase Auth
             const { data: authData, error: authError } =
-    await window.supabaseClient.auth.signUp({
-                email: email,
-                password: getPw(),
-                options: {
-                    data: {
-                        role: 'client',
-                        full_name: get('fullname'),
-                        guest_id: guestId,
-                        reg_id: loginId,
-                        phone: get('contact'),
-                        institution: get('institution'),
-                        branch: get('branch'),
-                        room: get('unit'),
-                        check_in: checkIn || null
+                await window.supabaseClient.auth.signUp({
+                    email: email,
+                    password: getPw(),
+                    options: {
+                        data: {
+                            role: 'client',
+                            full_name: get('fullname'),
+                            guest_id: guestId,
+                            reg_id: loginId,
+                            phone: get('contact'),
+                            institution: get('institution'),
+                            branch: get('branch'),
+                            room: get('unit'),
+                            check_in: checkIn || null
+                        }
                     }
-                }
-            });
+                });
 
             if (authError) throw authError;
 
-            // 2. Tell them to check their Gmail
-            alert(`Account created! We sent a verification link to ${email}.\n\nPlease check your Gmail inbox (and spam folder) and click the link to activate your account.`);
-            window.location.href = 'index.html';
+            // 2. Save email to session storage so the OTP page knows who to verify
+            sessionStorage.setItem('haven_otp_email', email);
+
+            // 3. Redirect to OTP verification page
+            window.location.href = 'verify-otp.html';
 
         } catch (err) {
             console.error('Registration error:', err);

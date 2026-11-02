@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================== */
     const rules = {
         'registration-id': {
-            pattern: /^[A-Za-z0-9._\-@]{3,}$/,
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Strict email format
             messages: {
                 required: 'Email address is required.',
                 pattern: 'Please enter a valid email address.'
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================
-       SIGN IN
+       SIGN IN & ROLE ROUTING
        ========================================== */
     function shake() {
         if (!card) return;
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const email = idInput.value.trim().toLowerCase();
 
-            // 1. Sign in with Supabase Auth using the REAL email
+            // 1. Sign in with Supabase Auth
             const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                 email: email, 
                 password: pwInput.value
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (authError) {
                 if (authError.message.includes('Email not confirmed')) {
-                    throw new Error("Please check your Gmail and click the verification link before logging in.");
+                    throw new Error("Please check your email and click the verification link (or enter your OTP) before logging in.");
                 }
                 throw authError;
             }
@@ -183,11 +183,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 .eq('id', authData.user.id)
                 .single();
 
-            if (profileError) throw profileError;
+            if (profileError) {
+                console.warn('Profile fetch error:', profileError);
+                // If no profile exists yet, default to client
+                window.location.href = DASHBOARDS.client;
+                return;
+            }
 
-            // 3. Redirect based on role
-            const role = profile?.role || 'client';
-            const destination = DASHBOARDS[role] || DASHBOARDS.client;
+            // 3. Safely normalize the role and determine destination
+            // Converts "Admin", "super-admin", "Front desk", etc., into predictable routes
+            const rawRole = (profile?.role || 'client').toLowerCase().trim();
+            
+            let destination = DASHBOARDS.client; // Fallback
+
+            if (rawRole.includes('admin')) {
+                destination = DASHBOARDS.admin;
+            } else if (rawRole.includes('staff') || rawRole.includes('front') || rawRole.includes('desk') || rawRole.includes('manager') || rawRole.includes('housekeeping') || rawRole.includes('maintenance')) {
+                destination = DASHBOARDS.staff;
+            } else {
+                // "client", "guest", "trainee" all go here
+                destination = DASHBOARDS.client;
+            }
             
             window.location.href = destination;
 
