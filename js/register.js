@@ -369,7 +369,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 1. Create the user in Supabase Auth using the REAL email
-            const { data: authData, error: authError } = await supabase.auth.signUp({
+            const { data: authData, error: authError } =
+    await window.supabaseClient.auth.signUp({
                 email: email,
                 password: getPw(),
                 options: {
