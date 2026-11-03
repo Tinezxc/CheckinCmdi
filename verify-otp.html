@@ -21,8 +21,8 @@
             <div class="card-drag-handle"></div>
             
             <div class="otp-content" id="stepInput">
-                <h2 class="otp-title">Verify your number</h2>
-                <p class="otp-subtitle">Enter the 4-digit code we sent to <strong id="displayEmail">your email</strong>.</p>
+                <h2 class="otp-title">Verify your email</h2>
+                <p class="otp-subtitle">Enter the 6-digit code we sent to <br><strong id="displayEmail">your email</strong>.</p>
                 
                 <form id="otpForm">
                     <div class="otp-inputs">
@@ -30,25 +30,16 @@
                         <input type="text" inputmode="numeric" maxlength="1" class="otp-box">
                         <input type="text" inputmode="numeric" maxlength="1" class="otp-box">
                         <input type="text" inputmode="numeric" maxlength="1" class="otp-box">
+                        <input type="text" inputmode="numeric" maxlength="1" class="otp-box">
+                        <input type="text" inputmode="numeric" maxlength="1" class="otp-box">
                     </div>
                     <span class="error-msg" id="otpError"></span>
-
-                    <div class="otp-sms-preview">
-                        <div class="sms-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                        </div>
-                        <div class="sms-text">
-                            <span class="sms-label">MESSAGE · HAVEN</span>
-                            <span class="sms-body" id="smsText">1234 is your verification code.</span>
-                        </div>
-                        <button type="button" class="sms-fill" id="autoFillBtn">Fill</button>
-                    </div>
                 </form>
             </div>
 
             <!-- State 2: Success -->
             <div class="otp-content hidden" id="stepSuccess">
-                <h2 class="otp-title">Number verified</h2>
+                <h2 class="otp-title">Email verified</h2>
                 <p class="otp-subtitle">You're signed in on this device.</p>
                 
                 <div class="success-icon-wrap">
@@ -57,14 +48,13 @@
                     </div>
                 </div>
 
-                <button class="btn-continue" id="continueBtn">Continue</button>
+                <button class="btn-continue" id="continueBtn">Continue to Login</button>
             </div>
         </div>
     </div>
 
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/verify-otp.js" defer></script>
 </body>
-</html>
+</html> 

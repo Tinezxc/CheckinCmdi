@@ -1,5 +1,5 @@
 /* ==========================================================
-   HAVEN — Register page (Supabase + Gmail)
+   HAVEN — Register page (Supabase)
    ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================
-       6) FORM SUBMIT — SUPABASE AUTH (GMAIL) + REDIRECT TO OTP
+       6) FORM SUBMIT — SUPABASE AUTH + REDIRECT TO OTP
        ========================================== */
     form?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkIn = `${mdY[3]}-${mdY[1].padStart(2, '0')}-${mdY[2].padStart(2, '0')}`;
             }
 
-            // 1. Create the user in Supabase Auth
+            // Create the user in Supabase Auth
             const { data: authData, error: authError } =
                 await window.supabaseClient.auth.signUp({
                     email: email,
@@ -389,10 +389,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (authError) throw authError;
 
-            // 2. Save email to session storage so the OTP page knows who to verify
+            // Save email to session storage for the OTP page
             sessionStorage.setItem('haven_otp_email', email);
 
-            // 3. Redirect to OTP verification page
+            // Redirect to OTP verification page
             window.location.href = 'verify-otp.html';
 
         } catch (err) {
@@ -444,5 +444,4 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         document.head.appendChild(style);
     }
-
 });

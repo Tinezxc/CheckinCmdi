@@ -1,5 +1,5 @@
 /* ==========================================================
-   HAVEN — Login page (Supabase + Gmail)
+   HAVEN — Login page (Supabase + Gmail + Forgot Password)
    ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -164,20 +164,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = idInput.value.trim().toLowerCase();
 
             // 1. Sign in with Supabase Auth
-            const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+            const { data: authData, error: authError } = await window.supabaseClient.auth.signInWithPassword({
                 email: email, 
                 password: pwInput.value
             });
 
             if (authError) {
                 if (authError.message.includes('Email not confirmed')) {
-                    throw new Error("Please check your email and click the verification link (or enter your OTP) before logging in.");
+                    throw new Error("Please check your email and verify your account before logging in.");
                 }
                 throw authError;
             }
 
             // 2. Fetch the user's profile to get their role
-            const { data: profile, error: profileError } = await supabase
+            const { data: profile, error: profileError } = await window.supabaseClient
                 .from('profiles')
                 .select('role')
                 .eq('id', authData.user.id)
@@ -185,24 +185,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (profileError) {
                 console.warn('Profile fetch error:', profileError);
-                // If no profile exists yet, default to client
                 window.location.href = DASHBOARDS.client;
                 return;
             }
 
             // 3. Safely normalize the role and determine destination
-            // Converts "Admin", "super-admin", "Front desk", etc., into predictable routes
             const rawRole = (profile?.role || 'client').toLowerCase().trim();
-            
             let destination = DASHBOARDS.client; // Fallback
 
             if (rawRole.includes('admin')) {
                 destination = DASHBOARDS.admin;
             } else if (rawRole.includes('staff') || rawRole.includes('front') || rawRole.includes('desk') || rawRole.includes('manager') || rawRole.includes('housekeeping') || rawRole.includes('maintenance')) {
                 destination = DASHBOARDS.staff;
-            } else {
-                // "client", "guest", "trainee" all go here
-                destination = DASHBOARDS.client;
             }
             
             window.location.href = destination;
@@ -215,6 +209,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setLoading(false);
     });
+
+    /* ==========================================
+       FORGOT PASSWORD LOGIC
+       ========================================== */
+    window.handleSubmit = async function(event) {
+        event.preventDefault();
+        
+        const resetBtn = event.target.querySelector('button[type="submit"]');
+        const originalBtnText = resetBtn.textContent;
+        const emailInput = document.getElementById('reset-email');
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            alert("Please enter your email address.");
+            return;
+        }
+
+        resetBtn.disabled = true;
+        resetBtn.textContent = "Sending...";
+
+        try {
+            // Using window.location.origin makes this work on Netlify, Vercel, or localhost automatically!
+            const { data, error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/update-password.html`
+            });
+
+            if (error) throw error;
+
+            alert("Password reset link sent! Please check your email inbox.");
+            
+            document.getElementById('forgotModal').classList.remove('active');
+            emailInput.value = '';
+
+        } catch (err) {
+            console.error('Reset error:', err);
+            alert(err.message || 'Error sending reset email. Please try again.');
+        } finally {
+            resetBtn.disabled = false;
+            resetBtn.textContent = originalBtnText;
+        }
+    };
 
     /* ==========================================
        SHAKE ANIMATION

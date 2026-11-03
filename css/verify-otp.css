@@ -4,6 +4,7 @@
     --green-dark: #1b3a2e;
     --green-mid: #2a5a46;
     --green-accent: #4b7c5c;
+    --green-light: #e2e8e0;
     --border: #e0dfd9;
     --text-main: #1f2923;
     --text-muted: #4f5a53;
@@ -29,7 +30,7 @@ body {
     align-items: center;
     gap: 24px;
     width: 100%;
-    max-width: 400px;
+    max-width: 440px;
     padding: 20px;
 }
 
@@ -90,21 +91,23 @@ body {
     font-weight: 600;
 }
 
+/* Adjusted for 6 boxes */
 .otp-inputs {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 24px;
+    width: 100%;
 }
 
 .otp-box {
-    width: 56px;
+    width: 44px;
     height: 56px;
-    border-radius: 16px;
+    border-radius: 12px;
     border: 2px solid var(--border);
     background: var(--bg-cream);
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: var(--green-dark);
     outline: none;
@@ -128,71 +131,7 @@ body {
     font-size: 0.8rem;
     color: #9b1c1c;
     height: 20px;
-    margin-bottom: 16px;
     display: block;
-}
-
-/* SMS Preview Banner */
-.otp-sms-preview {
-    background: #f0f4f1; /* very light green tint */
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    margin-top: 16px;
-}
-
-.sms-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--green-accent);
-    color: white;
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-}
-
-.sms-text {
-    flex: 1;
-    text-align: left;
-}
-
-.sms-label {
-    display: block;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 2px;
-}
-
-.sms-body {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-main);
-}
-
-.sms-fill {
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--green-dark);
-    cursor: pointer;
-    transition: all 0.15s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.sms-fill:hover {
-    background: var(--green-light);
-    border-color: var(--green-accent);
 }
 
 /* Success State */

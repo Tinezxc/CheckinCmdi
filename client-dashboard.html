@@ -266,6 +266,11 @@
 
 <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
 
-<script src="js/client-dashboard.js" defer></script>
+    <!-- Add these two lines at the bottom, before client-dashboard.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    
+    <!-- Your dashboard logic -->
+    <script src="js/client-dashboard.js" defer></script>
 </body>
 </html>
