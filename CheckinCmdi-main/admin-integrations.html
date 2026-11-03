@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrations - Haven Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin-integrations.css">
+</head>
+<body data-role="super-admin">
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" id="menuToggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="mobile-brand">Haven · Admin</span>
+        <span class="env-badge env-prod">Production</span>
+        <div class="topbar-avatar">SV</div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-admin" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">ADMIN CONSOLE</span>
+            </div>
+        </div>
+
+        
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">SYSTEM</span>
+            <a href="admin-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="admin-users.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Users and roles
+            </a>
+            <a href="admin-security.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Security
+            </a>
+            <a href="admin-audit.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Audit logs
+            </a>
+            <a href="admin-integrations.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Integrations
+            </a>
+            <a href="admin-data.html" class="nav-item" data-role-required="super-admin" aria-disabled="true" title="Super admin only">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+                Data and backups
+            </a>
+            <a href="admin-health.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                System health
+            </a>
+            <a href="admin-settings.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="staff-chip">
+                <div class="staff-avatar">SV</div>
+                <div class="staff-info">
+                    <span class="staff-name">Sarah Villanueva</span>
+                    <span class="staff-role" id="staffRoleLabel">admin</span>
+                </div>
+            </div>
+            <a href="../index.html" class="nav-item logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar topbar-admin">
+            <div class="topbar-accent-strip" aria-hidden="true"></div>
+            <div class="topbar-title">
+                <div class="topbar-title-row">
+                    <h1 class="app-title">Check-in Accommodation System <span class="admin-divider">·</span> Admin</h1>
+                    <span class="admin-badge">ADMIN</span>
+                    <span class="env-badge env-prod">Production</span>
+                </div>
+                <p class="app-subtitle">Integrations · <span id="roleBreadcrumb">Super admin</span></p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="globalSearch" placeholder="Search integrations…" aria-label="Global search">
+                    <kbd class="search-kbd">/</kbd>
+                </div>
+                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="icon-badge">3</span>
+                </button>
+                <button class="topbar-avatar" aria-label="Admin profile menu">SV</button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- Page header -->
+            <section class="page-header">
+                <div class="page-header-left">
+                    <h2 class="page-title">Integrations</h2>
+                    <span class="posture-pill" id="summaryPill">
+                        <span class="posture-dot"></span>
+                        <span id="summaryText">5 connected · 1 needs attention</span>
+                    </span>
+                    <span class="env-badge env-prod" id="envLabel">Production</span>
+                </div>
+                <div class="page-header-actions">
+                    <button class="btn btn-primary" id="addIntegrationBtn" data-role="super-admin">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add integration
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="Integrations sections">
+                <button class="tab active" role="tab" aria-selected="true" data-tab="connected">Connected <span class="tab-count" id="connectedTabCount">7</span></button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="available">Available <span class="tab-count" id="availableTabCount">14</span></button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="webhooks">Webhooks & API</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="logs">Sync & delivery logs</button>
+                <button class="tab" role="tab" aria-selected="false" data-tab="settings">Settings</button>
+            </nav>
+
+            <!-- ============ CONNECTED TAB ============ -->
+            <div class="tab-panel active" data-panel="connected">
+                <section class="filters-bar" aria-label="Filters">
+                    <div class="filter-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="search" id="connSearch" placeholder="Search integrations by name or category…" aria-label="Search integrations">
+                    </div>
+                    <div class="filter-chips">
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Category</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="category" data-value="all">All categories</button></li>
+                                <li><button data-filter="category" data-value="Messaging">Messaging</button></li>
+                                <li><button data-filter="category" data-value="Payments">Payments</button></li>
+                                <li><button data-filter="category" data-value="Door locks">Door locks</button></li>
+                                <li><button data-filter="category" data-value="Identity">Identity</button></li>
+                                <li><button data-filter="category" data-value="Booking">Booking & calendar</button></li>
+                                <li><button data-filter="category" data-value="Storage">Storage & backup</button></li>
+                                <li><button data-filter="category" data-value="Monitoring">Monitoring</button></li>
+                            </ul>
+                        </div>
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Status</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="status" data-value="all">Any status</button></li>
+                                <li><button data-filter="status" data-value="healthy">Healthy</button></li>
+                                <li><button data-filter="status" data-value="degraded">Degraded</button></li>
+                                <li><button data-filter="status" data-value="failing">Failing</button></li>
+                                <li><button data-filter="status" data-value="paused">Paused</button></li>
+                                <li><button data-filter="status" data-value="not-configured">Not configured</button></li>
+                            </ul>
+                        </div>
+                        <button class="chip-clear" id="clearConnFilters" hidden>Clear filters</button>
+                    </div>
+                </section>
+
+                <section class="int-grid" id="intGrid"></section>
+
+                <div class="empty-state card" id="intEmpty" hidden>
+                    <div class="empty-icon">🔌</div>
+                    <p class="empty-title">No integrations match your filters</p>
+                    <p class="empty-sub">Try a different search or clear the filters.</p>
+                    <button class="btn btn-outline" id="emptyConnClearBtn">Clear filters</button>
+                </div>
+            </div>
+
+            <!-- ============ AVAILABLE TAB ============ -->
+            <div class="tab-panel" data-panel="available">
+                <section class="int-categories">
+                    <button class="cat-chip active" data-category="all">All categories</button>
+                    <button class="cat-chip" data-category="Messaging">Messaging</button>
+                    <button class="cat-chip" data-category="Payments">Payments</button>
+                    <button class="cat-chip" data-category="Door locks">Door locks</button>
+                    <button class="cat-chip" data-category="Identity">Identity</button>
+                    <button class="cat-chip" data-category="Booking">Booking & calendar</button>
+                    <button class="cat-chip" data-category="Storage">Storage & backup</button>
+                    <button class="cat-chip" data-category="Monitoring">Monitoring</button>
+                </section>
+
+                <section class="catalog-grid" id="catalogGrid"></section>
+            </div>
+
+            <!-- ============ WEBHOOKS & API TAB ============ -->
+            <div class="tab-panel" data-panel="webhooks">
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>Webhooks</h3>
+                            <span class="card-sub">Signed HTTP callbacks sent to your endpoints</span>
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="addWebhookBtn" data-role="super-admin">+ Add webhook</button>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>URL</th>
+                                        <th class="hide-sm">Events</th>
+                                        <th>Signing secret</th>
+                                        <th>Last delivery</th>
+                                        <th class="hide-md">Success rate</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="webhooksBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <header class="card-header">
+                        <div>
+                            <h3>API keys</h3>
+                            <span class="card-sub">Shown once at creation — after that only the last 4 characters</span>
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="createKeyBtn" data-role="super-admin">+ Create API key</button>
+                    </header>
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th class="hide-sm">Scopes</th>
+                                        <th>Key</th>
+                                        <th class="hide-md">Created</th>
+                                        <th class="hide-sm">Last used</th>
+                                        <th>Expiry</th>
+                                        <th class="col-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="keysBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ LOGS TAB ============ -->
+            <div class="tab-panel" data-panel="logs">
+                <section class="filters-bar">
+                    <div class="filter-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="search" id="logSearchInput" placeholder="Search integration, error code, guest, room…" aria-label="Search delivery logs">
+                    </div>
+                    <div class="filter-chips">
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Result</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="result" data-value="all">Any result</button></li>
+                                <li><button data-filter="result" data-value="success">Success</button></li>
+                                <li><button data-filter="result" data-value="failure">Failure</button></li>
+                                <li><button data-filter="result" data-value="retry">Retry</button></li>
+                            </ul>
+                        </div>
+                        <div class="chip-select">
+                            <button class="chip" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="chip-label">Integration</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <ul class="chip-menu" hidden>
+                                <li><button data-filter="logIntegration" data-value="all">Any integration</button></li>
+                                <li><button data-filter="logIntegration" data-value="Email (SendGrid)">Email</button></li>
+                                <li><button data-filter="logIntegration" data-value="SMS (Twilio)">SMS</button></li>
+                                <li><button data-filter="logIntegration" data-value="Door locks (Salto)">Door locks</button></li>
+                                <li><button data-filter="logIntegration" data-value="Payments (Stripe)">Payments</button></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-outline btn-sm" id="exportLogsBtn" style="margin-left:auto">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Export
+                        </button>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-body no-pad">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Integration</th>
+                                        <th>Result</th>
+                                        <th class="hide-md">Error</th>
+                                        <th class="hide-sm">Retries</th>
+                                        <th class="hide-md">Related</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logsBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="logsEmpty" hidden>
+                                <div class="empty-icon">🔍</div>
+                                <p class="empty-title">No log entries match your filters</p>
+                                <p class="empty-sub">Try a different search or clear the filters.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ SETTINGS TAB ============ -->
+            <div class="tab-panel" data-panel="settings">
+                <form class="card form-card" id="intSettingsForm">
+                    <header class="card-header">
+                        <div>
+                            <h3>Retry & fallback</h3>
+                            <span class="card-sub">How Haven behaves when a provider is unavailable</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="maxRetries">Max retries</label>
+                                <input type="number" id="maxRetries" value="3" min="1" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="retryDelay">Base retry delay (seconds)</label>
+                                <input type="number" id="retryDelay" value="30" min="5">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="failureEmail">Failure notification recipients</label>
+                                <input type="text" id="failureEmail" value="ops@haven.app, security@haven.app">
+                            </div>
+                            <div class="form-group">
+                                <label for="fallbackPolicy">Fallback behaviour</label>
+                                <select id="fallbackPolicy">
+                                    <option selected>SMS falls back to email</option>
+                                    <option>Queue and retry</option>
+                                    <option>Fail the request</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <header class="card-header">
+                        <div>
+                            <h3>Usage quotas</h3>
+                            <span class="card-sub">Warn at 80% of monthly quota</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <ul class="quota-list">
+                            <li class="quota-item">
+                                <span class="quota-label">Email (SendGrid)</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:34%"></div></div>
+                                <span class="quota-value">3,412 / 10,000</span>
+                            </li>
+                            <li class="quota-item quota-warn">
+                                <span class="quota-label">SMS (Twilio)</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:82%"></div></div>
+                                <span class="quota-value">4,108 / 5,000</span>
+                            </li>
+                            <li class="quota-item">
+                                <span class="quota-label">Payments (Stripe)</span>
+                                <div class="quota-bar"><div class="quota-fill" style="width:21%"></div></div>
+                                <span class="quota-value">₱ 212,400 / ₱ 1,000,000</span>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <footer class="dashboard-footer">
+                <span>Haven · Admin console</span>
+                <span>© 2026 Check-in Accommodation System</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- ============ INTEGRATION DRAWER ============ -->
+<div class="drawer-overlay" id="intOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="intDrawer" role="dialog" aria-modal="true" aria-labelledby="intDrawerTitle" hidden>
+    <header class="drawer-header">
+        <div class="drawer-identity">
+            <div class="drawer-avatar" id="dLogo">✉️</div>
+            <div>
+                <h3 id="intDrawerTitle">Email (SendGrid)</h3>
+                <p class="drawer-sub" id="intDrawerSub">Messaging · Used for transactional email</p>
+                <span class="status-pill pass" id="intDrawerStatus"><span class="dot"></span> Healthy</span>
+            </div>
+        </div>
+        <button class="drawer-close" id="intDrawerClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <div class="drawer-quick-actions" role="toolbar" aria-label="Quick actions">
+        <button class="quick-btn" data-action="test">Test connection</button>
+        <button class="quick-btn" data-action="sync">Sync now</button>
+        <button class="quick-btn" data-action="pause">Pause</button>
+        <button class="quick-btn" data-action="configure" data-role="super-admin">Configure</button>
+    </div>
+
+    <nav class="drawer-tabs" role="tablist" aria-label="Integration details">
+        <button class="drawer-tab active" role="tab" aria-selected="true" data-dtab="overview">Overview</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="config">Configuration</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="data">Data shared</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="activity">Activity</button>
+        <button class="drawer-tab" role="tab" aria-selected="false" data-dtab="history">History</button>
+    </nav>
+
+    <div class="drawer-body">
+        <!-- Overview -->
+        <div class="drawer-panel active" data-panel="overview">
+            <div class="drawer-section">
+                <h4>Summary</h4>
+                <p class="drawer-summary" id="dSummary">SendGrid sends transactional emails to guests and staff — check-in confirmations, overdue reminders, receipts.</p>
+            </div>
+            <div class="drawer-section">
+                <h4>Status</h4>
+                <dl class="drawer-details">
+                    <div><dt>Last successful sync</dt><dd id="dLastSync">3 minutes ago</dd></div>
+                    <div><dt>Next scheduled sync</dt><dd id="dNextSync">In 27 minutes</dd></div>
+                    <div><dt>Monthly usage</dt><dd id="dUsage">34% of 10,000</dd></div>
+                    <div><dt>Added</dt><dd id="dAdded">Sep 12, 2026 · by Sarah Villanueva</dd></div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Configuration -->
+        <div class="drawer-panel" data-panel="config">
+            <div class="drawer-section">
+                <h4>Credentials</h4>
+                <ul class="cred-list">
+                    <li>
+                        <span class="cred-label">API key</span>
+                        <code class="cred-value" id="dApiKey">SG.····················3f4e</code>
+                        <button class="btn btn-ghost btn-sm" data-rotate="api" data-role="super-admin">Rotate</button>
+                    </li>
+                    <li>
+                        <span class="cred-label">Webhook secret</span>
+                        <code class="cred-value" id="dWebhookSecret">whsec_·············9b2a</code>
+                        <button class="btn btn-ghost btn-sm" data-rotate="webhook" data-role="super-admin">Rotate</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="drawer-section">
+                <h4>Scopes</h4>
+                <ul class="scope-list" id="dScopes"></ul>
+            </div>
+            <div class="drawer-section">
+                <h4>Sync schedule</h4>
+                <p class="drawer-summary">Every 30 minutes · <a href="#" class="link-muted">Edit schedule</a></p>
+            </div>
+        </div>
+
+        <!-- Data shared -->
+        <div class="drawer-panel" data-panel="data">
+            <div class="drawer-section">
+                <h4>Fields sent to this service</h4>
+                <p class="card-sub" style="margin-bottom:12px">Only the fields listed below leave Haven.</p>
+                <ul class="data-list" id="dDataList"></ul>
+            </div>
+        </div>
+
+        <!-- Activity -->
+        <div class="drawer-panel" data-panel="activity">
+            <ul class="drawer-history" id="dActivity"></ul>
+        </div>
+
+        <!-- History -->
+        <div class="drawer-panel" data-panel="history">
+            <ul class="drawer-history" id="dHistory"></ul>
+        </div>
+    </div>
+</aside>
+
+<!-- ============ ADD INTEGRATION DRAWER (STEPPER) ============ -->
+<div class="drawer-overlay" id="addOverlay" hidden></div>
+<aside class="drawer drawer-lg" id="addDrawer" role="dialog" aria-modal="true" aria-labelledby="addTitle" hidden>
+    <header class="drawer-header">
+        <div>
+            <h3 id="addTitle">Add integration</h3>
+            <p class="drawer-sub" id="addSub">Step 1 of 5 · Choose</p>
+        </div>
+        <button class="drawer-close" id="addClose" aria-label="Close panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <nav class="stepper" aria-label="Add integration steps">
+        <ol class="stepper-list">
+            <li class="stepper-item active" data-step="1"><span class="stepper-num">1</span><span class="stepper-label">Choose</span></li>
+            <li class="stepper-item" data-step="2"><span class="stepper-num">2</span><span class="stepper-label">Connect</span></li>
+            <li class="stepper-item" data-step="3"><span class="stepper-num">3</span><span class="stepper-label">Scopes</span></li>
+            <li class="stepper-item" data-step="4"><span class="stepper-num">4</span><span class="stepper-label">Test</span></li>
+            <li class="stepper-item" data-step="5"><span class="stepper-num">5</span><span class="stepper-label">Activate</span></li>
+        </ol>
+    </nav>
+
+    <div class="drawer-body">
+        <div class="wizard-step active" data-wstep="1">
+            <p class="drawer-summary">Choose an integration from the catalogue to connect.</p>
+            <ul class="choose-list" id="chooseList"></ul>
+        </div>
+
+        <div class="wizard-step" data-wstep="2">
+            <div class="env-warning">
+                ⚠ Choose your environment. Production credentials must not be used in Sandbox.
+            </div>
+            <div class="form-group">
+                <label>Environment</label>
+                <div class="radio-row">
+                    <label class="radio-chip">
+                        <input type="radio" name="env" value="prod" checked>
+                        <span>Production</span>
+                    </label>
+                    <label class="radio-chip">
+                        <input type="radio" name="env" value="sandbox">
+                        <span>Sandbox</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="addApiKey">API key / credentials</label>
+                <input type="text" id="addApiKey" placeholder="Paste API key or OAuth">
+                <span class="form-hint">Secrets are stored encrypted. Shown once.</span>
+            </div>
+        </div>
+
+        <div class="wizard-step" data-wstep="3">
+            <h4 class="subsection-title">Permissions requested</h4>
+            <ul class="scope-list" id="addScopeList"></ul>
+            <h4 class="subsection-title">Data shared</h4>
+            <ul class="data-list" id="addDataList"></ul>
+        </div>
+
+        <div class="wizard-step" data-wstep="4">
+            <div class="test-block">
+                <p class="drawer-summary">Test the connection before activating. Fix any errors first.</p>
+                <div class="test-result" id="testResult">Ready to test.</div>
+                <button class="btn btn-primary" id="runTestBtn">Run test</button>
+            </div>
+        </div>
+
+        <div class="wizard-step" data-wstep="5">
+            <p class="drawer-summary">Everything is ready. Activating will enable syncing immediately.</p>
+            <ul class="summary-list">
+                <li><strong>Integration</strong> <span id="sumInt">SendGrid</span></li>
+                <li><strong>Environment</strong> <span id="sumEnv">Production</span></li>
+                <li><strong>Scopes</strong> <span id="sumScopes">3 scopes</span></li>
+                <li><strong>Data shared</strong> <span id="sumData">3 fields</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <footer class="drawer-footer wizard-footer">
+        <button class="btn btn-ghost" id="addBack" hidden>← Back</button>
+        <div class="wizard-footer-right">
+            <button class="btn btn-outline" id="addCancel">Cancel</button>
+            <button class="btn btn-primary" id="addNext">Next →</button>
+            <button class="btn btn-primary" id="addActivate" hidden>
+                <span class="btn-label">Activate</span>
+                <span class="btn-spinner" hidden></span>
+            </button>
+        </div>
+    </footer>
+</aside>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <header class="modal-header">
+            <h3 id="confirmTitle">Confirm action</h3>
+            <button class="modal-close" id="confirmClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="confirmText">Please confirm this action.</p>
+            <div class="form-group">
+                <label for="confirmWord">Type <strong id="confirmWordPrompt">CONFIRM</strong> <span class="required">*</span></label>
+                <input type="text" id="confirmWord" autocomplete="off" placeholder="CONFIRM">
+                <span class="error-msg" id="confirmWordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmReason">Reason <span class="required">*</span></label>
+                <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
+                <span class="error-msg" id="confirmReasonErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+            <button class="btn btn-danger" id="confirmSubmit">Confirm</button>
+        </footer>
+    </div>
+</div>
+
+<!-- ============ STEP-UP MODAL ============ -->
+<div class="modal-overlay" id="stepupOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stepupTitle">
+        <header class="modal-header">
+            <h3 id="stepupTitle">Re-authenticate to continue</h3>
+            <button class="modal-close" id="stepupClose" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text">This action changes integrations. Confirm your identity.</p>
+            <div class="form-group">
+                <label for="stepupPassword">Password</label>
+                <input type="password" id="stepupPassword" placeholder="Enter your password">
+                <span class="error-msg" id="stepupPasswordErr"></span>
+            </div>
+            <div class="form-group">
+                <label for="stepupCode">2FA code</label>
+                <input type="text" id="stepupCode" inputmode="numeric" maxlength="6" placeholder="6-digit code">
+                <span class="error-msg" id="stepupCodeErr"></span>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="stepupCancel">Cancel</button>
+            <button class="btn btn-primary" id="stepupVerify">Verify</button>
+        </footer>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="js/admin-integrations.js" defer></script>
+</body>
+</html>
