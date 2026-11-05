@@ -404,3 +404,90 @@ setInterval(tick, 5000);
 applyRole('front-desk');
 renderAll();
 })();
+
+
+// Global function para sa pag-approve ng room (Pwede mong tawagin sa Console)
+window.approveGuestRoom = async function(guestId, roomNumber) {
+    const { data: profile, error: fetchErr } = await window.supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', guestId)
+        .single();
+
+    if (fetchErr || !profile) {
+        console.error("Guest not found");
+        return;
+    }
+
+    // I-update ang profile: gawing official room, at burahin ang pending_room
+    const { error: updateErr } = await window.supabaseClient
+        .from('profiles')
+        .update({ 
+            room: roomNumber, 
+            pending_room: null 
+        })
+        .eq('id', guestId);
+
+    // I-update ang room status to occupied
+    await window.supabaseClient
+        .from('rooms')
+        .update({ status: 'occupied' })
+        .eq('room_number', roomNumber);
+
+    if (updateErr) {
+        console.error("Error approving:", updateErr);
+    } else {
+        console.log(`Approved! Guest is now in Room ${roomNumber}`);
+    }
+};
+
+// Function para sa pag-approve
+window.approveGuestRoom = async function(guestId, roomNumber) {
+    // 1. I-update ang Profile (gawing official room, alisin ang pending)
+    const { error: updateErr } = await window.supabaseClient
+        .from('profiles')
+        .update({ 
+            room: roomNumber, 
+            pending_room: null 
+        })
+        .eq('id', guestId);
+
+    if (updateErr) return console.error("Error:", updateErr);
+
+    // 2. I-update ang Room status
+    await window.supabaseClient
+        .from('rooms')
+        .update({ status: 'occupied' })
+        .eq('room_number', roomNumber);
+
+    alert(`Successfully approved Room ${roomNumber}!`);
+    window.location.reload(); // I-refresh para mawala yung notification
+};
+
+// Auto-fetch notifications for staff
+document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
+    if (!session) return;
+
+    // Makinig sa mga bagong notifications
+    window.supabaseClient
+        .channel('staff-notifications')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
+            const note = payload.new;
+            // Ipakita sa console at sa isang alert
+            console.log("NEW REQUEST:", note.message);
+            
+            // Para makita agad ng staff, mag-a-alert tayo na may request.
+            const confirmApprove = confirm(`NEW REQUEST:\n${note.message}\n\nClick OK to approve.`);
+            if (confirmApprove) {
+                // Kunin yung guest id mula sa user_id ng notification (na siyang guest id natin)
+                const guestId = note.user_id;
+                // Kunin yung room number mula sa message (basic parsing)
+                const roomMatch = note.message.match(/Room (\d+)/);
+                if (roomMatch) {
+                    window.approveGuestRoom(guestId, roomMatch[1]);
+                }
+            }
+        })
+        .subscribe();
+});

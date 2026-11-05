@@ -381,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             phone: get('contact'),
                             institution: get('institution'),
                             branch: get('branch'),
-                            room: get('unit'),
                             check_in: checkIn || null
                         }
                     }

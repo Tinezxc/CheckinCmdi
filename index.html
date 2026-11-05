@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- SIGURADUHIN NA GANITO ANG LINK SA CSS -->
     <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
@@ -32,12 +34,9 @@
                     <p>Please enter your details</p>
                 </div>
 
-                <!-- Shown after a successful registration -->
                 <div class="alert alert-success" id="registeredNotice" hidden role="status">
                     Account created! Please sign in with your email and password.
                 </div>
-
-                <!-- Shown when sign-in fails -->
                 <div class="alert alert-error" id="loginAlert" hidden role="alert"></div>
 
                 <form class="login-form" id="loginForm" novalidate>
@@ -63,6 +62,7 @@
                         <a href="#" class="forgot-password" onclick="openModal(event)">Forgot password?</a>
                     </div>
 
+                    <!-- DAPAT NANDIYAN ITO -->
                     <button type="submit" class="btn-signin" id="loginBtn">
                         <span class="btn-label">Sign in</span>
                         <span class="btn-spinner" hidden aria-label="Loading"></span>
@@ -70,6 +70,7 @@
                 </form>
             </div>
 
+            <!-- DAPAT NANDIYAN DIN ITO -->
             <div class="signup-prompt">
                 Are you new? <a href="register.html">Create an Account</a>
             </div>
@@ -80,29 +81,27 @@
 
     </div>
 
-    <!-- Forgot Password Modal -->
     <div class="modal-overlay" id="forgotModal">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal()">&times;</button>
-
             <div class="modal-header">
                 <div class="modal-icon">✦</div>
                 <h2>Forgot Password?</h2>
                 <p>Enter your registered email and we'll send you a link to reset your password.</p>
             </div>
-
             <form class="modal-form" onsubmit="handleSubmit(event)">
                 <div class="form-group">
                     <label for="reset-email">Email Address</label>
                     <input type="email" id="reset-email" placeholder="you@example.com" required>
                 </div>
-
                 <button type="submit" class="btn-submit">Send Reset Link</button>
             </form>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/pop-up.js" defer></script>
     <script src="js/login.js" defer></script>
+</body>
 </html>

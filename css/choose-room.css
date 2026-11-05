@@ -1,0 +1,151 @@
+:root {
+    --green-dark: #1b3a2e;
+    --green-light: #e2e8e0;
+    --green-accent: #4b7c5c;
+    --bg-cream: #f6f5f1;
+    --bg-white: #ffffff;
+    --border: #e0dfd9;
+    --text-main: #1f2923;
+    --text-muted: #4f5a53;
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--text-main);
+}
+
+.room-selection-container {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+}
+
+.card {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(31, 41, 35, 0.05);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.header h1 {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+    margin-top: 0;
+}
+
+.header p {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.room-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.room-card {
+    background: var(--bg-white);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.room-card:hover {
+    border-color: var(--green-accent);
+    box-shadow: 0 4px 12px rgba(75, 124, 92, 0.15);
+    transform: translateY(-2px);
+}
+
+.room-card.selected {
+    border-color: var(--green-dark);
+    background: var(--green-light);
+}
+
+.room-number {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+}
+
+.room-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.room-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 12px;
+}
+
+.status-available {
+    background: #dcf1e3;
+    color: #1e5a3a;
+}
+
+/* DITO YUNG DESIGN NG BUTTON */
+.footer-actions {
+    margin-top: 40px;
+    text-align: right;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+}
+
+.btn {
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--green-dark);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #12271f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(27, 58, 46, 0.3);
+}
+
+.btn-primary:disabled {
+    background: #cfcdc4;
+    cursor: not-allowed;
+    color: #ffffff;
+}
+
+.loading-text {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 0;
+}
