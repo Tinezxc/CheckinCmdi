@@ -11,6 +11,8 @@
     --font-sans: 'Inter', sans-serif;
 }
 
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
     background-color: var(--bg-cream);
     display: flex;
@@ -18,14 +20,14 @@ body {
     justify-content: center;
     min-height: 100vh;
     margin: 0;
+    padding: 40px 20px; /* Binigyan ng space sa ibabaw at ilalim */
     font-family: var(--font-sans);
     color: var(--text-main);
 }
 
 .room-selection-container {
     width: 100%;
-    max-width: 800px;
-    padding: 20px;
+    max-width: 1200px; /* PINALAPAD PARA SA PC */
 }
 
 .card {
@@ -43,7 +45,7 @@ body {
 
 .header h1 {
     font-family: var(--font-serif);
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: var(--green-dark);
     margin-bottom: 8px;
     margin-top: 0;
@@ -52,12 +54,14 @@ body {
 .header p {
     color: var(--text-muted);
     margin: 0;
+    font-size: 1.05rem;
 }
 
+/* LANDSCAPE GRID - Awtomatikong dadami ang columns kapag malapad ang screen */
 .room-options {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
+    gap: 20px;
 }
 
 .room-card {
@@ -68,6 +72,9 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .room-card:hover {
@@ -92,6 +99,7 @@ body {
 .room-info {
     font-size: 0.85rem;
     color: var(--text-muted);
+    margin-bottom: 12px;
 }
 
 .room-status {
@@ -100,7 +108,7 @@ body {
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
-    margin-top: 12px;
+    margin-top: auto;
 }
 
 .status-available {
@@ -148,4 +156,25 @@ body {
     text-align: center;
     color: var(--text-muted);
     padding: 40px 0;
+}
+
+/* =========================================
+   RESPONSIVE (Para hindi masira sa mobile)
+   ========================================= */
+@media (max-width: 768px) {
+    body { padding: 20px 12px; }
+    .card { padding: 24px 16px; }
+    .header h1 { font-size: 1.8rem; }
+    
+    /* Gawing 2 columns sa tablet/phone */
+    .room-options {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+    }
+    
+    .room-card { padding: 16px 12px; }
+    .room-number { font-size: 1.5rem; }
+    
+    .footer-actions { text-align: center; }
+    .btn { width: 100%; }
 }

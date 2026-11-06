@@ -13,6 +13,8 @@
     --status-amber-fg: #8a5a00;
     --status-gray-bg: #ececec;
     --status-gray-fg: #4a4a4a;
+    --status-blue-bg: #dee8fb;
+    --status-blue-fg: #1e3a8a;
     --danger: #b42318;
 
     --bg-cream: #f6f5f1;
@@ -50,11 +52,12 @@ body {
     color: var(--text-main);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden; /* Pinipigilan ang horizontal scroll sa mobile */
 }
 body.no-scroll { overflow: hidden; }
 
 button { font-family: inherit; cursor: pointer; }
-a { color: inherit; }
+a { color: inherit; text-decoration: none; }
 [hidden] { display: none !important; }
 
 :focus-visible {
@@ -71,7 +74,7 @@ a { color: inherit; }
 .dashboard-layout { display: flex; min-height: 100vh; width: 100%; }
 
 /* =========================================
-   SIDEBAR
+   SIDEBAR (Desktop)
    ========================================= */
 .sidebar {
     width: var(--sidebar-w);
@@ -541,7 +544,7 @@ a { color: inherit; }
     border: none;
     border-radius: var(--r-lg);
     padding: 0;
-    margin: auto; /* centers the dialog (the global reset removed the default) */
+    margin: auto; 
     max-height: calc(100vh - 32px);
     overflow-y: auto;
     width: min(440px, calc(100% - 32px));
@@ -610,32 +613,54 @@ a { color: inherit; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* =========================================
-   RESPONSIVE
+   RESPONSIVE - ITO YUNG FIX PARA SA MOBILE
    ========================================= */
+
+/* Tablet & Small Laptop */
 @media (max-width: 1100px) {
     .content-grid { grid-template-columns: 1fr; }
 }
 
+/* Mobile View (Tablet portrait pababa) */
 @media (max-width: 1024px) {
+    /* Ipakita ang mobile topbar */
     .mobile-topbar { display: flex; }
+    
+    /* Itago ang desktop topbar */
     .topbar { display: none; }
+    
+    /* Itago ang sidebar sa gilid at gawing slide-in menu */
     .sidebar { transform: translateX(-100%); }
     .sidebar.open { transform: translateX(0); }
     .sidebar-overlay.open { display: block; }
-    .main-content { margin-left: 0; }
+    
+    /* DITO YUNG PINAKAMALAKING FIX: alisin ang margin-left */
+    .main-content { margin-left: 0; width: 100%; }
+    
+    /* I-adjust ang padding para umayos sa mobile */
     .dashboard-content { padding: var(--s-5); }
 }
 
+/* Phone View */
 @media (max-width: 640px) {
     .dashboard-content { padding: var(--s-4); gap: var(--s-4); }
     .hero-card { padding: var(--s-5); }
+    
+    /* Siguraduhing maayos ang spacing ng dates sa mobile */
     .stay-meta { gap: var(--s-4); }
+    
+    /* Gawing full width ang buttons sa mobile para madaling pindutin */
     .hero-ctas { flex-direction: column; }
     .hero-ctas .btn { width: 100%; }
+    
     .card { padding: var(--s-4); }
+    
+    /* Gawing isang column ang quick actions sa sobrang liit */
     .actions-grid { grid-template-columns: 1fr; }
+    
     .toast-region { left: var(--s-4); right: var(--s-4); bottom: var(--s-4); }
     .toast { max-width: none; }
+    
     .modal-actions { flex-direction: column-reverse; }
     .modal-actions .btn { width: 100%; }
 }
@@ -644,336 +669,52 @@ a { color: inherit; }
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
 
-/* ===== Auth gate ===== */
-.auth-gate {
-    position: fixed;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    background: linear-gradient(140deg, #f6f3ec 0%, #eae4d8 100%);
-    z-index: 100;
-}
-.auth-gate[hidden] { display: none; }
+/* =========================================
+   MOBILE LAYOUT FIX (tablet & phone, <= 1024px)
+   Root cause: .mobile-topbar and .main-content were laid out
+   side by side in the flex row of .dashboard-layout, which
+   squeezed the page into a narrow strip. Stack them instead.
+   ========================================= */
+@media screen and (max-width: 1024px) {
+    .dashboard-layout {
+        flex-direction: column;
+        width: 100%;
+    }
 
-.auth-card {
-    width: 100%;
-    max-width: 380px;
-    padding: 32px 28px;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 20px 60px rgba(60, 50, 30, .15);
-}
-.auth-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-}
-.auth-logo .logo-box {
-    width: 40px; height: 40px;
-    display: grid; place-items: center;
-    background: #2f3d2f;
-    color: #fff;
-    border-radius: 10px;
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-}
-.auth-logo .logo-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: #2f3d2f;
-}
-.auth-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    margin: 0 0 6px;
-    color: #2f3d2f;
-}
-.auth-sub {
-    margin: 0 0 18px;
-    color: #6b6b6b;
-    font-size: 14px;
-}
-.auth-hint {
-    margin-top: 14px;
-    font-size: 12px;
-    color: #888;
-    text-align: center;
-}
-.auth-hint code {
-    background: #f1eee7;
-    padding: 1px 5px;
-    border-radius: 4px;
-    color: #555;
-}
-.form-group { margin-bottom: 14px; }
-.form-group label {
-    display: block;
-    font-size: 13px;
-    color: #555;
-    margin-bottom: 6px;
-}
-.form-group input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #d6d2c7;
-    border-radius: 9px;
-    font: inherit;
-    font-size: 14px;
-}
-.form-group input:focus {
-    outline: none;
-    border-color: #2f3d2f;
-}
-.error-msg {
-    display: block;
-    margin-top: 6px;
-    color: #c53030;
-    font-size: 12px;
-    min-height: 14px;
-}
-.btn-block { width: 100%; }
+    /* Slide-in sidebar (hidden until the menu button is tapped) */
+    .sidebar {
+        transform: translateX(-100%);
+        visibility: hidden;
+        width: min(var(--sidebar-w), 85vw);
+        transition: transform 0.25s ease, visibility 0.25s;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+        visibility: visible;
+    }
 
-/* ===== Toast (if not already defined) ===== */
-.toast-region {
-    position: fixed;
-    right: 18px; bottom: 18px;
-    display: flex; flex-direction: column;
-    gap: 8px; z-index: 200;
-}
-.toast {
-    padding: 12px 16px;
-    background: #2f3d2f;
-    color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 10px 24px rgba(0,0,0,.2);
-    font-size: 13px;
-    display: flex; flex-direction: column;
-    transition: opacity .3s, transform .3s;
-}
-.toast strong { font-weight: 600; margin-bottom: 2px; }
-.toast span { opacity: .85; }
-.toast.leaving { opacity: 0; transform: translateY(6px); }
+    .mobile-topbar {
+        display: flex;
+        width: 100%;
+        flex: 0 0 auto;
+    }
+    .topbar { display: none; }
 
-/* ===== Notification list empty state ===== */
-.notif-empty {
-    padding: 20px;
-    text-align: center;
-    color: #888;
-    font-size: 13px;
-}
-.notif-item {
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0ece2;
-}
-.notif-item:last-child { border-bottom: 0; }
-.notif-title { font-size: 13px; color: #2f3d2f; }
-.notif-meta { font-size: 11px; color: #999; margin-top: 2px; }
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+        flex: 1 1 auto;
+    }
 
-/* ===== Auth gate ===== */
-.auth-gate {
-    position: fixed;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    background: linear-gradient(140deg, #f6f3ec 0%, #eae4d8 100%);
-    z-index: 100;
-    font-family: 'Inter', system-ui, sans-serif;
-}
-.auth-gate[hidden] { display: none; }
+    .content-grid { grid-template-columns: 1fr; }
 
-.auth-card {
-    width: 100%;
-    max-width: 380px;
-    padding: 32px 28px;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 20px 60px rgba(60, 50, 30, .15);
-}
-.auth-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-}
-.auth-logo .logo-box {
-    width: 40px; height: 40px;
-    display: grid; place-items: center;
-    background: #2f3d2f;
-    color: #fff;
-    border-radius: 10px;
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-}
-.auth-logo .logo-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: #2f3d2f;
-}
-.auth-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    margin: 0 0 6px;
-    color: #2f3d2f;
-}
-.auth-sub {
-    margin: 0 0 18px;
-    color: #6b6b6b;
-    font-size: 14px;
-}
-.auth-hint {
-    margin-top: 14px;
-    font-size: 12px;
-    color: #888;
-    text-align: center;
-}
-.auth-hint code {
-    background: #f1eee7;
-    padding: 1px 5px;
-    border-radius: 4px;
-    color: #555;
+    .hero-title { word-break: break-word; }
 }
 
-/* ===== Form group inside gate ===== */
-.form-group { margin-bottom: 14px; }
-.form-group label {
-    display: block;
-    font-size: 13px;
-    color: #555;
-    margin-bottom: 6px;
-}
-.form-group input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #d6d2c7;
-    border-radius: 9px;
-    font: inherit;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-.form-group input:focus {
-    outline: none;
-    border-color: #2f3d2f;
-}
-.error-msg {
-    display: block;
-    margin-top: 6px;
-    color: #c53030;
-    font-size: 12px;
-    min-height: 14px;
-    line-height: 1.4;
-}
-
-/* ===== Buttons inside gate ===== */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 18px;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    font: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background .15s, border-color .15s;
-}
-.btn-primary {
-    background: #2f3d2f;
-    color: #fff;
-    border-color: #2f3d2f;
-}
-.btn-primary:hover { background: #24301f; }
-.btn-outline {
-    background: #fff;
-    color: #2f3d2f;
-    border-color: #d6d2c7;
-}
-.btn-ghost {
-    background: transparent;
-    color: #555;
-    border-color: transparent;
-}
-.btn-block { width: 100%; }
-
-/* ===== Toast region ===== */
-.toast-region {
-    position: fixed;
-    right: 18px; bottom: 18px;
-    display: flex; flex-direction: column;
-    gap: 8px; z-index: 200;
-}
-.toast {
-    padding: 12px 16px;
-    background: #2f3d2f;
-    color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 10px 24px rgba(0,0,0,.2);
-    font-size: 13px;
-    display: flex; flex-direction: column;
-    transition: opacity .3s, transform .3s;
-    max-width: 320px;
-}
-.toast strong { font-weight: 600; margin-bottom: 2px; }
-.toast span { opacity: .85; }
-.toast.leaving { opacity: 0; transform: translateY(6px); }
-
-/* ===== Notification list ===== */
-.notif-empty {
-    padding: 20px;
-    text-align: center;
-    color: #888;
-    font-size: 13px;
-}
-.notif-item {
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0ece2;
-}
-.notif-item:last-child { border-bottom: 0; }
-.notif-title { font-size: 13px; color: #2f3d2f; }
-.notif-meta { font-size: 11px; color: #999; margin-top: 2px; }
-
-/* ===== Status pills (used by hero + reg + notifications) ===== */
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 500;
-    background: #eee;
-    color: #555;
-}
-.status-pill.checked-in { background: #e6f4ea; color: #1e5a3a; }
-.status-pill.checked-out { background: #eef0f3; color: #555; }
-.status-pill.overdue { background: #fde8e8; color: #9b1c1c; }
-.status-pill.arriving { background: #e8f1fd; color: #1e4a9b; }
-
-/* ===== Progress bar ===== */
-.progress-track {
-    position: relative;
-    height: 8px;
-    background: #eee;
-    border-radius: 999px;
-    overflow: hidden;
-}
-.progress-fill {
-    height: 100%;
-    width: 0;
-    background: #2f3d2f;
-    transition: width .4s ease;
-}
-
-/* ===== Amenities chips ===== */
-.amenity {
-    display: inline-block;
-    padding: 3px 10px;
-    margin: 2px 4px 2px 0;
-    background: #f1eee7;
-    border-radius: 999px;
-    font-size: 12px;
-    color: #555;
+/* Small phones: allow long values to wrap instead of overflowing */
+@media screen and (max-width: 480px) {
+    .detail-row { flex-wrap: wrap; row-gap: 2px; }
+    .detail-value { text-align: right; min-width: 0; overflow-wrap: anywhere; }
+    .stay-meta { gap: var(--s-4) var(--s-5); }
 }

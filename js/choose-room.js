@@ -1,3 +1,8 @@
+import {
+    showSkeleton,
+    hideSkeleton
+} from 'js/utils/skeletonloading.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session }, error: sessionError } = await window.supabaseClient.auth.getSession();
     if (sessionError || !session) { window.location.href = 'index.html'; return; }
@@ -53,3 +58,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
+
+// Show room card skeletons
+showSkeleton(roomGrid, {
+    count: 6,
+    type: 'cards'
+});
+
+// Fetch available rooms
+const { data: rooms, error: roomsError } = await window.supabaseClient
+    .from('rooms')
+    .select('*')
+    .eq('status', 'vacant-clean');
+
+// Hide skeleton after fetching
+hideSkeleton(roomGrid);
