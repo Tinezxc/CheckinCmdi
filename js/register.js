@@ -147,6 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         'address': { required: true, messages: { required: 'Address is required.' } },
+        'sex': {
+            required: true,
+            validate: (v) => ['Male', 'Female'].includes(v) || 'Please select Male or Female.',
+            messages: { required: 'Sex is required.' }
+        },
         'checkin': {
             required: true,
             validate: (v) => {
@@ -259,6 +264,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const group = input.closest('.form-group');
             if (group && group.classList.contains('error')) validateField(fieldId);
         });
+        // <select> fires "change" — make sure the error clears right after picking
+        if (input.tagName === 'SELECT') {
+            input.addEventListener('change', () => validateField(fieldId));
+        }
     });
 
     const passwordInput = document.getElementById('password');
@@ -381,6 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             phone: get('contact'),
                             institution: get('institution'),
                             branch: get('branch'),
+                            gender: get('sex'),
                             check_in: checkIn || null
                         }
                     }
@@ -410,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
             e.preventDefault();
-            const inputs = [...form.querySelectorAll('input')];
+            const inputs = [...form.querySelectorAll('input, select')];
             const idx = inputs.indexOf(e.target);
             if (idx > -1 && idx < inputs.length - 1) {
                 inputs[idx + 1].focus();

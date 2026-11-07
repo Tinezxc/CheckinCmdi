@@ -178,3 +178,75 @@ body {
     .footer-actions { text-align: center; }
     .btn { width: 100%; }
 }
+
+/* =========================================
+   FLOORS & OCCUPANCY
+   ========================================= */
+.floor-heading {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--green-dark);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-top: 12px;
+}
+
+.floor-heading:first-child { margin-top: 0; }
+
+.floor-heading small {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.room-beds {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+.bed-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+}
+
+.bed-dot.taken { background: var(--green-dark); }
+
+.status-men   { background: #dbe9f7; color: #1d4e7a; }
+.status-women { background: #f8e1ec; color: #8a2c5a; }
+.status-full  { background: #ece9e2; color: #6b6f6a; }
+
+.room-card.unavailable {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #faf9f6;
+}
+
+.room-card.unavailable:hover {
+    border-color: var(--border);
+    box-shadow: none;
+    transform: none;
+}
+
+.notice {
+    grid-column: 1 / -1;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.notice-error {
+    background: #fbe9e7;
+    color: #8a2c1f;
+    border: 1px solid #f1c9c2;
+}

@@ -133,6 +133,34 @@ body {
 }
 .form-group input::placeholder { color: var(--color-text-placeholder); }
 
+/* Select (Sex) — matches the inputs */
+.form-group select {
+    width: 100%;
+    padding: 0.8rem 2.5rem 0.8rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: var(--color-text-dark);
+    background-color: var(--color-bg-gray);
+    outline: none;
+    transition: all 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    cursor: pointer;
+}
+.form-group select:invalid { color: var(--color-text-placeholder); }
+.form-group select option { color: var(--color-text-dark); }
+.form-group select:focus {
+    border-color: var(--color-primary);
+    background-color: var(--color-bg-white);
+    box-shadow: 0 0 0 3px rgba(28, 76, 212, 0.08);
+}
+.form-group.error select { border-color: #dc2626; }
+
 /* Errors */
 .error-msg {
     display: block;
