@@ -391,6 +391,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             institution: get('institution'),
                             branch: get('branch'),
                             gender: get('sex'),
+                            unit: get('unit'),
+                            address: get('address'),
                             check_in: checkIn || null
                         }
                     }

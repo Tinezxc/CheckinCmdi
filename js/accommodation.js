@@ -61,24 +61,69 @@ function setupSidebar() {
         overlay.addEventListener('click', () => setOpen(false));
     }
 
-    // Close on Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') setOpen(false);
     });
 
-    // Close the menu after tapping a link inside it
     sidebar.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', () => setOpen(false));
     });
 }
 
+/** Real floor / capacity of the guest's room (pending or approved). */
+async function fetchMyRoom(db, p) {
+    const roomNo = p.room || p.pending_room;
+    if (!roomNo) return null;
+
+    const fallback = {
+        room_number: String(roomNo),
+        floor: Number(String(roomNo).charAt(0)) || null,
+        capacity: null,
+        occupants: null
+    };
+
+    try {
+        const { data, error } = await db.rpc('get_my_room');
+        if (error || !data || !data.length) return fallback;
+        return data[0];
+    } catch (e) {
+        return fallback;
+    }
+}
+
+const fmtDate = (d) =>
+    d && !isNaN(new Date(d).getTime())
+        ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '—';
+
+function stayProgress(start, end) {
+    const s = new Date(start).getTime();
+    const e = end.getTime();
+    if (isNaN(s) || isNaN(e) || e <= s) return 0;
+    return Math.max(0, Math.min(100, Math.round(((Date.now() - s) / (e - s)) * 100)));
+}
+
+const REQUEST_LABELS = {
+    extend: 'Extend stay',
+    checkout: 'Check-out request',
+    maintenance: 'Maintenance',
+    housekeeping: 'Housekeeping',
+    other: 'Other'
+};
+const STATUS_LABELS = {
+    pending: 'Pending',
+    in_progress: 'In progress',
+    done: 'Done',
+    rejected: 'Declined'
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
+
+    const db = window.supabaseClient;
 
     // Make the hamburger menu work right away
     setupSidebar();
 
-    // The element that gets the skeleton. Uses #guestShell if the page has it,
-    // otherwise falls back to the <main> element.
     const shell =
         document.getElementById('guestShell') ||
         document.querySelector('main');
@@ -100,8 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
 
         // 1. Check Session
-        const { data: { session }, error: sessionError } =
-            await window.supabaseClient.auth.getSession();
+        const { data: { session }, error: sessionError } = await db.auth.getSession();
 
         if (sessionError || !session) {
             window.location.href = 'index.html';
@@ -109,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 2. Fetch Profile Data
-        const { data: p, error } = await window.supabaseClient
+        const { data: p, error } = await db
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
@@ -120,7 +164,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // 3. Update UI with Real Data
+        const info = await fetchMyRoom(db, p);
+        const approved = !!p.room;
+        const pending = !approved && !!p.pending_room;
+
+        // 3. Sidebar
         const initials = (p.full_name || '')
             .split(' ')
             .map(n => n[0])
@@ -128,7 +176,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             .substring(0, 2)
             .toUpperCase();
 
-        // Sidebar
         document.querySelectorAll('[data-bind="initials"]')
             .forEach(el => el.textContent = initials);
         document.querySelectorAll('[data-bind="name"]')
@@ -136,49 +183,214 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('[data-bind="regId"]')
             .forEach(el => el.textContent = p.reg_id || 'Pending');
 
-        // Page Header (Dorm Info)
-        const roomNum = p.room || 'Unassigned';
+        // 4. Page header (dorm info)
+        const floorLabel = info && info.floor ? `Floor ${info.floor}` : '—';
 
-        setText(
-            'dormTitle',
-            roomNum !== 'Unassigned' ? `Dorm ${roomNum}` : 'No Room Assigned'
-        );
-        setText(
-            'dormSub',
-            p.room
-                ? `Floor ${p.room.charAt(0)} · Shared dormitory`
-                : 'Please contact front desk'
-        );
+        if (approved) {
+            setText('dormTitle', `Dorm ${p.room}`);
+            setText('dormSub', `${floorLabel} · Shared dormitory`);
+        } else if (pending) {
+            setText('dormTitle', `Room ${p.pending_room} (Pending approval)`);
+            setText('dormSub', 'Waiting for staff to approve your room request');
+        } else {
+            setText('dormTitle', 'No Room Selected');
+            setText('dormSub', 'Choose a room from your dashboard to get started');
+        }
 
-        // Stay Details
-        setText(
-            'factCheckIn',
-            p.check_in
-                ? new Date(p.check_in).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                })
-                : '—'
-        );
-        setText('factCheckOut', 'TBD'); // You can add a check_out column later
-        setText('factStatus', p.room ? 'Checked in' : 'Not checked in');
+        // 5. Stay details
+        const checkIn = p.check_in || p.created_at;
+        const storedCheckOut = p.check_out ? new Date(p.check_out) : null;
+        const checkOut = storedCheckOut || new Date(new Date(checkIn).getTime() + 7 * 86400000);
 
-        // Dorm Details
-        setText('dormFloor', p.room ? `Floor ${p.room.charAt(0)}` : '—');
-        setText('dormCapacity', p.capacity || '5 Trainees'); // Will use database capacity soon
+        setText('factCheckIn', approved ? fmtDate(checkIn) : '—');
+        setText('factCheckOut', approved ? fmtDate(checkOut) + (storedCheckOut ? '' : ' (est.)') : '—');
+        setText('factStatus', approved ? 'Checked in' : pending ? 'Pending approval' : 'Not checked in');
 
-        // Status Pill
+        // Stay progress bar
+        const pct = approved ? stayProgress(checkIn, checkOut) : 0;
+        const bar = document.getElementById('stayBar');
+        const fill = document.getElementById('stayBarFill');
+        if (bar) bar.setAttribute('aria-valuenow', String(pct));
+        if (fill) fill.style.width = pct + '%';
+
+        // Status pill
         const statusLabel = document.getElementById('statusLabel');
         if (statusLabel) {
-            if (p.room) {
+            if (approved) {
                 statusLabel.textContent = 'Checked in';
                 statusLabel.className = 'status ok';
+            } else if (pending) {
+                statusLabel.textContent = 'Pending approval';
+                statusLabel.className = 'status warn';
             } else {
                 statusLabel.textContent = 'Not checked in';
                 statusLabel.className = 'status warn';
             }
         }
+
+        // 6. Dorm details (real data from the rooms table)
+        setText('dormFloor', floorLabel);
+        setText('dormCapacity', info && info.capacity ? `${info.capacity} trainees` : '—');
+
+        // 7. Wi-Fi (only handed out to approved guests)
+        const wifiNote = document.getElementById('wifiNote');
+        if (approved) {
+            const { data: wifi, error: wifiError } = await db.rpc('get_wifi_info');
+            if (!wifiError && wifi && wifi.length) {
+                setText('wifiNetwork', wifi[0].network || '—');
+                setText('wifiPassword', wifi[0].password || '—');
+                if (wifiNote) wifiNote.hidden = true;
+            } else if (wifiNote) {
+                wifiNote.textContent = 'Wi-Fi details are not available yet. Please ask the front desk.';
+            }
+        }
+
+        // 8. Service requests
+        const requestList = document.getElementById('requestList');
+        const extendBtn = document.getElementById('extendBtn');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const newRequestBtn = document.getElementById('newRequestBtn');
+
+        async function loadRequests() {
+            if (!requestList) return;
+            const { data: rows, error: reqError } = await db
+                .from('service_requests')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            requestList.innerHTML = '';
+
+            if (reqError || !rows || rows.length === 0) {
+                const li = document.createElement('li');
+                li.className = 'req-empty';
+                li.textContent = reqError
+                    ? 'Requests are not available yet.'
+                    : 'No active requests.';
+                requestList.appendChild(li);
+                return;
+            }
+
+            rows.forEach((r) => {
+                const li = document.createElement('li');
+                li.className = 'req-item';
+
+                const left = document.createElement('div');
+                const title = document.createElement('div');
+                title.className = 'req-item-title';
+                title.textContent = REQUEST_LABELS[r.type] || r.type;
+                left.appendChild(title);
+
+                if (r.details) {
+                    const text = document.createElement('div');
+                    text.className = 'req-item-text';
+                    text.textContent = r.details;
+                    left.appendChild(text);
+                }
+
+                const date = document.createElement('div');
+                date.className = 'req-item-date';
+                date.textContent = fmtDate(r.created_at);
+                left.appendChild(date);
+
+                const badge = document.createElement('span');
+                badge.className = 'req-badge ' + (r.status || 'pending');
+                badge.textContent = STATUS_LABELS[r.status] || 'Pending';
+
+                li.appendChild(left);
+                li.appendChild(badge);
+                requestList.appendChild(li);
+            });
+        }
+
+        await loadRequests();
+
+        // Dialog
+        const dialog = document.getElementById('requestDialog');
+        const form = document.getElementById('requestForm');
+        const typeWrap = document.getElementById('requestTypeWrap');
+        const typeSelect = document.getElementById('requestType');
+        const detailsInput = document.getElementById('requestDetails');
+        const errorEl = document.getElementById('requestError');
+        const submitBtn = document.getElementById('requestSubmit');
+        const cancelBtn = document.getElementById('requestCancel');
+        const titleEl = document.getElementById('requestDialogTitle');
+
+        let fixedType = null;      // set for "Extend stay" / "Request check-out"
+        let detailsRequired = false;
+
+        function openRequest({ type = null, title, placeholder, required = false }) {
+            fixedType = type;
+            detailsRequired = required;
+            titleEl.textContent = title;
+            detailsInput.placeholder = placeholder;
+            detailsInput.value = '';
+            errorEl.textContent = '';
+            typeWrap.hidden = !!type;
+            if (!type) typeSelect.value = 'maintenance';
+            dialog.showModal();
+            detailsInput.focus();
+        }
+
+        if (!approved) {
+            // Requests are for approved guests only
+            [extendBtn, checkoutBtn, newRequestBtn].forEach((b) => {
+                if (!b) return;
+                b.disabled = true;
+                b.title = 'Available once your room is approved';
+            });
+        } else {
+            extendBtn?.addEventListener('click', () => openRequest({
+                type: 'extend',
+                title: 'Extend your stay',
+                placeholder: 'How many extra days, or what new check-out date would you like?',
+                required: true
+            }));
+            checkoutBtn?.addEventListener('click', () => openRequest({
+                type: 'checkout',
+                title: 'Request check-out',
+                placeholder: 'Preferred check-out date and time (optional)'
+            }));
+            newRequestBtn?.addEventListener('click', () => openRequest({
+                title: 'New request',
+                placeholder: 'Tell us what you need',
+                required: true
+            }));
+        }
+
+        cancelBtn?.addEventListener('click', () => dialog.close());
+
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const details = detailsInput.value.trim();
+            const type = fixedType || typeSelect.value;
+
+            if (detailsRequired && !details) {
+                errorEl.textContent = 'Please add a few details.';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            const { error: insertError } = await db.from('service_requests').insert({
+                user_id: session.user.id,
+                type,
+                details: details || null
+            });
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send request';
+
+            if (insertError) {
+                errorEl.textContent = 'Could not send the request: ' + insertError.message;
+                return;
+            }
+
+            dialog.close();
+            await loadRequests();
+        });
 
     } catch (err) {
 

@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         setField('fullname', p.full_name);
         setField('email', session.user.email);
         setField('phone', p.phone);
+        setField('sex', p.gender);
         setField('institution', p.institution);
         setField('guestId', p.guest_id);
 
@@ -167,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         setSummary('institution', p.institution);
         setSummary('branch', p.branch);
-        setSummary('room', p.room || 'Unassigned');
+        setSummary('room', p.room || (p.pending_room ? `${p.pending_room} (Pending)` : 'Unassigned'));
         setSummary(
             'checkIn',
             p.check_in
@@ -179,6 +180,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 : '—'
         );
         setSummary('regId', p.reg_id);
+
+        // Status pill reflects the real state (not always "Checked in")
+        const statusPill = document.getElementById('statusPill');
+        if (statusPill) {
+            let cls = 'neutral', label = 'No room selected';
+            if (p.room) { cls = 'checked-in'; label = 'Checked in'; }
+            else if (p.pending_room) { cls = 'overdue'; label = 'Pending approval'; }
+            statusPill.className = 'status-pill ' + cls;
+            statusPill.innerHTML = '<span class="dot"></span> ' + label;
+        }
 
         // 4. Setup QR Code
         const qrBtn = document.getElementById('qrBtn');

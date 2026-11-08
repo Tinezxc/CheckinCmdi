@@ -130,6 +130,17 @@
                             <span class="detail-value" data-bind="branch"></span>
                         </div>
 
+                        <!-- PENDING REQUEST: change room / cancel -->
+                        <div id="pendingContainer" style="margin-top: 24px; padding-top: 24px; border-top: 1px dashed #e0dfd9; display: none;">
+                            <p style="font-size: 0.85rem; color: #4f5a53; margin-bottom: 12px;">
+                                Your request for Room <strong data-bind="pendingRoom"></strong> is waiting for staff approval.
+                            </p>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="btn btn-primary" type="button" id="changeRoomBtn">Change room</button>
+                                <button class="btn" type="button" id="cancelRequestBtn" style="background: none; border: 1px solid #cfcdc4; color: #4f5a53;">Cancel request</button>
+                            </div>
+                        </div>
+
                         <!-- ITO YUNG BUTTON PARA SA CHOOSE ROOM -->
                         <div id="chooseRoomContainer" style="margin-top: 24px; padding-top: 24px; border-top: 1px dashed #e0dfd9; display: none;">
                             <p style="font-size: 0.85rem; color: #4f5a53; margin-bottom: 12px;">You haven't selected a room yet.</p>
