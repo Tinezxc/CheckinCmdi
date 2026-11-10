@@ -1,80 +1,29 @@
-/* Haven staff console: dashboard behaviour (mock data, no backend).
-   Floors: 2 (rooms 101-111, 201-211). Queue shows 12 rows per page. */
+/* Haven staff console: dashboard behaviour.
+   Starts EMPTY: no sample guests, rooms, requests or activity.
+   Fill the data containers below (rooms, queue, overdue, requests, activity)
+   at runtime and call renderAll() to show them. */
 (() => {
 'use strict';
 
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const initials = n => n.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const initials = n => String(n).split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || '–';
 const PAGE_SIZE = 12;
 
-/* ---------------- Data ---------------- */
+/* ---------------- Labels ---------------- */
 const STATUS_LABEL = { 'pending': 'Pending', 'checked-in': 'Checked In', 'checked-out': 'Checked Out', 'overdue': 'Overdue' };
 const ROOM_LABEL = { 'occupied': 'Occupied', 'vacant-clean': 'Vacant clean', 'vacant-dirty': 'Vacant dirty', 'cleaning': 'Cleaning', 'maintenance': 'Maintenance', 'reserved': 'Reserved' };
 
-const rooms = {};
-const layout = {
-    1: ['vacant-clean', 'occupied', 'vacant-dirty', 'cleaning', 'reserved', 'maintenance', 'occupied', 'occupied', 'vacant-clean', 'occupied', 'vacant-dirty'],
-    2: ['occupied', 'reserved', 'occupied', 'occupied', 'cleaning', 'vacant-dirty', 'occupied', 'occupied', 'reserved', 'vacant-clean', 'reserved']
-};
-Object.entries(layout).forEach(([f, list]) => list.forEach((status, i) => {
-    const number = +f * 100 + i + 1;
-    rooms[number] = { number, floor: +f, status, history: [] };
-}));
+/* ---------------- Data (empty) ---------------- */
+const rooms = {};                                            // { [number]: { number, floor, status, capacity?, history: [] } }
+const queue = { arrivals: [], departures: [], inhouse: [] }; // { guest, guestId, room, time, status }
+const overdue = [];                                          // { name, room, expected, days }
+const STAFF = ['Unassigned'];                                // names for the "Assign to" dropdown
+const requests = [];                                         // { id, title, room, guest, ago, priority, assignee }
+const activity = [];                                         // { who, html, at, cls }
 
-const FIRST = ['Maya', 'Leo', 'Nina', 'Omar', 'Zoe', 'Ken', 'Ana', 'Ivan', 'Priya', 'Tom', 'Lia', 'Sam', 'Hugo', 'Yuki', 'Elena'];
-const LAST = ['Santos', 'Garcia', 'Nguyen', 'Silva', 'Kowalski', 'Haddad', 'Lopez', 'Park', 'Rossi', 'Dubois', 'Ibrahim', 'Cole', 'Meyer'];
-const TIMES = ['09:00 AM', '09:30 AM', '10:00 AM', '12:00 PM', '12:30 PM', '01:00 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '06:00 PM'];
-let idSeq = 1008;
-const nextId = () => 'TR-' + (++idSeq);
-const person = i => FIRST[i % FIRST.length] + ' ' + LAST[(i * 5 + 2) % LAST.length];
-const mk = (guest, guestId, room, time, status) => ({ guest, guestId, room, time, status });
-
-const queue = {
-    arrivals: [
-        mk('Aiko Tanaka', 'TR-1002', 202, '10:30 AM', 'pending'),
-        mk('Diego Marquez', 'TR-1003', 203, '11:00 AM', 'pending'),
-        mk('Lena Okafor', 'TR-1004', 208, '11:45 AM', 'checked-in'),
-        mk('Ravi Batra', 'TR-1005', 209, '01:15 PM', 'pending'),
-        mk('Mei Chen', 'TR-1006', 211, '02:00 PM', 'pending')
-    ],
-    departures: [
-        mk('Sofia Reyes', 'TR-1001', 201, '11:00 AM', 'overdue'),
-        mk('Jamie Dela Cruz', 'TR-1007', 107, '11:00 AM', 'pending'),
-        mk('Hana Kim', 'TR-1008', 207, '11:30 AM', 'checked-out')
-    ],
-    inhouse: []
-};
-[[105, 'pending'], [109, 'checked-in'], [210, 'pending'], [101, 'checked-in'], [211, 'pending'], [202, 'checked-in'], [109, 'pending']]
-    .forEach(([room, status], i) => queue.arrivals.push(mk(person(i), nextId(), room, TIMES[i], status)));
-[[102, 'pending'], [108, 'checked-out'], [204, 'pending'], [110, 'checked-out'], [203, 'pending']]
-    .forEach(([room, status], i) => queue.departures.push(mk(person(i + 20), nextId(), room, TIMES[i + 3], status)));
-const OCC = [102, 107, 108, 110, 201, 203, 204, 207, 208];
-for (let i = 0; i < 43; i++) queue.inhouse.push(mk(person(i + 40), nextId(), OCC[i % OCC.length], TIMES[i % TIMES.length], 'checked-in'));
-
-const overdue = [
-    { name: 'Sofia Reyes', room: 201, expected: 'Oct 9, 2026', days: 1 },
-    { name: 'Diego Marquez', room: 203, expected: 'Oct 8, 2026', days: 2 }
-];
-
-const STAFF = ['Unassigned', 'Joy Lim (Housekeeping)', 'Ravi Batra (Maintenance)', 'Marco Cruz (Front desk)'];
-const requests = [
-    { id: 1, title: 'Housekeeping', room: 201, guest: 'Sofia Reyes', ago: '5 min ago', priority: 'urgent', assignee: STAFF[1] },
-    { id: 2, title: 'Maintenance', room: 203, guest: 'Diego Marquez', ago: '20 min ago', priority: 'normal', assignee: STAFF[0] },
-    { id: 3, title: 'Extra bedding', room: 202, guest: 'Aiko Tanaka', ago: '1 hr ago', priority: 'normal', assignee: STAFF[1] },
-    { id: 4, title: 'Locker issue', room: 208, guest: 'Lena Okafor', ago: '2 hr ago', priority: 'normal', assignee: STAFF[0] },
-    { id: 5, title: 'Late check-out', room: 207, guest: 'Hana Kim', ago: '3 hr ago', priority: 'urgent', assignee: STAFF[2] }
-];
-
-const now0 = Date.now();
-const activity = [
-    { who: 'Marco Cruz', html: 'checked in <strong>Sofia Reyes</strong> to room <strong>201</strong>.', at: now0 - 5 * 60e3 },
-    { who: 'Joy Lim', html: 'marked room <strong>105</strong> as <em>vacant dirty</em>.', at: now0 - 12 * 60e3, cls: 'amber' },
-    { who: 'Ravi Batra', html: 'assigned a housekeeping request to <strong>Joy Lim</strong>.', at: now0 - 23 * 60e3, cls: 'blue' },
-    { who: 'Marco Cruz', html: 'registered a new guest <strong>Aiko Tanaka</strong>.', at: now0 - 60 * 60e3 }
-];
-
+const staff = { name: 'Staff' };
 const state = { tab: 'arrivals', sortKey: null, sortDir: 1, page: 1, query: '', role: 'front-desk', kpi: null, touched: Date.now() };
 const ROLE_LABEL = { 'front-desk': 'Front desk', 'housekeeping': 'Housekeeping', 'manager': 'Manager' };
 const canAct = () => state.role !== 'housekeeping';
@@ -90,13 +39,32 @@ function toast(title, text, type) {
 }
 function touch() { state.touched = Date.now(); tick(); }
 function logActivity(html, cls) {
-    activity.unshift({ who: 'Marco Cruz', html, at: Date.now(), cls });
+    activity.unshift({ who: staff.name, html, at: Date.now(), cls });
     activity.length = Math.min(activity.length, 8);
     renderActivity();
 }
 const rel = ms => { const m = Math.floor(ms / 60e3); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : Math.floor(m / 60) + ' hr ago'; };
-const toMin = t => { const m = /(\d+):(\d+)\s*(AM|PM)/.exec(t); return (+m[1] % 12 + (m[3] === 'PM' ? 12 : 0)) * 60 + +m[2]; };
+const toMin = t => { const m = /(\d+):(\d+)\s*(AM|PM)/.exec(t); return m ? (+m[1] % 12 + (m[3] === 'PM' ? 12 : 0)) * 60 + +m[2] : 0; };
 const guestInRoom = no => [...queue.departures, ...queue.arrivals, ...queue.inhouse].find(g => g.room === no && (g.status === 'checked-in' || g.status === 'overdue' || (queue.departures.includes(g) && g.status === 'pending')));
+const emptyBlock = (title, sub) => '<div class="empty-state"><p class="empty-title">' + esc(title) + '</p><p class="empty-sub">' + esc(sub) + '</p></div>';
+
+function setStaff(name) {
+    staff.name = name;
+    const ini = initials(name);
+    $$('.staff-avatar, .mobile-topbar .topbar-avatar, .topbar-actions .topbar-avatar').forEach(el => { el.textContent = ini; });
+    $('.staff-name').textContent = name;
+}
+/* Shows the signed-in staff member's real name (stays "Staff" if it can't be loaded) */
+async function loadStaff() {
+    const db = window.supabaseClient;
+    if (!db) return;
+    try {
+        const { data: { session } } = await db.auth.getSession();
+        if (!session) return;
+        const { data: p } = await db.from('profiles').select('full_name').eq('id', session.user.id).single();
+        if (p && p.full_name) setStaff(p.full_name);
+    } catch (e) { /* keep the placeholder */ }
+}
 
 /* ---------------- Queue ---------------- */
 function rowsForTab(tab, q) {
@@ -128,9 +96,9 @@ function renderQueue() {
     $('#queueBody').innerHTML = rows.map(g => {
         const a = actionFor(g);
         return '<tr tabindex="0" data-room="' + g.room + '"><td><div class="guest-cell"><span class="guest-avatar">' + initials(g.guest) + '</span><span class="guest-name">' + esc(g.guest) + '</span></div></td>' +
-            '<td class="muted">' + g.guestId + '</td><td><strong>' + g.room + '</strong></td><td class="muted">' + g.time + '</td>' +
+            '<td class="muted">' + esc(g.guestId) + '</td><td><strong>' + g.room + '</strong></td><td class="muted">' + esc(g.time) + '</td>' +
             '<td><span class="status-pill ' + g.status + '"><span class="dot"></span>' + STATUS_LABEL[g.status] + '</span></td>' +
-            '<td class="col-actions"><button class="btn btn-sm" data-act="' + a.act + '" data-id="' + g.guestId + '">' + a.label + '</button></td></tr>';
+            '<td class="col-actions"><button class="btn btn-sm" data-act="' + a.act + '" data-id="' + esc(g.guestId) + '">' + a.label + '</button></td></tr>';
     }).join('');
 
     const empty = $('#queueEmpty');
@@ -159,6 +127,12 @@ function renderQueue() {
 function renderKpis() {
     const k = f => $('.kpi-card[data-filter="' + f + '"]');
     const done = queue.departures.filter(g => g.status === 'checked-out').length;
+
+    const beds = Object.values(rooms).reduce((n, r) => n + (r.capacity || 0), 0);
+    const occupied = queue.inhouse.length;
+    k('all').querySelector('.kpi-value').innerHTML = (beds ? Math.round(occupied / beds * 100) : 0) + '<span class="kpi-suffix">%</span>';
+    k('all').querySelector('.kpi-sub').textContent = occupied + ' of ' + beds + ' beds';
+
     k('arrivals').querySelector('.kpi-value').textContent = queue.arrivals.length;
     k('arrivals').querySelector('.kpi-sub').textContent = queue.arrivals.filter(g => g.status === 'checked-in').length + ' already checked in';
     k('departures').querySelector('.kpi-value').textContent = queue.departures.length;
@@ -181,7 +155,7 @@ function renderOverdue() {
     const dis = canAct() ? '' : ' disabled';
     list.innerHTML = overdue.map(o =>
         '<li class="overdue-item"><div class="overdue-main"><span class="overdue-name">' + esc(o.name) + '</span>' +
-        '<span class="overdue-meta">Room ' + o.room + ' · Expected ' + o.expected + '</span>' +
+        '<span class="overdue-meta">Room ' + o.room + ' · Expected ' + esc(o.expected) + '</span>' +
         '<span class="overdue-days">' + o.days + ' day' + (o.days > 1 ? 's' : '') + ' overdue</span></div>' +
         '<div class="overdue-actions"><button class="btn btn-sm btn-outline" data-action="contact" data-guest="' + esc(o.name) + '"' + dis + '>Contact</button>' +
         '<button class="btn btn-sm btn-outline" data-action="extend" data-guest="' + esc(o.name) + '"' + dis + '>Extend</button>' +
@@ -191,21 +165,31 @@ function renderOverdue() {
 
 /* ---------------- Service requests ---------------- */
 function renderRequests() {
+    if (!requests.length) {
+        $('#reqQueue').innerHTML = '<li class="empty-state"><p class="empty-title">No open requests</p><p class="empty-sub">Guest requests will appear here.</p></li>';
+        return;
+    }
     $('#reqQueue').innerHTML = requests.map(r =>
         '<li class="req-item"><div class="req-head"><div><div class="req-title">' + esc(r.title) + '</div>' +
-        '<div class="req-meta">Room ' + r.room + ' · ' + esc(r.guest) + ' · ' + r.ago + '</div></div>' +
+        '<div class="req-meta">Room ' + r.room + ' · ' + esc(r.guest) + ' · ' + esc(r.ago) + '</div></div>' +
         '<span class="status-pill ' + (r.priority === 'urgent' ? 'urgent' : 'pending') + '"><span class="dot"></span>' + (r.priority === 'urgent' ? 'Urgent' : 'Normal') + '</span></div>' +
         '<div class="req-row"><label for="assign-' + r.id + '">Assign to</label><select class="req-select" id="assign-' + r.id + '" data-id="' + r.id + '"' + (canAct() ? '' : ' disabled') + '>' +
-        STAFF.map(s => '<option' + (s === r.assignee ? ' selected' : '') + '>' + s + '</option>').join('') + '</select></div></li>'
+        STAFF.map(s => '<option' + (s === r.assignee ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select></div></li>'
     ).join('');
 }
 
 /* ---------------- Room board ---------------- */
 function renderRooms() {
+    const all = Object.values(rooms);
+    if (!all.length) {
+        $('#roomBoard').innerHTML = emptyBlock('No rooms to show', 'Rooms will appear here once they are added.');
+        return;
+    }
+    const floors = [...new Set(all.map(r => r.floor))].sort((a, b) => a - b);
     let html = '';
-    [1, 2].forEach(f => {
+    floors.forEach(f => {
         html += '<div class="room-floor"><h4>Floor ' + f + '</h4><div class="room-grid">';
-        Object.values(rooms).filter(r => r.floor === f).forEach(r => {
+        all.filter(r => r.floor === f).forEach(r => {
             html += '<button class="room-cell st-' + r.status + '" data-room="' + r.number + '" aria-label="Room ' + r.number + ', ' + ROOM_LABEL[r.status] + '">' + r.number + '<small>' + ROOM_LABEL[r.status] + '</small></button>';
         });
         html += '</div></div>';
@@ -215,6 +199,10 @@ function renderRooms() {
 
 /* ---------------- Activity ---------------- */
 function renderActivity() {
+    if (!activity.length) {
+        $('#activityList').innerHTML = '<li class="empty-state" style="grid-column: 1 / -1;"><p class="empty-title">No recent activity</p><p class="empty-sub">Check-ins, check-outs and updates will show up here.</p></li>';
+        return;
+    }
     $('#activityList').innerHTML = activity.map(a =>
         '<li class="activity-item"><div class="activity-avatar ' + (a.cls || '') + '">' + initials(a.who) + '</div><div class="activity-body"><p><strong>' + esc(a.who) + '</strong> ' + a.html + '</p><span class="activity-time">' + rel(Date.now() - a.at) + '</span></div></li>'
     ).join('');
@@ -232,11 +220,12 @@ function openDrawer(no) {
     drawerRoom = no;
     const g = guestInRoom(no);
     $('#roomDrawerTitle').textContent = 'Room ' + no;
-    $('#roomDrawerSub').textContent = 'Floor ' + r.floor + ' · Standard Shared';
+    $('#roomDrawerSub').textContent = 'Floor ' + r.floor;
     $('#drawerGuestName').textContent = g ? g.guest : 'No current guest';
     $('#drawerGuestMeta').textContent = g ? 'Guest ID ' + g.guestId + ' · In-house' : ROOM_LABEL[r.status];
     $('.roommate-avatar', $('#roomDrawer')).textContent = g ? initials(g.guest) : '–';
     $('#drawerStatus').textContent = ROOM_LABEL[r.status];
+    $('#drawerCapacity').textContent = r.capacity ? r.capacity + ' guests' : '—';
     const hist = r.history.concat(['Status: ' + ROOM_LABEL[r.status]]);
     $('.drawer-history').innerHTML = hist.slice(-5).reverse().map(h => '<li>' + esc(h) + '</li>').join('');
     $('#roomDrawer .drawer-footer .btn-primary').disabled = !(g && canAct());
@@ -345,13 +334,15 @@ $('#overdueList').addEventListener('click', e => {
 
 $('#reqQueue').addEventListener('change', e => {
     const s = e.target.closest('.req-select'); if (!s) return;
-    const r = requests.find(x => x.id === +s.dataset.id); r.assignee = s.value;
+    const r = requests.find(x => x.id === +s.dataset.id); if (!r) return;
+    r.assignee = s.value;
     if (s.value !== STAFF[0]) { logActivity('assigned <strong>' + esc(r.title) + '</strong> (room ' + r.room + ') to <strong>' + esc(s.value.split(' (')[0]) + '</strong>.', 'blue'); toast('Request assigned', r.title + ' → ' + s.value); }
     touch();
 });
 
 $('#exportCsvBtn').addEventListener('click', () => {
     const rows = rowsForTab(state.tab, state.query);
+    if (!rows.length) { toast('Nothing to export', 'The current list is empty.', 'error'); return; }
     const csv = ['Guest,Guest ID,Room,Time,Status'].concat(rows.map(g => [g.guest, g.guestId, g.room, g.time, STATUS_LABEL[g.status]].map(v => '"' + String(v).replace(/"/g, '""') + '"').join(','))).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
@@ -403,6 +394,7 @@ setInterval(tick, 5000);
 
 applyRole('front-desk');
 renderAll();
+loadStaff();
 })();
 
 

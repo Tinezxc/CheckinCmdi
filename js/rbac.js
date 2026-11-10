@@ -11,8 +11,8 @@
     const ROLES = {
         'front-desk': {
             label: 'Front desk',
-            name: 'Marco Cruz',
-            initials: 'MC',
+            name: 'Staff',
+            initials: 'ST',
             home: 'staff-dashboard.html',
             nav: ['dashboard', 'guests', 'rooms', 'checkin', 'requests'],
             // What the role can DO (used by element gating and data filtering)
@@ -34,8 +34,8 @@
         },
         'housekeeping': {
             label: 'Housekeeping',
-            name: 'Joy Lim',
-            initials: 'JL',
+            name: 'Staff',
+            initials: 'ST',
             home: 'staff-dashboard.html',
             nav: ['dashboard', 'rooms', 'requests'],
             permissions: {
@@ -56,8 +56,8 @@
         },
         'manager': {
             label: 'Manager',
-            name: 'Ravi Batra',
-            initials: 'RB',
+            name: 'Staff',
+            initials: 'ST',
             home: 'staff-dashboard.html',
             nav: ['dashboard', 'guests', 'rooms', 'checkin', 'requests', 'reports', 'settings'],
             permissions: {
@@ -176,7 +176,7 @@
                 let badgeHTML = '';
                 if (item.badge) {
                     const count = this.openRequestsCountFor(role);
-                    badgeHTML = `<span class="badge" id="navReqBadge">${count}</span>`;
+                    badgeHTML = `<span class="badge" id="navReqBadge"${count ? '' : ' hidden'}>${count}</span>`;
                 }
 
                 a.innerHTML = `${ICONS[item.icon] || ''} ${item.label}${badgeHTML}`;
@@ -206,9 +206,7 @@
         /* Count of requests visible to a role (used for the sidebar badge) */
         openRequestsCountFor(role) {
             const scope = role.permissions['requests.view'];
-            if (scope === false) return 0;
-            if (scope === 'all') return 5;          // from mock data
-            if (scope === 'housekeeping') return 3; // housekeeping-only requests
+            // No sample data: the real count is filled in by the page that loads the requests.
             return 0;
         },
 
@@ -226,6 +224,23 @@
             setText('.topbar-avatar', role.initials);
             setText('.staff-avatar', role.initials);
             setText('.mobile-topbar .topbar-avatar', role.initials);
+            this.loadRealIdentity();
+        },
+
+        /* Replaces the "Staff" placeholder with the signed-in person's real name */
+        async loadRealIdentity() {
+            const db = window.supabaseClient;
+            if (!db) return;
+            try {
+                const { data: { session } } = await db.auth.getSession();
+                if (!session) return;
+                const { data: p } = await db.from('profiles').select('full_name').eq('id', session.user.id).single();
+                if (!p || !p.full_name) return;
+                const ini = p.full_name.split(' ').filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+                Object.values(ROLES).forEach((r) => { r.name = p.full_name; r.initials = ini; });
+                document.querySelectorAll('.staff-name').forEach((el) => (el.textContent = p.full_name));
+                document.querySelectorAll('.topbar-avatar, .staff-avatar').forEach((el) => (el.textContent = ini));
+            } catch (e) { /* keep the placeholder */ }
         },
 
         /* ==========================================

@@ -24,7 +24,7 @@
             </svg>
         </button>
         <span class="mobile-brand">Check-in Accommodation System</span>
-        <div class="topbar-avatar">MC</div>
+        <div class="topbar-avatar">ST</div>
     </header>
 
     <!-- ============ SIDEBAR ============ -->
@@ -95,7 +95,7 @@
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
                 Service requests
-                <span class="badge" id="navReqBadge">5</span>
+                <span class="badge" id="navReqBadge" hidden>0</span>
             </a>
 
             <a href="staff-reports.html" class="nav-item" data-role-required="manager" aria-disabled="true" title="Manager only">
@@ -118,9 +118,9 @@
 
         <div class="sidebar-footer">
             <div class="staff-chip">
-                <div class="staff-avatar">MC</div>
+                <div class="staff-avatar">ST</div>
                 <div class="staff-info">
-                    <span class="staff-name">Marco Cruz</span>
+                    <span class="staff-name">Staff</span>
                     <span class="staff-role" id="staffRoleLabel">Front desk</span>
                 </div>
             </div>
@@ -170,12 +170,12 @@
                 </button>
 
                 <div class="topbar-icon-wrap">
-                    <button class="icon-btn has-count" id="notifBtn" aria-label="Notifications, 3 unread">
+                    <button class="icon-btn has-count" id="notifBtn" aria-label="Notifications, none unread">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
-                        <span class="icon-badge">3</span>
+                        <span class="icon-badge" hidden>0</span>
                     </button>
                     <div class="notif-menu" id="notifMenu" hidden>
                         <div class="notif-menu-header">
@@ -183,14 +183,12 @@
                             <button class="link-muted" type="button">Mark all read</button>
                         </div>
                         <ul class="notif-menu-list">
-                            <li class="unread"><span class="notif-dot"></span><div><p>Sofia Reyes' stay is overdue (room 201).</p><span>Today · 8:02 AM</span></div></li>
-                            <li class="unread"><span class="notif-dot"></span><div><p>Housekeeping completed room 105.</p><span>Yesterday</span></div></li>
-                            <li><span class="notif-dot empty"></span><div><p>Arrivals report ready for Oct 10.</p><span>Oct 9, 2026</span></div></li>
+                            <li class="notif-empty" style="justify-content: center; padding: 28px 16px; color: var(--text-3);">No notifications yet</li>
                         </ul>
                     </div>
                 </div>
 
-                <button class="topbar-avatar" aria-label="Staff profile menu">MC</button>
+                <button class="topbar-avatar" aria-label="Staff profile menu">ST</button>
             </div>
         </header>
 
@@ -200,41 +198,41 @@
             <section class="kpi-row" aria-label="Key performance indicators">
                 <button class="kpi-card" data-filter="all">
                     <span class="kpi-label">Occupancy</span>
-                    <span class="kpi-value">78<span class="kpi-suffix">%</span></span>
-                    <span class="kpi-sub">43 of 55 beds</span>
+                    <span class="kpi-value">0<span class="kpi-suffix">%</span></span>
+                    <span class="kpi-sub">0 of 0 beds</span>
                     <span class="kpi-spark spark-green"></span>
                 </button>
 
                 <button class="kpi-card" data-filter="arrivals">
                     <span class="kpi-label">Arrivals today</span>
-                    <span class="kpi-value">12</span>
-                    <span class="kpi-sub">4 already checked in</span>
+                    <span class="kpi-value">0</span>
+                    <span class="kpi-sub">0 already checked in</span>
                     <span class="kpi-spark spark-green"></span>
                 </button>
 
                 <button class="kpi-card" data-filter="departures">
                     <span class="kpi-label">Departures today</span>
-                    <span class="kpi-value">8</span>
-                    <span class="kpi-sub">5 pending · 3 done</span>
+                    <span class="kpi-value">0</span>
+                    <span class="kpi-sub">0 pending · 0 done</span>
                     <span class="kpi-spark spark-blue"></span>
                 </button>
 
                 <button class="kpi-card kpi-alert" data-filter="overdue">
                     <span class="kpi-label">Overdue check-outs</span>
-                    <span class="kpi-value">2</span>
-                    <span class="kpi-sub">Requires attention</span>
+                    <span class="kpi-value">0</span>
+                    <span class="kpi-sub">All clear</span>
                     <span class="kpi-spark spark-amber"></span>
                 </button>
 
                 <button class="kpi-card" data-filter="requests">
                     <span class="kpi-label">Open requests</span>
-                    <span class="kpi-value">5</span>
-                    <span class="kpi-sub">1 urgent</span>
+                    <span class="kpi-value">0</span>
+                    <span class="kpi-sub">0 urgent</span>
                     <span class="kpi-spark spark-blue"></span>
                 </button>
             </section>
 
-            <!-- ============ MAIN GRID: left = queue + room board, right = overdue + requests, bottom = activity ============ -->
+            <!-- ============ MAIN GRID ============ -->
             <div class="main-grid">
 
                 <div class="main-col">
@@ -256,13 +254,13 @@
                         <div class="card-body no-pad">
                             <div class="tabs" role="tablist" aria-label="Queue view">
                                 <button class="tab active" role="tab" aria-selected="true" data-tab="arrivals">
-                                    Arrivals <span class="tab-count">12</span>
+                                    Arrivals <span class="tab-count">0</span>
                                 </button>
                                 <button class="tab" role="tab" aria-selected="false" data-tab="departures">
-                                    Departures <span class="tab-count">8</span>
+                                    Departures <span class="tab-count">0</span>
                                 </button>
                                 <button class="tab" role="tab" aria-selected="false" data-tab="inhouse">
-                                    In-house <span class="tab-count">43</span>
+                                    In-house <span class="tab-count">0</span>
                                 </button>
                             </div>
 
@@ -281,7 +279,7 @@
                                     <tbody id="queueBody"></tbody>
                                 </table>
 
-                                <div class="empty-state" id="queueEmpty" hidden>
+                                <div class="empty-state" id="queueEmpty">
                                     <div class="empty-icon">📋</div>
                                     <p class="empty-title">No arrivals today</p>
                                     <p class="empty-sub">New arrivals will appear here as they are registered.</p>
@@ -289,7 +287,7 @@
                             </div>
 
                             <div class="table-footer">
-                                <span class="table-info" id="queueInfo">Showing 1–12 of 12</span>
+                                <span class="table-info" id="queueInfo">Showing 0 of 0</span>
                                 <div class="pagination">
                                     <button class="page-btn" aria-label="Previous page" disabled>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -297,7 +295,7 @@
                                         </svg>
                                     </button>
                                     <button class="page-btn active">1</button>
-                                    <button class="page-btn" aria-label="Next page">
+                                    <button class="page-btn" aria-label="Next page" disabled>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="9 18 15 12 9 6"></polyline>
                                         </svg>
@@ -327,54 +325,29 @@
 
                 <div class="side-col">
                     <section class="card" aria-labelledby="overdueTitle">
-                            <header class="card-header">
-                                <h3 id="overdueTitle">
-                                    Overdue check-outs
-                                    <span class="count-badge count-amber">2</span>
-                                </h3>
-                            </header>
-                            <div class="card-body">
-                                <ul class="overdue-list" id="overdueList">
-                                    <li class="overdue-item">
-                                        <div class="overdue-main">
-                                            <span class="overdue-name">Sofia Reyes</span>
-                                            <span class="overdue-meta">Room 201 · Expected Oct 9, 2026</span>
-                                            <span class="overdue-days">1 day overdue</span>
-                                        </div>
-                                        <div class="overdue-actions">
-                                            <button class="btn btn-sm btn-outline" data-action="contact">Contact</button>
-                                            <button class="btn btn-sm btn-outline" data-action="extend">Extend</button>
-                                            <button class="btn btn-sm btn-danger" data-action="force" data-guest="Sofia Reyes" data-room="201">Force check-out</button>
-                                        </div>
-                                    </li>
-                                    <li class="overdue-item">
-                                        <div class="overdue-main">
-                                            <span class="overdue-name">Diego Marquez</span>
-                                            <span class="overdue-meta">Room 203 · Expected Oct 8, 2026</span>
-                                            <span class="overdue-days">2 days overdue</span>
-                                        </div>
-                                        <div class="overdue-actions">
-                                            <button class="btn btn-sm btn-outline" data-action="contact">Contact</button>
-                                            <button class="btn btn-sm btn-outline" data-action="extend">Extend</button>
-                                            <button class="btn btn-sm btn-danger" data-action="force" data-guest="Diego Marquez" data-room="203">Force check-out</button>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </section>
+                        <header class="card-header">
+                            <h3 id="overdueTitle">
+                                Overdue check-outs
+                                <span class="count-badge count-amber">0</span>
+                            </h3>
+                        </header>
+                        <div class="card-body">
+                            <ul class="overdue-list" id="overdueList"></ul>
+                        </div>
+                    </section>
 
                     <section class="card" aria-labelledby="reqTitle">
-                            <header class="card-header">
-                                <h3 id="reqTitle">
-                                    Service requests
-                                    <span class="count-badge count-blue">5 open</span>
-                                </h3>
-                                <button class="link-muted" type="button">View all</button>
-                            </header>
-                            <div class="card-body no-pad">
-                                <ul class="req-queue" id="reqQueue"></ul>
-                            </div>
-                        </section>
+                        <header class="card-header">
+                            <h3 id="reqTitle">
+                                Service requests
+                                <span class="count-badge count-blue">0 open</span>
+                            </h3>
+                            <button class="link-muted" type="button">View all</button>
+                        </header>
+                        <div class="card-body no-pad">
+                            <ul class="req-queue" id="reqQueue"></ul>
+                        </div>
+                    </section>
                 </div>
 
                 <section class="card span-all" aria-labelledby="activityTitle">
@@ -383,36 +356,7 @@
                         <span class="live-pill"><span class="live-dot"></span>Live</span>
                     </header>
                     <div class="card-body">
-                        <ul class="activity-list" id="activityList">
-                            <li class="activity-item">
-                                <div class="activity-avatar">MC</div>
-                                <div class="activity-body">
-                                    <p><strong>Marco Cruz</strong> checked in <strong>Sofia Reyes</strong> to room <strong>201</strong>.</p>
-                                    <span class="activity-time">5 min ago</span>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-avatar amber">JL</div>
-                                <div class="activity-body">
-                                    <p><strong>Joy Lim</strong> marked room <strong>105</strong> as <em>vacant dirty</em>.</p>
-                                    <span class="activity-time">12 min ago</span>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-avatar blue">RB</div>
-                                <div class="activity-body">
-                                    <p><strong>Ravi Batra</strong> assigned a housekeeping request to <strong>Joy Lim</strong>.</p>
-                                    <span class="activity-time">23 min ago</span>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-avatar">MC</div>
-                                <div class="activity-body">
-                                    <p><strong>Marco Cruz</strong> registered a new guest <strong>Aiko Tanaka</strong>.</p>
-                                    <span class="activity-time">1 hr ago</span>
-                                </div>
-                            </li>
-                        </ul>
+                        <ul class="activity-list" id="activityList"></ul>
                     </div>
                 </section>
 
@@ -432,8 +376,8 @@
 <aside class="drawer" id="roomDrawer" role="dialog" aria-modal="true" aria-labelledby="roomDrawerTitle" hidden>
     <header class="drawer-header">
         <div>
-            <h3 id="roomDrawerTitle">Room 201</h3>
-            <p class="drawer-sub" id="roomDrawerSub">Floor 2 · Standard Shared</p>
+            <h3 id="roomDrawerTitle">Room</h3>
+            <p class="drawer-sub" id="roomDrawerSub">—</p>
         </div>
         <button class="drawer-close" id="roomDrawerClose" aria-label="Close panel">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -446,10 +390,10 @@
         <div class="drawer-section">
             <h4>Current guest</h4>
             <div class="drawer-guest">
-                <div class="roommate-avatar">SR</div>
+                <div class="roommate-avatar">–</div>
                 <div>
-                    <p class="drawer-guest-name" id="drawerGuestName">Sofia Reyes</p>
-                    <p class="drawer-guest-meta" id="drawerGuestMeta">Guest ID TR-1001 · In-house</p>
+                    <p class="drawer-guest-name" id="drawerGuestName">No current guest</p>
+                    <p class="drawer-guest-meta" id="drawerGuestMeta">—</p>
                 </div>
             </div>
         </div>
@@ -457,20 +401,16 @@
         <div class="drawer-section">
             <h4>Room details</h4>
             <dl class="drawer-details">
-                <div><dt>Status</dt><dd id="drawerStatus">Occupied</dd></div>
-                <div><dt>Bed type</dt><dd>2 Bunk beds</dd></div>
-                <div><dt>Capacity</dt><dd>5 guests</dd></div>
-                <div><dt>Last cleaned</dt><dd>Today · 6:30 AM</dd></div>
+                <div><dt>Status</dt><dd id="drawerStatus">—</dd></div>
+                <div><dt>Bed type</dt><dd>—</dd></div>
+                <div><dt>Capacity</dt><dd id="drawerCapacity">—</dd></div>
+                <div><dt>Last cleaned</dt><dd>—</dd></div>
             </dl>
         </div>
 
         <div class="drawer-section">
             <h4>History</h4>
-            <ul class="drawer-history">
-                <li><strong>Oct 2</strong> · Checked in Sofia Reyes</li>
-                <li><strong>Oct 1</strong> · Deep clean completed</li>
-                <li><strong>Sep 30</strong> · Maintenance passed</li>
-            </ul>
+            <ul class="drawer-history"></ul>
         </div>
     </div>
     <footer class="drawer-footer">
@@ -492,9 +432,7 @@
             </button>
         </header>
         <div class="modal-body">
-            <p class="modal-text" id="confirmText">
-                This will force <strong>Sofia Reyes</strong> out of room <strong>201</strong>. This action cannot be undone.
-            </p>
+            <p class="modal-text" id="confirmText"></p>
             <div class="form-group">
                 <label for="confirmReason">Reason <span class="required">*</span></label>
                 <textarea id="confirmReason" rows="3" placeholder="Provide a reason (min 5 characters)…"></textarea>
@@ -513,22 +451,5 @@
 <script src="js/rbac.js" defer></script>
 <script src="js/staff-dashboard.js" defer></script>
 <script src="js/notification.js" defer></script>
-<!-- Stopgap: only 2 floors exist. Removes any floor above 2 from the room board, including after re-renders.
-     Delete this block once staff-dashboard.js only generates floors 1-2. -->
-<script>
-(function () {
-    var board = document.getElementById('roomBoard');
-    if (!board) return;
-    function prune() {
-        board.querySelectorAll('.room-floor').forEach(function (floor) {
-            var h = floor.querySelector('h4');
-            var m = h && /(\d+)/.exec(h.textContent);
-            if (m && parseInt(m[1], 10) > 2) floor.remove();
-        });
-    }
-    new MutationObserver(prune).observe(board, { childList: true, subtree: true });
-    prune();
-})();
-</script>
 </body>
 </html>
