@@ -54,6 +54,28 @@
                 'settings.view': false
             }
         },
+        'maintenance': {
+            label: 'Maintenance',
+            name: 'Staff',
+            initials: 'ST',
+            home: 'staff-dashboard.html',
+            nav: ['dashboard', 'rooms', 'requests'],
+            permissions: {
+                'dashboard.view': true,
+                'guests.view': false,
+                'guests.reveal': false,
+                'rooms.view': true,
+                'rooms.change': false,
+                'rooms.clean': false,
+                'checkin.view': false,
+                'checkin.do': false,
+                'checkin.force': false,
+                'requests.view': 'maintenance',
+                'requests.assign': false,
+                'reports.view': false,
+                'settings.view': false
+            }
+        },
         'manager': {
             label: 'Manager',
             name: 'Staff',
@@ -105,6 +127,171 @@
     };
 
     /* ==========================================
+       ROLE STATE (verified against the database)
+       The browser only CACHES the role for fast page loads; it is re-checked
+       against profiles.role on every page. Real enforcement = database rules.
+       ========================================== */
+    const CACHE_KEY = 'haven_role_cache';        // { uid, role }
+    const VIEW_AS_KEY = 'haven_view_as';          // managers only, display-only preview
+    const RELOAD_KEY = 'haven_rbac_reload';
+    const STAFF_ROLES = Object.keys(ROLES);
+    const DEFAULT_ROLE = 'housekeeping';          // least-privileged fallback while unknown
+
+    const state = { realRole: null, userId: null, name: 'Staff', initials: 'ST', verified: false, denied: false };
+
+    function safeParse(json) { try { return JSON.parse(json); } catch (e) { return null; } }
+    function readCache() { return safeParse(localStorage.getItem(CACHE_KEY)); }
+    function writeCache(uid, role) { localStorage.setItem(CACHE_KEY, JSON.stringify({ uid, role })); }
+    function clearCache() { localStorage.removeItem(CACHE_KEY); sessionStorage.removeItem(VIEW_AS_KEY); }
+
+    function getViewAs() { return sessionStorage.getItem(VIEW_AS_KEY); }
+    function setViewAs(role) {
+        if (role) sessionStorage.setItem(VIEW_AS_KEY, role);
+        else sessionStorage.removeItem(VIEW_AS_KEY);
+    }
+    function isViewingAs() { return state.realRole === 'manager' && !!getViewAs() && getViewAs() !== 'manager'; }
+
+    function effectiveRole() {
+        const real = state.realRole;
+        if (!real || !ROLES[real]) return DEFAULT_ROLE;
+        if (real === 'manager') {
+            const v = getViewAs();
+            if (v && ROLES[v]) return v;
+        }
+        return real;
+    }
+
+    function makeInitials(name) {
+        return String(name || '').split(' ').filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase() || 'ST';
+    }
+
+    /* ---------- full-screen messages (checking / staff only / error) ---------- */
+    function injectOverlayStyles() {
+        if (document.getElementById('rbacGateCSS')) return;
+        const style = document.createElement('style');
+        style.id = 'rbacGateCSS';
+        style.textContent = `
+            .rbac-gate { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 24px;
+                background: radial-gradient(900px 400px at 85% -10%, rgba(75,124,92,.14), transparent 60%), #f1f0ea;
+                font-family: var(--sans, var(--font-sans, Inter, sans-serif)); color: #1b221e; }
+            .rbac-gate-card { width: min(440px, 100%); padding: 40px 32px; text-align: center; background: #fff; border: 1px solid #e5e3dc;
+                border-radius: 16px; box-shadow: 0 16px 40px rgba(20,28,24,.12); }
+            .rbac-gate-icon { width: 64px; height: 64px; margin: 0 auto 16px; display: grid; place-items: center; border-radius: 50%;
+                background: #eef2ee; color: #1b3a2e; }
+            .rbac-gate-icon.warn { background: #fbeecf; color: #7a5200; }
+            .rbac-gate h2 { font-family: var(--serif, var(--font-serif, 'Playfair Display', serif)); font-size: 1.4rem; font-weight: 500; color: #1b3a2e; margin-bottom: 8px; }
+            .rbac-gate p { font-size: .9rem; line-height: 1.55; color: #4a554e; margin-bottom: 20px; }
+            .rbac-gate-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+            .rbac-gate-btn { padding: 10px 18px; border-radius: 8px; border: 1px solid #cfccc1; background: #fff; font: inherit; font-size: .85rem;
+                font-weight: 600; color: #1b221e; cursor: pointer; text-decoration: none; }
+            .rbac-gate-btn.primary { background: #1b3a2e; border-color: #12291f; color: #fff; }
+            .rbac-spinner { width: 28px; height: 28px; border: 3px solid #e2e8e0; border-top-color: #1b3a2e; border-radius: 50%; animation: rbacSpin .8s linear infinite; }
+            @keyframes rbacSpin { to { transform: rotate(360deg); } }
+        `;
+        document.head.appendChild(style);
+    }
+
+    function showGate({ title, message, icon = 'lock', warn = false, actions = [] }) {
+        injectOverlayStyles();
+        hideGate();
+        const icons = {
+            spinner: '<div class="rbac-spinner" aria-hidden="true"></div>',
+            lock: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>'
+        };
+        const gate = document.createElement('div');
+        gate.className = 'rbac-gate';
+        gate.id = 'rbacGate';
+        gate.setAttribute('role', 'alertdialog');
+        gate.innerHTML = `
+            <div class="rbac-gate-card">
+                <div class="rbac-gate-icon${warn ? ' warn' : ''}">${icons[icon] || icons.lock}</div>
+                <h2></h2><p></p>
+                <div class="rbac-gate-actions"></div>
+            </div>`;
+        gate.querySelector('h2').textContent = title;
+        gate.querySelector('p').textContent = message;
+        const box = gate.querySelector('.rbac-gate-actions');
+        actions.forEach((a) => {
+            const el = document.createElement(a.href ? 'a' : 'button');
+            el.className = 'rbac-gate-btn' + (a.primary ? ' primary' : '');
+            el.textContent = a.label;
+            if (a.href) el.href = a.href;
+            if (a.onClick) el.addEventListener('click', a.onClick);
+            box.appendChild(el);
+        });
+        document.body.appendChild(gate);
+    }
+    function hideGate() { const g = document.getElementById('rbacGate'); if (g) g.remove(); }
+
+    /* ---------- sign out (also ends the Supabase session) ---------- */
+    async function signOut() {
+        clearCache();
+        try { if (window.supabaseClient) await window.supabaseClient.auth.signOut(); } catch (e) { /* ignore */ }
+        window.location.href = 'index.html';
+    }
+
+    /* ---------- reload once when the cached role was missing or stale ---------- */
+    function reloadOnce() {
+        const last = Number(sessionStorage.getItem(RELOAD_KEY) || 0);
+        if (Date.now() - last < 10000) return false;     // avoid reload loops
+        sessionStorage.setItem(RELOAD_KEY, String(Date.now()));
+        window.location.reload();
+        return true;
+    }
+
+    /* ---------- the check: who is signed in, and what is their role? ---------- */
+    async function verifyAccess() {
+        const db = window.supabaseClient;
+        if (!db) {
+            showGate({ title: 'Cannot connect', warn: true, icon: 'lock',
+                message: 'The connection to the server is not available. Check that the Supabase scripts are on this page.',
+                actions: [{ label: 'Try again', primary: true, onClick: () => window.location.reload() }] });
+            return;
+        }
+
+        let session = null;
+        try { ({ data: { session } } = await db.auth.getSession()); } catch (e) { session = null; }
+        if (!session) { window.location.href = 'index.html'; return; }
+
+        const { data: p, error } = await db.from('profiles').select('role, full_name').eq('id', session.user.id).single();
+        if (error || !p) {
+            showGate({ title: 'We could not check your access', warn: true,
+                message: 'Please try again. If this keeps happening, contact a manager.',
+                actions: [{ label: 'Try again', primary: true, onClick: () => window.location.reload() },
+                          { label: 'Sign out', onClick: signOut }] });
+            return;
+        }
+
+        state.userId = session.user.id;
+        state.name = p.full_name || 'Staff';
+        state.initials = makeInitials(state.name);
+        Object.values(ROLES).forEach((r) => { r.name = state.name; r.initials = state.initials; });
+
+        const role = STAFF_ROLES.includes(p.role) ? p.role : null;
+        if (!role) {
+            state.denied = true;
+            clearCache();
+            showGate({ title: 'Staff area', icon: 'lock',
+                message: 'This part of Haven is for staff only. Your account does not have staff access.',
+                actions: [{ label: 'Go to my dashboard', primary: true, href: 'client-dashboard.html' },
+                          { label: 'Sign out', onClick: signOut }] });
+            return;
+        }
+
+        const cache = readCache();
+        const changed = !cache || cache.uid !== session.user.id || cache.role !== role;
+        state.realRole = role;
+        state.verified = true;
+        writeCache(session.user.id, role);
+
+        if (changed && reloadOnce()) return;       // pages were built with a different/unknown role
+        hideGate();
+        RBAC.applyIdentity();
+        RBAC.applyRoleSwitcher();
+        RBAC.applyLogout();      // also covers pages that don't call RBAC.init yet
+    }
+
+    /* ==========================================
        PUBLIC API
        ========================================== */
     const RBAC = {
@@ -112,17 +299,19 @@
         NAV_ITEMS,
 
         /* --- Current role --- */
-        getRole() {
-            return localStorage.getItem('haven_role') || 'front-desk';
-        },
+        getRole() { return effectiveRole(); },
+        realRole() { return state.realRole; },
+        isManager() { return state.realRole === 'manager'; },
+        isViewingAs() { return isViewingAs(); },
+        /* Managers only: preview another role. Display only, grants no real access. */
         setRole(role) {
-            if (!ROLES[role]) return;
-            localStorage.setItem('haven_role', role);
+            if (!ROLES[role] || !this.isManager()) return;
+            setViewAs(role === 'manager' ? null : role);
             window.location.reload();
         },
-        getProfile() {
-            return ROLES[this.getRole()];
-        },
+        getProfile() { return ROLES[effectiveRole()]; },
+        signOut() { return signOut(); },
+        ready: null,   // set below: resolves when the database check has finished
         can(perm) {
             const p = this.getProfile().permissions;
             return p[perm] === true;
@@ -224,23 +413,6 @@
             setText('.topbar-avatar', role.initials);
             setText('.staff-avatar', role.initials);
             setText('.mobile-topbar .topbar-avatar', role.initials);
-            this.loadRealIdentity();
-        },
-
-        /* Replaces the "Staff" placeholder with the signed-in person's real name */
-        async loadRealIdentity() {
-            const db = window.supabaseClient;
-            if (!db) return;
-            try {
-                const { data: { session } } = await db.auth.getSession();
-                if (!session) return;
-                const { data: p } = await db.from('profiles').select('full_name').eq('id', session.user.id).single();
-                if (!p || !p.full_name) return;
-                const ini = p.full_name.split(' ').filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
-                Object.values(ROLES).forEach((r) => { r.name = p.full_name; r.initials = ini; });
-                document.querySelectorAll('.staff-name').forEach((el) => (el.textContent = p.full_name));
-                document.querySelectorAll('.topbar-avatar, .staff-avatar').forEach((el) => (el.textContent = ini));
-            } catch (e) { /* keep the placeholder */ }
         },
 
         /* ==========================================
@@ -249,8 +421,40 @@
         applyRoleSwitcher() {
             const select = document.getElementById('roleSelect');
             if (!select) return;
+            const label = document.querySelector('.role-label');
+
+            // make sure every role has an option (e.g. Maintenance)
+            Object.entries(ROLES).forEach(([key, r]) => {
+                if (!select.querySelector('option[value="' + key + '"]')) {
+                    const o = document.createElement('option');
+                    o.value = key; o.textContent = r.label;
+                    select.appendChild(o);
+                }
+            });
             select.value = this.getRole();
-            select.onchange = (e) => this.setRole(e.target.value);
+
+            if (this.isManager()) {
+                select.disabled = false;
+                select.title = 'Preview the app as another role (display only)';
+                if (label) label.textContent = this.isViewingAs() ? 'Viewing as' : 'View as';
+                select.onchange = (e) => this.setRole(e.target.value);
+            } else {
+                select.disabled = true;
+                select.title = 'Your role is set by a manager';
+                if (label) label.textContent = 'Signed in as';
+                select.onchange = null;
+            }
+        },
+
+        /* ==========================================
+           APPLY: sign-out links really end the session
+           ========================================== */
+        applyLogout() {
+            document.querySelectorAll('.nav-item.logout').forEach((a) => {
+                if (a.dataset.rbacLogout) return;
+                a.dataset.rbacLogout = '1';
+                a.addEventListener('click', (e) => { e.preventDefault(); signOut(); });
+            });
         },
 
         /* ==========================================
@@ -475,15 +679,32 @@
         /* ==========================================
            BOOTSTRAP — call once per page
            ========================================== */
-        init({ active }) {
+        init({ active } = {}) {
+            if (state.denied) return false;
             if (active && !this.guardPage(active)) return false;
             this.applySidebar(active);
             this.applyIdentity();
             this.applyRoleSwitcher();
             this.applyElementGating();
+            this.applyLogout();
             return true;
         }
     };
 
     window.RBAC = RBAC;
+
+    /* ==========================================
+       START: use the cached role right away, then verify with the database
+       ========================================== */
+    function start() {
+        const cache = readCache();
+        state.realRole = cache && ROLES[cache.role] ? cache.role : null;
+        if (!state.realRole) {
+            showGate({ title: 'Checking your access…', icon: 'spinner',
+                message: 'One moment while we confirm your staff account.' });
+        }
+        RBAC.ready = verifyAccess();
+    }
+    if (document.body) start();
+    else document.addEventListener('DOMContentLoaded', start);
 })();

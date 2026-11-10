@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="CSS/staff-settings.css">
+<link rel="stylesheet" href="CSS/staff-theme.css">
 </head>
 <body data-role="manager">
 
@@ -753,6 +754,10 @@ We're glad you're here.
 
 <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
+<!-- Database connection + shared staff helpers (must load before rbac.js) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/staff-core.js" defer></script>
 <script src="js/rbac.js" defer></script>
 
 <script src="js/staff-settings.js" defer></script>
