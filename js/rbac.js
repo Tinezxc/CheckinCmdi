@@ -251,9 +251,13 @@
 
         let session = null;
         try { ({ data: { session } } = await db.auth.getSession()); } catch (e) { session = null; }
-        if (!session) { window.location.href = 'index.html'; return; }
+        if (!session) {
+            const page = window.location.pathname.split('/').pop() || '';
+            window.location.href = 'index.html' + (/^staff-[a-z]+\.html$/.test(page) ? '?next=' + encodeURIComponent(page) : '');
+            return;
+        }
 
-        const { data: p, error } = await db.from('profiles').select('role, full_name').eq('id', session.user.id).single();
+        const { data: p, error } = await db.from('profiles').select('*').eq('id', session.user.id).single();
         if (error || !p) {
             showGate({ title: 'We could not check your access', warn: true,
                 message: 'Please try again. If this keeps happening, contact a manager.',
@@ -266,6 +270,17 @@
         state.name = p.full_name || 'Staff';
         state.initials = makeInitials(state.name);
         Object.values(ROLES).forEach((r) => { r.name = state.name; r.initials = state.initials; });
+
+        const expired = p.access_expires_at && new Date(p.access_expires_at) < new Date();
+        if (p.status === 'suspended' || expired) {
+            state.denied = true;
+            clearCache();
+            showGate({ title: expired ? 'Access expired' : 'Account suspended', icon: 'lock',
+                message: expired ? 'Your access period has ended. Please contact an administrator.'
+                                 : 'This account has been suspended. Please contact an administrator.',
+                actions: [{ label: 'Sign out', primary: true, onClick: signOut }] });
+            return;
+        }
 
         const role = STAFF_ROLES.includes(p.role) ? p.role : null;
         if (!role) {

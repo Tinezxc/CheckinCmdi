@@ -103,9 +103,9 @@
 
         <div class="sidebar-footer">
             <div class="staff-chip">
-                <div class="staff-avatar">SV</div>
+                <div class="staff-avatar">AD</div>
                 <div class="staff-info">
-                    <span class="staff-name">Sarah Villanueva</span>
+                    <span class="staff-name">Admin</span>
                     <span class="staff-role" id="staffRoleLabel">admin</span>
                 </div>
             </div>
@@ -143,14 +143,14 @@
                     <input type="search" id="globalSearch" placeholder="Search users, guest ID, email…" aria-label="Global search">
                     <kbd class="search-kbd">/</kbd>
                 </div>
-                <button class="icon-btn has-count" aria-label="Notifications, 3 unread">
+                <button class="icon-btn has-count" aria-label="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                     </svg>
-                    <span class="icon-badge">3</span>
+                    <span class="icon-badge" hidden>0</span>
                 </button>
-                <button class="topbar-avatar" aria-label="Admin profile menu">SV</button>
+                <button class="topbar-avatar" aria-label="Admin profile menu">AD</button>
             </div>
         </header>
 
@@ -160,7 +160,7 @@
             <section class="page-header">
                 <div class="page-header-left">
                     <h2 class="page-title">Users and roles</h2>
-                    <span class="page-count" id="totalCount">24 users</span>
+                    <span class="page-count" id="totalCount">0 users</span>
                 </div>
                 <div class="page-header-actions">
                     <button class="btn btn-outline" id="exportBtn">
@@ -614,17 +614,18 @@
                 </div>
             </div>
             <label class="toggle-row">
-                <input type="checkbox" id="cu2fa">
+                <input type="checkbox" id="cuTempPw" checked>
                 <span class="toggle-slider"></span>
-                <span>Require 2FA setup on first sign-in</span>
+                <span>Create with a temporary password (no email needed)</span>
             </label>
+            <p class="form-hint">Turn this off to email an invite instead. The person then sets their own password.</p>
         </div>
 
         <div class="wizard-step" data-wstep="3">
             <div class="summary-block">
                 <h4>What will this person be able to do?</h4>
                 <ul class="perm-list" id="cuSummaryList"></ul>
-                <p class="summary-note">They will receive an invite email and must set up 2FA on first sign-in. Their access will expire on <strong id="cuSummaryExpiry">Apr 11, 2027</strong>.</p>
+                <p class="summary-note"><span id="cuSummaryHow"></span> Their access will expire on <strong id="cuSummaryExpiry">—</strong>.</p>
             </div>
         </div>
     </div>
@@ -730,6 +731,8 @@
 
 <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
 <script src="js/admin-users.js" defer></script>
 </body>
 </html>

@@ -13,6 +13,55 @@ document.addEventListener('DOMContentLoaded', () => {
         admin: 'admin-dashboard.html'
     };
 
+    // Exact staff roles stored in profiles.role (see staff-roles.sql)
+    const STAFF_ROLES = ['front-desk', 'housekeeping', 'maintenance', 'manager'];
+    const ROLE_CACHE_KEY = 'haven_role_cache';     // lets staff pages open without a one-time reload
+    const MAX_TRIES = 5;
+    const LOCK_SECONDS = 30;
+    let failedTries = 0;
+    let lockedUntil = 0;
+
+    /* ==========================================
+       HELPERS: lock-out, friendly errors, routing
+       ========================================== */
+    function isLocked() { return Date.now() < lockedUntil; }
+
+    function registerFailure() {
+        failedTries += 1;
+        if (failedTries >= MAX_TRIES) {
+            lockedUntil = Date.now() + LOCK_SECONDS * 1000;
+            failedTries = 0;
+        }
+    }
+
+    function friendlyAuthError(err) {
+        const msg = String((err && err.message) || '').toLowerCase();
+        if (msg.includes('invalid login')) return 'Incorrect email or password.';
+        if (msg.includes('banned') || msg.includes('suspended')) return 'This account has been suspended. Please contact an administrator.';
+        if (msg.includes('not confirmed')) return 'Please verify your email first. Check your inbox for the 6-digit code.';
+        if (msg.includes('rate') || msg.includes('too many')) return 'Too many attempts. Please wait a minute and try again.';
+        if (msg.includes('network') || msg.includes('fetch')) return 'Could not reach the server. Check your connection and try again.';
+        // Anything unexpected: say so (instead of blaming the password) and show the real reason
+        return 'Could not sign in' + (err && err.message ? ' (' + err.message + ')' : '') + '. Please try again.';
+    }
+
+    // Only allow returning to one of our own staff pages (e.g. ?next=staff-rooms.html)
+    function safeNextPage() {
+        const next = new URLSearchParams(window.location.search).get('next') || '';
+        return /^staff-[a-z]+\.html$/.test(next) ? next : null;
+    }
+
+    function cacheRole(userId, role) {
+        try { localStorage.setItem(ROLE_CACHE_KEY, JSON.stringify({ uid: userId, role: role })); } catch (e) { /* ignore */ }
+    }
+
+    function getDestination(role) {
+        const r = String(role || 'client').toLowerCase().trim();
+        if (STAFF_ROLES.includes(r)) return safeNextPage() || DASHBOARDS.staff;
+        if (r === 'admin' || r === 'super-admin' || r === 'support-admin') return DASHBOARDS.admin;
+        return DASHBOARDS.client;
+    }
+
     /* ==========================================
        VALIDATION
        ========================================== */
@@ -96,6 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         hideAlert();
 
+        if (isLocked()) {
+            const secs = Math.ceil((lockedUntil - Date.now()) / 1000);
+            showAlert('Too many attempts. Please wait ' + secs + ' seconds and try again.');
+            shake();
+            return;
+        }
+
         if (!validateForm()) { shake(); return; }
 
         const label = loginBtn.querySelector('.btn-label');
@@ -116,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 password: pwInput.value
             });
 
-            if (authError) throw authError;
+            if (authError) { registerFailure(); throw authError; }
 
             // 2. Fetch Profile
             const { data: profile, error: profileError } = await window.supabaseClient
@@ -125,24 +181,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 .eq('id', authData.user.id)
                 .single();
 
-            if (profileError) throw profileError;
-
-            // 3. Route based on Role
-            const rawRole = (profile?.role || 'client').toLowerCase().trim();
-            let destination = DASHBOARDS.client;
-
-            if (rawRole.includes('admin')) {
-                destination = DASHBOARDS.admin;
-            } else if (rawRole.includes('staff') || rawRole.includes('front') || rawRole.includes('desk') || rawRole.includes('manager')) {
-                destination = DASHBOARDS.staff;
+            if (profileError || !profile) {
+                throw { friendly: 'We could not load your account. Please try again or contact the front desk.' };
             }
-            
-            // Redirect to Dashboard (Gatekeeper sa client-dashboard.js ang bahala kung walang room)
-            window.location.href = destination;
+
+            // 3. Route based on role (staff roles go to the staff console)
+            const role = String(profile.role || 'client').toLowerCase().trim();
+            if (STAFF_ROLES.includes(role)) cacheRole(authData.user.id, role);
+
+            // Redirect to the dashboard (client-dashboard.js asks guests without a room to choose one)
+            window.location.href = getDestination(role);
 
         } catch (err) {
             console.error('Login error:', err);
-            showAlert(err.message || 'Incorrect email or password.');
+            showAlert(err.friendly || friendlyAuthError(err));
             shake();
         }
 

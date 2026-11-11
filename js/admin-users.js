@@ -3,32 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================
        MOCK DATA — 24 users across all roles
        ========================================== */
-    const USERS = [
-        { id: 1,  name: 'Sarah Villanueva', email: 'sarah@haven.app',     role: 'Super admin',  status: 'active',     twofa: true,  lastActive: 'Now',                 lastActiveKey: 'today', initials: 'SV', isMe: true },
-        { id: 2,  name: 'Ravi Batra',       email: 'ravi@haven.app',      role: 'Manager',      status: 'active',     twofa: true,  lastActive: 'Today · 4:30 PM',     lastActiveKey: 'today', initials: 'RB' },
-        { id: 3,  name: 'Marco Cruz',       email: 'marco@haven.app',     role: 'Front desk',   status: 'active',     twofa: true,  lastActive: 'Today · 4:21 PM',     lastActiveKey: 'today', initials: 'MC' },
-        { id: 4,  name: 'Joy Lim',          email: 'joy@haven.app',       role: 'Housekeeping', status: 'active',     twofa: false, lastActive: 'Today · 3:40 PM',     lastActiveKey: 'today', initials: 'JL' },
-        { id: 5,  name: 'Ana Torres',       email: 'ana@haven.app',       role: 'Housekeeping', status: 'active',     twofa: true,  lastActive: 'Today · 1:02 PM',     lastActiveKey: 'today', initials: 'AT' },
-        { id: 6,  name: 'Diego Santos',     email: 'diego@haven.app',     role: 'Maintenance',  status: 'active',     twofa: true,  lastActive: 'Today · 11:30 AM',    lastActiveKey: 'today', initials: 'DS' },
-        { id: 7,  name: 'Priya Nair',       email: 'priya@haven.app',     role: 'Front desk',   status: 'active',     twofa: true,  lastActive: 'Today · 9:42 AM',     lastActiveKey: 'today', initials: 'PN' },
-        { id: 8,  name: 'Omar Haddad',      email: 'omar@haven.app',      role: 'Front desk',   status: 'locked',     twofa: true,  lastActive: 'Oct 6 · 2:15 PM',     lastActiveKey: 'week',  initials: 'OH' },
-        { id: 9,  name: 'Hana Kim',         email: 'hana@haven.app',      role: 'Housekeeping', status: 'active',     twofa: true,  lastActive: 'Oct 9 · 6:30 AM',     lastActiveKey: 'week',  initials: 'HK' },
-        { id: 10, name: 'Tomás Silva',      email: 'tomas@haven.app',     role: 'Maintenance',  status: 'active',     twofa: false, lastActive: 'Yesterday · 5:15 PM', lastActiveKey: 'today', initials: 'TS' },
-        { id: 11, name: 'Kim Reyes',        email: 'kim@haven.app',       role: 'Housekeeping', status: 'active',     twofa: true,  lastActive: 'Yesterday · 8:10 PM', lastActiveKey: 'today', initials: 'KR' },
-        { id: 12, name: 'Alex Del Rosario', email: 'alex@haven.app',      role: 'Front desk',   status: 'invited',    twofa: false, lastActive: '—',                   lastActiveKey: 'never', initials: 'AD' },
-        { id: 13, name: 'Mei Chen',         email: 'mei@example.com',     role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Today · 3:14 PM',     lastActiveKey: 'today', initials: 'MC' },
-        { id: 14, name: 'Sofia Reyes',      email: 'sofia@example.com',   role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Today · 8:02 AM',     lastActiveKey: 'today', initials: 'SR', guestId: 'TR-1001', regId: 'HV-1001', room: '201', checkout: 'Oct 9, 2026', overdueDays: 2 },
-        { id: 15, name: 'Aiko Tanaka',      email: 'aiko@example.com',    role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Today · 10:30 AM',    lastActiveKey: 'today', initials: 'AT' },
-        { id: 16, name: 'Diego Marquez',    email: 'diego.m@example.com', role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Today · 11:05 AM',    lastActiveKey: 'today', initials: 'DM' },
-        { id: 17, name: 'Lena Okafor',      email: 'lena@example.com',    role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Yesterday · 6:42 PM', lastActiveKey: 'today', initials: 'LO' },
-        { id: 18, name: 'Ravi Patel',       email: 'ravi.p@example.com',  role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Yesterday · 4:20 PM', lastActiveKey: 'today', initials: 'RP' },
-        { id: 19, name: 'Rina Suzuki',      email: 'rina@example.com',    role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Oct 8 · 3:10 PM',     lastActiveKey: 'week',  initials: 'RS' },
-        { id: 20, name: 'Carlos Mendez',    email: 'carlos@example.com',  role: 'Guest',        status: 'active',     twofa: false, lastActive: 'Oct 7 · 9:20 AM',     lastActiveKey: 'week',  initials: 'CM' },
-        { id: 21, name: 'Support Admin 1',  email: 'support1@haven.app',  role: 'Support admin', status: 'active',    twofa: true,  lastActive: 'Today · 2:00 PM',     lastActiveKey: 'today', initials: 'SA' },
-        { id: 22, name: 'Support Admin 2',  email: 'support2@haven.app',  role: 'Support admin', status: 'suspended', twofa: true, lastActive: 'Oct 4 · 11:30 AM',     lastActiveKey: 'week',  initials: 'SA' },
-        { id: 23, name: 'Temp Admin · Maya',email: 'maya@haven.app',      role: 'Support admin', status: 'active',    twofa: true,  lastActive: 'Today · 1:00 PM',     lastActiveKey: 'today', initials: 'MA', tempRole: 'Support admin', expiresAt: '2026-10-13T18:00', isTemp: true },
-        { id: 24, name: 'Pending Invite · Leo', email: 'leo@haven.app',   role: 'Front desk',   status: 'invited',    twofa: false, lastActive: '—',                   lastActiveKey: 'never', initials: 'LI', inviteExpires: '2 days' }
-    ];
+    const USERS = [];   // filled from the database
 
     const ROLES = [
         { name: 'Guest',         count: 9,  desc: 'External users with limited self-service access. They can view their own stay, submit service requests and manage their profile.', grantAll: ['view own stay', 'submit service requests', 'update own profile'] },
@@ -62,40 +37,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ROLE_COLUMNS = ['Guest', 'Front desk', 'Housekeeping', 'Maintenance', 'Manager', 'Support admin', 'Super admin'];
 
-    const ACCESS_REQUESTS = [
-        { id: 1, requester: 'Marco Cruz',  initials: 'MC', role: 'Front desk',   requested: 'Manager access',  duration: '7 days',   reason: 'Covering weekend manager shifts while Ravi is on leave.' },
-        { id: 2, requester: 'Joy Lim',     initials: 'JL', role: 'Housekeeping', requested: 'Support admin',   duration: '3 days',   reason: 'Assisting with user onboarding for the new hires this week.' }
-    ];
+    const ACCESS_REQUESTS = [];   // no request feature in the database yet
 
-    const ROLE_HISTORY = [
-        { admin: 'Sarah Villanueva', target: 'Ravi Batra',      oldRole: 'Front desk',   newRole: 'Manager',       reason: 'Promotion',                     time: 'Oct 8 · 3:15 PM' },
-        { admin: 'Sarah Villanueva', target: 'Maya Cruz',       oldRole: '—',            newRole: 'Support admin', reason: 'Temporary elevation · 7 days',  time: 'Oct 6 · 9:00 AM' },
-        { admin: 'Sarah Villanueva', target: 'Omar Haddad',     oldRole: 'Front desk',   newRole: 'Front desk (suspended)', reason: 'Policy violation',     time: 'Oct 5 · 4:30 PM' },
-        { admin: 'Sarah Villanueva', target: 'Priya Nair',      oldRole: 'Guest',        newRole: 'Front desk',    reason: 'Hired as front desk',           time: 'Oct 3 · 10:12 AM' },
-        { admin: 'Sarah Villanueva', target: 'Tomás Silva',     oldRole: 'Guest',        newRole: 'Maintenance',   reason: 'Hired as maintenance',          time: 'Oct 2 · 2:40 PM' },
-        { admin: 'Sarah Villanueva', target: 'Kim Reyes',       oldRole: 'Guest',        newRole: 'Housekeeping',  reason: 'Hired as housekeeping',         time: 'Sep 30 · 9:05 AM' },
-        { admin: 'Sarah Villanueva', target: 'Support Admin 2', oldRole: 'Support admin',newRole: 'Support admin (suspended)', reason: 'Access review', time: 'Sep 28 · 11:00 AM' },
-        { admin: 'Sarah Villanueva', target: 'Ana Torres',      oldRole: 'Guest',        newRole: 'Housekeeping',  reason: 'Hired as housekeeping',         time: 'Sep 25 · 3:30 PM' },
-        { admin: 'Sarah Villanueva', target: 'Diego Santos',    oldRole: 'Guest',        newRole: 'Maintenance',   reason: 'Hired as maintenance',          time: 'Sep 22 · 10:00 AM' },
-        { admin: 'Sarah Villanueva', target: 'Hana Kim',        oldRole: 'Guest',        newRole: 'Housekeeping',  reason: 'Hired as housekeeping',         time: 'Sep 20 · 1:45 PM' },
-        { admin: 'Sarah Villanueva', target: 'Joy Lim',         oldRole: 'Guest',        newRole: 'Housekeeping',  reason: 'Hired as housekeeping',         time: 'Sep 18 · 11:20 AM' },
-        { admin: 'Sarah Villanueva', target: 'Marco Cruz',      oldRole: 'Guest',        newRole: 'Front desk',    reason: 'Hired as front desk',           time: 'Sep 15 · 9:10 AM' },
-        { admin: 'Sarah Villanueva', target: 'Support Admin 1', oldRole: 'Guest',        newRole: 'Support admin', reason: 'New support admin',             time: 'Sep 12 · 3:00 PM' },
-        { admin: 'Sarah Villanueva', target: 'Sarah Villanueva',oldRole: 'Support admin',newRole: 'Super admin',   reason: 'Promotion to Super admin',      time: 'Sep 1 · 9:00 AM' },
-        { admin: 'System',           target: 'Ravi Batra',      oldRole: '—',            newRole: 'Manager (temp)',reason: 'Auto-expired temporary role',   time: 'Aug 15 · 11:59 PM' }
-    ];
+    const ROLE_HISTORY = [];   // filled from the role_history table
 
-    const ROLE_LABELS = { 'super-admin': 'Super admin', 'support-admin': 'Support admin' };
-    const ADMIN_BY_ROLE = {
-        'super-admin': { name: 'Sarah Villanueva', initials: 'SV' },
-        'support-admin': { name: 'Support Admin 1', initials: 'SA' }
+    // Database role keys <-> the labels shown on this page
+    const ROLE_KEY_TO_LABEL = {
+        'client': 'Guest', 'front-desk': 'Front desk', 'housekeeping': 'Housekeeping', 'maintenance': 'Maintenance',
+        'manager': 'Manager', 'support-admin': 'Support admin', 'super-admin': 'Super admin'
     };
+    const ROLE_LABEL_TO_KEY = Object.fromEntries(Object.entries(ROLE_KEY_TO_LABEL).map(([k, v]) => [v, k]));
+    const ROLE_LABELS = { 'super-admin': 'Super admin', 'support-admin': 'Support admin' };
+    const db = window.supabaseClient;
 
     /* ==========================================
        STATE
        ========================================== */
     const state = {
-        role: 'super-admin',
+        role: 'support-admin',
+        me: null,
+        actionTarget: null,
         tab: 'users',
         search: '',
         filterRole: 'all',
@@ -120,47 +81,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================
-       ROLE SWITCHER
+       ROLE DISPLAY (the role comes from the database)
        ========================================== */
-    function applyRole(role) {
-        state.role = role;
-        document.body.dataset.role = role;
-        $('#staffRoleLabel').textContent = ROLE_LABELS[role];
-        $('#roleBreadcrumb').textContent = ROLE_LABELS[role];
-        const admin = ADMIN_BY_ROLE[role];
-        const staffNameEl = document.querySelector('.staff-name');
-        const staffAvatarEl = document.querySelector('.staff-avatar');
-        const topbarAvatar = document.querySelector('.topbar-avatar');
-        if (staffNameEl) staffNameEl.textContent = admin.name;
-        if (staffAvatarEl) staffAvatarEl.textContent = admin.initials;
-        if (topbarAvatar) topbarAvatar.textContent = admin.initials;
-
-        // Super-admin-only buttons
-        $$('[data-role-required="super-admin"]').forEach((el) => {
-            if (role === 'super-admin') {
-                el.removeAttribute('aria-disabled');
-                el.removeAttribute('title');
-            } else {
-                el.setAttribute('aria-disabled', 'true');
-                el.setAttribute('title', 'Super admin only');
-            }
-        });
-
-        // Bulk bar
-        $$('.bulk-actions [data-role="super-admin"]').forEach((el) => {
-            if (role === 'super-admin') {
-                el.removeAttribute('aria-disabled');
-                el.removeAttribute('title');
-            } else {
-                el.setAttribute('aria-disabled', 'true');
-                el.setAttribute('title', 'Super admin only');
-            }
-        });
-
-        toast('success', 'Role switched', `Now viewing as ${ROLE_LABELS[role]}.`);
+    function esc(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
-    document.getElementById('roleSelect')?.addEventListener('change', (e) => applyRole(e.target.value));
-    applyRole('super-admin');
+
+    function applyRole(roleKey) {
+        state.role = roleKey;
+        document.body.dataset.role = roleKey;
+        const label = ROLE_LABELS[roleKey] || roleKey;
+        const me = state.me || { name: 'Admin', initials: 'AD' };
+
+        const roleLabel = $('#staffRoleLabel'); if (roleLabel) roleLabel.textContent = label;
+        const crumb = $('#roleBreadcrumb'); if (crumb) crumb.textContent = label;
+        $$('.staff-name').forEach((el) => { el.textContent = me.name; });
+        $$('.staff-avatar, .topbar-avatar').forEach((el) => { el.textContent = me.initials; });
+
+        const isSuper = roleKey === 'super-admin';
+        $$('[data-role-required="super-admin"], .bulk-actions [data-role="super-admin"]').forEach((el) => {
+            if (isSuper) { el.removeAttribute('aria-disabled'); el.removeAttribute('title'); }
+            else { el.setAttribute('aria-disabled', 'true'); el.setAttribute('title', 'Super admin only'); }
+        });
+    }
+    applyRole('support-admin');   // most restricted until the database confirms who you are
 
     /* ==========================================
        MOBILE SIDEBAR
@@ -321,10 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
         $$('tr[data-user-id]', body).forEach((row) => {
             row.addEventListener('click', (e) => {
                 if (e.target.closest('.row-check') || e.target.closest('.row-menu-btn')) return;
-                openUserDrawer(Number(row.dataset.userId));
+                openUserDrawer(row.dataset.userId);
             });
             row.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') { e.preventDefault(); openUserDrawer(Number(row.dataset.userId)); }
+                if (e.key === 'Enter') { e.preventDefault(); openUserDrawer(row.dataset.userId); }
                 if (e.key === 'ArrowDown') { e.preventDefault(); row.nextElementSibling?.focus(); }
                 if (e.key === 'ArrowUp') { e.preventDefault(); row.previousElementSibling?.focus(); }
             });
@@ -333,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Checkboxes
         $$('.row-check', body).forEach((cb) => {
             cb.addEventListener('change', () => {
-                const id = Number(cb.dataset.id);
+                const id = cb.dataset.id;
                 if (cb.checked) state.selected.add(id);
                 else state.selected.delete(id);
                 cb.closest('tr').classList.toggle('selected', cb.checked);
@@ -345,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $$('[data-user-menu]', body).forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                openRowMenu(Number(btn.dataset.userMenu), btn);
+                openRowMenu(btn.dataset.userMenu, btn);
             });
         });
 
@@ -371,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         menu.innerHTML = `
             <li><button data-menu="view">View details</button></li>
             ${!isGuest ? `
-                <li><button data-menu="change-role" ${isMe || isLastSuper ? 'disabled title="You cannot change your own role or the last Super admin\\'s role"' : ''}>Change role</button></li>
+                <li><button data-menu="change-role" ${isMe || isLastSuper ? 'disabled title="You cannot change your own role or the last Super admin"' : ''}>Change role</button></li>
             ` : ''}
             <li><button data-menu="reset-password" ${isGuest ? 'disabled title="Guest accounts do not have passwords"' : ''}>Reset password</button></li>
             <li><button data-menu="reset-2fa" ${!u.twofa ? 'disabled' : ''}>Reset 2FA</button></li>
@@ -383,18 +327,24 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         document.body.appendChild(menu);
+        if (state.role !== 'super-admin') {
+            menu.querySelectorAll('[data-menu="change-role"], [data-menu="suspend"], [data-menu="delete"]').forEach((b) => {
+                b.disabled = true; b.title = 'Super admin only';
+            });
+        }
 
         menu.querySelectorAll('button').forEach((b) => {
             b.addEventListener('click', () => {
                 closeAllMenus();
                 const action = b.dataset.menu;
+                state.actionTarget = u;
                 if (action === 'view') openUserDrawer(id);
-                else if (action === 'change-role') openConfirm('change-role', `Change role for <strong>${u.name}</strong>?`, 'CHANGE');
+                else if (action === 'change-role') openConfirm('change-role', changeRoleMarkup(u), 'CHANGE');
                 else if (action === 'reset-password') openConfirm('reset-password', `Send password reset to <strong>${u.name}</strong>?`, 'RESET');
                 else if (action === 'reset-2fa') openConfirm('reset-2fa', `Reset 2FA for <strong>${u.name}</strong>? They will need to set it up again.`, 'RESET');
                 else if (action === 'unlock') openConfirm('unlock', `Unlock account for <strong>${u.name}</strong>?`, 'UNLOCK');
                 else if (action === 'suspend') {
-                    if (u.status === 'suspended') { toast('success', 'Reactivated', `${u.name} can sign in again.`); return; }
+                    if (u.status === 'suspended') { openConfirm('reactivate', `Reactivate <strong>${esc(u.name)}</strong>? They will be able to sign in again.`, 'REACTIVATE'); return; }
                     openConfirm('suspend', `Suspend <strong>${u.name}</strong>? They will be signed out and cannot sign in.`, 'SUSPEND');
                 }
                 else if (action === 'delete') openConfirm('delete', `Delete <strong>${u.name}</strong>? This will remove all sessions and cannot be undone. Consider suspending instead.`, 'DELETE');
@@ -521,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('#bulkExport')?.addEventListener('click', () => {
+        exportUsers(USERS.filter((u) => state.selected.has(u.id)));
         toast('success', 'Exported', `${state.selected.size} user(s) exported as CSV.`);
         $('#bulkClear').click();
     });
@@ -542,13 +493,15 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================
        ROLE CARDS
        ========================================== */
+    function countFor(label) { return USERS.filter((u) => u.role === label).length; }
+
     function renderRoles() {
         const grid = $('#roleGrid');
         grid.innerHTML = ROLES.map((r) => `
             <div class="role-card">
                 <div class="role-card-head">
                     <span class="role-card-name">${r.name}</span>
-                    <span class="role-card-count">${r.count} user${r.count === 1 ? '' : 's'}</span>
+                    <span class="role-card-count">${countFor(r.name)} user${countFor(r.name) === 1 ? '' : 's'}</span>
                 </div>
                 <p class="role-card-desc">${r.desc}</p>
                 <button class="btn btn-outline btn-sm" data-view-perms="${r.name}">View permissions</button>
@@ -692,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================== */
     function renderRequests() {
         const list = $('#requestList');
-        list.innerHTML = ACCESS_REQUESTS.map((r) => `
+        list.innerHTML = !ACCESS_REQUESTS.length ? '<li class="muted" style="padding:24px;text-align:center">No pending access requests.</li>' : ACCESS_REQUESTS.map((r) => `
             <li class="request-item">
                 <span class="request-avatar">${r.initials}</span>
                 <div class="request-body">
@@ -735,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================== */
     function renderHistory() {
         const body = $('#historyBody');
-        body.innerHTML = ROLE_HISTORY.map((h) => `
+        body.innerHTML = !ROLE_HISTORY.length ? '<tr><td colspan="6" class="muted" style="padding:24px;text-align:center">No role changes yet.</td></tr>' : ROLE_HISTORY.map((h) => `
             <tr>
                 <td>${h.admin}</td>
                 <td>${h.target}</td>
@@ -776,7 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $('#pGuestSection').hidden = false;
             $('#pGuestId').textContent = u.guestId;
             $('#pRegId').textContent = u.regId;
-            $('#pRoom').textContent = u.room;
+            $('#pRoom').textContent = u.room || '—';
             $('#pCheckout').textContent = u.checkout;
             $('#pOverdue').textContent = `${u.overdueDays} days`;
         } else {
@@ -875,6 +828,10 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#createTitle').textContent = mode === 'admin' ? 'Create admin' : 'Create user';
         $('#cuName').value = '';
         $('#cuEmail').value = '';
+        $('#cuStart').value = new Date().toISOString().slice(0, 10);
+        $('#cuExpiry').value = new Date(Date.now() + 180 * 86400000).toISOString().slice(0, 10);
+        if ($('#cuTempPw')) $('#cuTempPw').checked = true;
+        resetCreateResult();
         $('#cuRole').value = 'Guest';
         if (mode === 'admin') {
             // Pre-fill role options only for admin
@@ -930,6 +887,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </li>
             `).join('')
             : '<li style="color:var(--text-muted);font-size:0.8rem">This role has no permissions beyond basic access.</li>';
+        const how = $('#cuSummaryHow');
+        if (how) how.textContent = $('#cuTempPw') && $('#cuTempPw').checked
+            ? 'You will see a temporary password to share with them, once.'
+            : 'They will get an email invite to set their own password.';
         $('#cuSummaryExpiry').textContent = new Date($('#cuExpiry').value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
@@ -960,17 +921,82 @@ document.addEventListener('DOMContentLoaded', () => {
         if (createStep < 3) goToCreateStep(createStep + 1);
     });
 
-    $('#createSubmit')?.addEventListener('click', () => {
+    $('#createSubmit')?.addEventListener('click', async () => {
         const btn = $('#createSubmit');
+        const spinner = btn.querySelector('.btn-spinner');
+        const roleLabel = $('#cuRole').value;
+        const email = $('#cuEmail').value.trim();
+        const useTemp = !!($('#cuTempPw') && $('#cuTempPw').checked);
+        const tempPassword = useTemp ? makeTempPassword() : null;
+
         btn.disabled = true;
-        btn.querySelector('.btn-spinner').hidden = false;
-        setTimeout(() => {
+        spinner.hidden = false;
+        try {
+            await callAdminFunction({
+                action: 'create',
+                email,
+                full_name: $('#cuName').value.trim(),
+                role: ROLE_LABEL_TO_KEY[roleLabel],
+                expires_at: $('#cuExpiry').value || null,
+                temp_password: tempPassword,
+                redirect_to: window.location.origin + '/update-password.html'
+            });
+            showCreateResult({ email, name: $('#cuName').value.trim(), role: roleLabel, tempPassword });
+            await refreshAll();
+        } catch (err) {
+            toast('error', 'Could not create the account', esc(err.message));
+        } finally {
             btn.disabled = false;
-            btn.querySelector('.btn-spinner').hidden = true;
-            toast('success', 'Invite sent', `${$('#cuName').value} will receive an invitation email.`);
-            closeCreate();
-        }, 700);
+            spinner.hidden = true;
+        }
     });
+
+    function makeTempPassword() {
+        const sets = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnopqrstuvwxyz', '23456789', '!@#$%&*'];
+        const all = sets.join('');
+        const rand = (n) => crypto.getRandomValues(new Uint32Array(1))[0] % n;
+        const out = sets.map((chars) => chars[rand(chars.length)]);
+        while (out.length < 14) out.push(all[rand(all.length)]);
+        for (let i = out.length - 1; i > 0; i--) { const j = rand(i + 1); [out[i], out[j]] = [out[j], out[i]]; }
+        return out.join('');
+    }
+
+    function resetCreateResult() {
+        const panel = $('#cuResult'); if (panel) panel.remove();
+        const cancel = $('#createCancel'); if (cancel) cancel.textContent = 'Cancel';
+    }
+
+    function showCreateResult({ email, name, role, tempPassword }) {
+        $$('#createDrawer .wizard-step').forEach((st) => st.classList.remove('active'));
+        $$('#createDrawer .stepper-item').forEach((it) => it.classList.add('done'));
+        $('#createBack').hidden = true;
+        $('#createNext').hidden = true;
+        $('#createSubmit').hidden = true;
+        $('#createCancel').textContent = 'Done';
+        $('#createSub').textContent = 'Account created';
+
+        const panel = document.createElement('div');
+        panel.id = 'cuResult';
+        panel.innerHTML = `
+            <div class="summary-block">
+                <h4>${esc(name)} is ready</h4>
+                <p class="summary-note">Role: <strong>${esc(role)}</strong><br>Email: <strong>${esc(email)}</strong></p>
+                ${tempPassword
+                    ? `<p class="summary-note" style="margin-top:12px">Temporary password (shown only once):</p>
+                       <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+                           <code id="cuTempValue" style="flex:1;padding:10px 12px;border:1px dashed #cfccc1;border-radius:8px;background:#faf9f5;font-size:.95rem;user-select:all">${esc(tempPassword)}</code>
+                           <button type="button" class="btn btn-outline btn-sm" id="cuCopyBtn">Copy</button>
+                       </div>
+                       <p class="summary-note" style="margin-top:10px">Share it privately. Ask them to change it after their first sign-in.</p>`
+                    : `<p class="summary-note" style="margin-top:12px">An invite email was sent. They set their own password from the link.</p>`}
+            </div>`;
+        $('#createDrawer .drawer-body').appendChild(panel);
+
+        const copy = $('#cuCopyBtn');
+        if (copy) copy.addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText(tempPassword); copy.textContent = 'Copied'; } catch (e) { copy.textContent = 'Press Ctrl+C'; }
+        });
+    }
 
     /* ==========================================
        STEP-UP MODAL
@@ -984,6 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#stepupPasswordErr').textContent = '';
         $('#stepupCodeErr').textContent = '';
         openModal(stepupOverlay);
+        updateStepupCodeVisibility();
         setTimeout(() => $('#stepupPassword').focus(), 100);
     }
     function closeStepup() { closeModal(stepupOverlay); }
@@ -992,15 +1019,48 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#stepupCancel')?.addEventListener('click', closeStepup);
     stepupOverlay?.addEventListener('click', (e) => { if (e.target === stepupOverlay) closeStepup(); });
 
-    $('#stepupVerify')?.addEventListener('click', () => {
-        const pass = $('#stepupPassword').value.trim();
+    async function getVerifiedTotp() {
+        try {
+            const { data } = await db.auth.mfa.listFactors();
+            return (data && data.totp && data.totp.find((f) => f.status === 'verified')) || null;
+        } catch (e) { return null; }
+    }
+
+    // The 6-digit code is only asked for when this admin has an authenticator app set up
+    async function updateStepupCodeVisibility() {
+        const group = $('#stepupCode') && $('#stepupCode').closest('.form-group');
+        if (group) group.hidden = !(await getVerifiedTotp());
+    }
+
+    $('#stepupVerify')?.addEventListener('click', async () => {
+        const btn = $('#stepupVerify');
+        const pass = $('#stepupPassword').value;
         const code = $('#stepupCode').value.trim();
-        let ok = true;
-        if (pass.length < 4) { $('#stepupPasswordErr').textContent = 'Enter your password.'; ok = false; }
-        if (!/^\d{6}$/.test(code)) { $('#stepupCodeErr').textContent = 'Enter a 6-digit 2FA code.'; ok = false; }
-        if (!ok) return;
-        state.stepupCallback?.();
-        closeStepup();
+        $('#stepupPasswordErr').textContent = '';
+        $('#stepupCodeErr').textContent = '';
+        if (!pass) { $('#stepupPasswordErr').textContent = 'Enter your password.'; return; }
+
+        btn.disabled = true;
+        try {
+            const { error: pwErr } = await db.auth.signInWithPassword({ email: state.me.email, password: pass });
+            if (pwErr) { $('#stepupPasswordErr').textContent = 'That password is not correct.'; return; }
+
+            const totp = await getVerifiedTotp();
+            if (totp) {
+                if (!/^\d{6}$/.test(code)) { $('#stepupCodeErr').textContent = 'Enter the 6-digit code from your authenticator app.'; return; }
+                const ch = await db.auth.mfa.challenge({ factorId: totp.id });
+                if (ch.error) throw ch.error;
+                const vr = await db.auth.mfa.verify({ factorId: totp.id, challengeId: ch.data.id, code });
+                if (vr.error) { $('#stepupCodeErr').textContent = 'That code is not valid.'; return; }
+            }
+            const done = state.stepupCallback;
+            closeStepup();
+            if (done) done();
+        } catch (err) {
+            $('#stepupPasswordErr').textContent = err.message || 'Could not verify. Please try again.';
+        } finally {
+            btn.disabled = false;
+        }
     });
 
     /* ==========================================
@@ -1041,31 +1101,137 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!ok) return;
 
         const { action } = state.confirmCtx;
+        const target = state.actionTarget || state.activeUser;
+        const picker = $('#crNewRole');
+        const newRoleKey = picker ? picker.value : null;
         closeConfirm();
+        state.actionTarget = null;
 
-        // Sensitive actions require step-up
-        const sensitive = ['change-role','save-permissions','delete','suspend','bulk-suspend','signout-all','apply-elevation'];
-        if (sensitive.includes(action)) {
-            openStepup(() => {
-                if (action === 'delete') toast('success', 'User deleted', 'Account and sessions removed. This action is logged.', 10000, { label: 'Undo', onClick: () => toast('success', 'Restored', 'User account restored.') });
-                else if (action === 'save-permissions') toast('success', 'Permissions saved', 'Changes applied to every page that uses permissions.');
-                else if (action === 'change-role') toast('success', 'Role changed', 'Role history updated.');
-                else if (action === 'suspend' || action === 'bulk-suspend') toast('success', 'Suspended', 'Affected users were signed out.', 10000, { label: 'Undo', onClick: () => toast('success', 'Restored', 'Suspend undone.') });
-                else if (action === 'signout-all') toast('success', 'Signed out', 'All sessions terminated.');
-                else if (action === 'apply-elevation') toast('success', 'Elevation applied', 'Temporary access will expire automatically.');
-            });
-        } else {
-            const messages = {
-                'reset-password': ['Password reset', 'Reset link sent.'],
-                'reset-2fa': ['2FA reset', 'User must set up 2FA again.'],
-                'unlock': ['Account unlocked', 'User can sign in again.'],
-                'approve-request': ['Request approved', 'Temporary access will expire automatically.'],
-                'decline-request': ['Request declined', 'Requester notified.']
-            };
-            const [t, m] = messages[action] || ['Done', 'Action completed.'];
-            toast('success', t, m);
-        }
+        const run = () => runAdminAction(action, { target, reason, newRoleKey });
+        const sensitive = ['change-role', 'delete', 'suspend', 'bulk-suspend'];
+        if (sensitive.includes(action)) openStepup(run);
+        else run();
     });
+
+    /* ==========================================
+       DATABASE: load + admin actions
+       ========================================== */
+    async function callAdminFunction(body) {
+        const { data, error } = await db.functions.invoke('admin-users', { body });
+        if (error) {
+            let message = error.message;
+            try { const detail = await error.context.json(); if (detail && detail.error) message = detail.error; } catch (e) { /* keep default */ }
+            throw new Error(message);
+        }
+        if (data && data.error) throw new Error(data.error);
+        return data;
+    }
+
+    function fmtLast(d) {
+        const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        if (new Date().toDateString() === d.toDateString()) return 'Today · ' + time;
+        if (Date.now() - d.getTime() < 2 * 86400000) return 'Yesterday · ' + time;
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + time;
+    }
+    function lastKey(d) {
+        if (!d) return 'never';
+        const days = (Date.now() - d.getTime()) / 86400000;
+        return days < 2 ? 'today' : days < 8 ? 'week' : days < 31 ? 'month' : 'older';
+    }
+
+    function mapUser(r) {
+        const name = r.full_name || r.email || 'Unnamed';
+        const last = r.last_sign_in_at ? new Date(r.last_sign_in_at) : null;
+        return {
+            id: r.id, name, email: r.email || '',
+            role: ROLE_KEY_TO_LABEL[r.role] || r.role,
+            status: r.status || 'active',
+            twofa: !!r.twofa,
+            lastActive: last ? fmtLast(last) : '—',
+            lastActiveKey: lastKey(last),
+            initials: initials(name),
+            isMe: !!(state.me && r.id === state.me.id),
+            guestId: r.guest_id, regId: r.reg_id, room: r.room,
+            checkout: '—', overdueDays: 0,
+            isTemp: false
+        };
+    }
+
+    async function loadUsers() {
+        const { data, error } = await db.rpc('admin_list_users');
+        if (error) { toast('error', 'Could not load users', esc(error.message)); return; }
+        USERS.length = 0;
+        (data || []).forEach((r) => USERS.push(mapUser(r)));
+        state.selected.clear();
+        updateSavedCounts();
+        renderUsers();
+        renderRoles();
+    }
+
+    async function loadHistory() {
+        const { data } = await db.from('role_history').select('*').order('created_at', { ascending: false }).limit(200);
+        ROLE_HISTORY.length = 0;
+        (data || []).forEach((h) => ROLE_HISTORY.push({
+            admin: h.changed_by_name || 'System',
+            target: h.target_name || '—',
+            oldRole: ROLE_KEY_TO_LABEL[h.old_role] || h.old_role || '—',
+            newRole: ROLE_KEY_TO_LABEL[h.new_role] || h.new_role || '—',
+            reason: h.reason || '—',
+            time: fmtLast(new Date(h.created_at))
+        }));
+        renderHistory();
+    }
+
+    async function refreshAll() { await Promise.all([loadUsers(), loadHistory()]); }
+
+    function changeRoleMarkup(u) {
+        const current = ROLE_LABEL_TO_KEY[u.role];
+        const options = Object.entries(ROLE_KEY_TO_LABEL)
+            .filter(([key]) => key !== current)
+            .map(([key, label]) => `<option value="${key}">${label}</option>`).join('');
+        return `Change the role of <strong>${esc(u.name)}</strong> (now ${esc(u.role)}).
+            <label style="display:block;margin-top:10px;font-size:.8rem;font-weight:500">New role
+                <select id="crNewRole" style="display:block;width:100%;margin-top:6px;padding:9px 11px;border:1px solid #cfccc1;border-radius:8px;font:inherit">${options}</select>
+            </label>`;
+    }
+
+    async function runAdminAction(action, ctx) {
+        const t = ctx.target;
+        const redirect = window.location.origin + '/update-password.html';
+        try {
+            if (action === 'change-role') {
+                const { error } = await db.rpc('admin_set_role', { p_target: t.id, p_role: ctx.newRoleKey, p_reason: ctx.reason });
+                if (error) throw error;
+                toast('success', 'Role changed', `${esc(t.name)} is now ${esc(ROLE_KEY_TO_LABEL[ctx.newRoleKey])}.`);
+            } else if (action === 'reset-password') {
+                await callAdminFunction({ action: 'reset_password', user_id: t.id, redirect_to: redirect });
+                toast('success', 'Password reset sent', 'A reset link was emailed to the user.');
+            } else if (action === 'reset-2fa') {
+                await callAdminFunction({ action: 'reset_2fa', user_id: t.id });
+                toast('success', '2FA reset', 'They must set up two-step verification again.');
+            } else if (action === 'unlock' || action === 'reactivate') {
+                await callAdminFunction({ action: 'set_status', user_id: t.id, status: 'active' });
+                toast('success', 'Account active', `${esc(t.name)} can sign in again.`);
+            } else if (action === 'suspend') {
+                await callAdminFunction({ action: 'set_status', user_id: t.id, status: 'suspended' });
+                toast('success', 'Suspended', `${esc(t.name)} can no longer sign in.`);
+            } else if (action === 'bulk-suspend') {
+                const ids = [...state.selected].filter((id) => !(state.me && id === state.me.id));
+                for (const id of ids) await callAdminFunction({ action: 'set_status', user_id: id, status: 'suspended' });
+                toast('success', 'Suspended', `${ids.length} account(s) suspended.`);
+            } else if (action === 'delete') {
+                await callAdminFunction({ action: 'delete', user_id: t.id });
+                toast('success', 'User deleted', 'The account was removed and the action was logged.');
+                closeUserDrawer();
+            } else {
+                toast('error', 'Not available yet', 'This action is not connected to the database yet.');
+                return;
+            }
+            await refreshAll();
+        } catch (err) {
+            toast('error', 'Action failed', esc(err.message || 'Please try again.'));
+        }
+    }
 
     /* ==========================================
        MODAL HELPERS
@@ -1131,22 +1297,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================
-       ROLE EXPIRY TICKER
+       EXPORT (real CSV of what is on screen)
        ========================================== */
-    const expiryEl = $('#roleExpiry');
-    let mins = 4 * 60 + 12;
-    setInterval(() => {
-        mins--;
-        if (mins <= 0) { expiryEl.textContent = 'Access expired · re-authenticate'; expiryEl.style.color = 'var(--status-red-fg)'; return; }
-        const h = Math.floor(mins / 60);
-        const m = mins % 60;
-        expiryEl.textContent = `Access expires in ${h}h ${m}m`;
-    }, 60000);
+    function exportUsers(list) {
+        const rows = [['Name', 'Email', 'Role', 'Status', '2FA', 'Last active']]
+            .concat(list.map((u) => [u.name, u.email, u.role, u.status, u.twofa ? 'Enabled' : 'Not set', u.lastActive]));
+        const csv = rows.map((r) => r.map((v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"').join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        a.download = 'users.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+    $('#exportBtn')?.addEventListener('click', () => {
+        const list = applyFilters();
+        if (!list.length) { toast('error', 'Nothing to export', 'The list is empty.'); return; }
+        exportUsers(list);
+        toast('success', 'Export ready', `${list.length} user(s) saved as CSV.`);
+    });
 
     /* ==========================================
-       EXPORT BUTTON
+       ACCESS CHECK + START-UP
        ========================================== */
-    $('#exportBtn')?.addEventListener('click', () => {
-        toast('success', 'Export started', 'Exports will include user IDs, roles and 2FA state. Sensitive fields are masked unless permitted.');
-    });
+    function showAdminGate(title, message, retry) {
+        const gate = document.createElement('div');
+        gate.style.cssText = 'position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:24px;background:#f1f0ea;font-family:Inter,sans-serif;color:#1b221e';
+        gate.innerHTML = `<div style="width:min(440px,100%);padding:40px 32px;text-align:center;background:#fff;border:1px solid #e5e3dc;border-radius:16px;box-shadow:0 16px 40px rgba(20,28,24,.12)">
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:500;color:#1b3a2e;margin-bottom:8px"></h2>
+            <p style="font-size:.9rem;line-height:1.55;color:#4a554e;margin-bottom:20px"></p>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"></div></div>`;
+        gate.querySelector('h2').textContent = title;
+        gate.querySelector('p').textContent = message;
+        const box = gate.querySelector('div > div');
+        const add = (label, primary, onClick) => {
+            const b = document.createElement('button');
+            b.textContent = label;
+            b.style.cssText = 'padding:10px 18px;border-radius:8px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;border:1px solid ' + (primary ? '#12291f;background:#1b3a2e;color:#fff' : '#cfccc1;background:#fff;color:#1b221e');
+            b.addEventListener('click', onClick);
+            box.appendChild(b);
+        };
+        if (retry) add('Try again', true, () => window.location.reload());
+        else add('Go to my dashboard', true, () => { window.location.href = 'client-dashboard.html'; });
+        add('Sign out', false, signOutAndLeave);
+        document.body.appendChild(gate);
+    }
+
+    async function signOutAndLeave() {
+        try { localStorage.removeItem('haven_role_cache'); if (db) await db.auth.signOut(); } catch (e) { /* ignore */ }
+        window.location.href = 'index.html';
+    }
+    $$('.nav-item.logout').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); signOutAndLeave(); }));
+
+    async function verifyAdmin() {
+        if (!db) { showAdminGate('Cannot connect', 'The connection to the server is not available.', true); return null; }
+        const { data: { session } } = await db.auth.getSession();
+        if (!session) { window.location.href = 'index.html'; return null; }
+
+        const { data: p, error } = await db.from('profiles').select('*').eq('id', session.user.id).single();
+        if (error || !p) { showAdminGate('We could not check your access', 'Please try again. If this keeps happening, contact a Super admin.', true); return null; }
+
+        const expired = p.access_expires_at && new Date(p.access_expires_at) < new Date();
+        if (!['super-admin', 'support-admin'].includes(p.role) || p.status === 'suspended' || expired) {
+            showAdminGate('Admin area', 'This part of Haven is for administrators only.', false);
+            return null;
+        }
+        const name = p.full_name || 'Admin';
+        state.me = { id: session.user.id, email: session.user.email, name, initials: initials(name), role: p.role };
+        return p.role;
+    }
+
+    async function initAdmin() {
+        const role = await verifyAdmin();
+        if (!role) return;
+        applyRole(role);
+        await refreshAll();
+    }
+    initAdmin();
 });
