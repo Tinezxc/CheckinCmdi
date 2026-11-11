@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accommodation - Haven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/client-accommodation.css">
+<link rel="stylesheet" href="CSS/skeleton-loading.css">
+<style>
+    /* Service-request list + dialog (added) */
+    .req-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border, #e0dfd9); }
+    .req-item:last-child { border-bottom: none; }
+    .req-item-title { font-size: 0.9rem; font-weight: 600; color: var(--text-main, #1f2923); }
+    .req-item-text { font-size: 0.8rem; color: var(--text-muted, #4f5a53); margin-top: 2px; word-break: break-word; }
+    .req-item-date { font-size: 0.72rem; color: var(--text-muted, #4f5a53); margin-top: 4px; }
+    .req-badge { flex-shrink: 0; font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #fdf0d5; color: #8a5a00; }
+    .req-badge.done { background: #dcf1e3; color: #1e5a3a; }
+    .req-badge.rejected { background: #fbe0e0; color: #9b1c1c; }
+    .req-badge.in_progress { background: #dee8fb; color: #1e3a8a; }
+    .req-empty { padding: 20px; text-align: center; color: var(--text-muted, #4f5a53); }
+    .wifi-note { margin-top: 12px; font-size: 0.8rem; color: var(--text-muted, #4f5a53); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .req-dialog { border: 1px solid var(--border, #e0dfd9); border-radius: 14px; padding: 24px; width: min(440px, 92vw); font-family: inherit; color: var(--text-main, #1f2923); }
+    .req-dialog::backdrop { background: rgba(20, 28, 24, 0.5); }
+    .req-dialog h3 { font-size: 1.05rem; margin-bottom: 14px; }
+    .req-dialog label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 12px; }
+    .req-dialog select, .req-dialog textarea { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; border: 1px solid #cfcdc4; border-radius: 8px; font: inherit; font-size: 0.9rem; }
+    .req-dialog textarea { resize: vertical; }
+    .req-dialog [hidden], .wifi-note[hidden] { display: none !important; }
+    .req-error { min-height: 16px; font-size: 0.78rem; color: #9b1c1c; margin-bottom: 8px; }
+    .req-actions { display: flex; justify-content: flex-end; gap: 8px; }
+</style>
+<link rel="stylesheet" href="CSS/modal-logout.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <header class="mobile-topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="mobile-brand">Check-in Accommodation System</span>
+        <div class="topbar-avatar" data-bind="initials"></div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box">H</div>
+            <div class="logo-text">
+                <span class="logo-title">haven</span>
+                <span class="logo-subtitle">A PLACE TO BELONG</span>
+            </div>
+        </div>
+
+        <div class="guest-chip">
+            <div class="guest-chip-avatar" data-bind="initials"></div>
+            <div class="guest-chip-info">
+                <span class="guest-chip-name" data-bind="name"></span>
+                <span class="guest-chip-role">Guest · <span data-bind="regId"></span></span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <span class="nav-section-title">Your stay</span>
+            <a href="client-dashboard.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </a>
+            <a href="profile.html" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Profile
+            </a>
+            <a href="accommodation.html" class="nav-item active" aria-current="page">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Accommodation
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="nav-item logout" id="logoutLink" onclick="handleLogout(event)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="client-dashboard.html">Dashboard</a>
+                <span class="sep">/</span>
+                <span class="current" aria-current="page">Accommodation</span>
+            </nav>
+        </header>
+
+        <div class="page">
+
+            <!-- Page header -->
+            <header class="page-header">
+                <div>
+                    <h1 class="page-title" id="dormTitle">Dorm</h1>
+                    <p class="page-sub" id="dormSub">Loading details...</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn" id="extendBtn" type="button">Extend stay</button>
+                    <button class="btn" id="checkoutBtn" type="button">Request check-out</button>
+                </div>
+            </header>
+
+            <!-- Stay -->
+            <section class="panel" aria-labelledby="stayTitle">
+                <div class="panel-head">
+                    <h2 id="stayTitle">Your stay</h2>
+                    <span class="status" id="statusLabel"></span>
+                </div>
+                <div class="panel-body">
+                    <dl class="facts">
+                        <div><dt>Check-in</dt><dd id="factCheckIn">—</dd></div>
+                        <div><dt>Expected check-out</dt><dd id="factCheckOut">—</dd></div>
+                        <div><dt>Status</dt><dd id="factStatus">—</dd></div>
+                    </dl>
+                    <div class="bar" role="progressbar" id="stayBar" aria-label="Stay progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="stayBarFill"></span></div>
+                </div>
+            </section>
+
+            <div class="two-col">
+
+                <div class="col">
+                    <!-- Dorm details -->
+                    <section class="panel" aria-labelledby="detailsTitle">
+                        <div class="panel-head"><h2 id="detailsTitle">Dorm details</h2></div>
+                        <div class="panel-body">
+                            <dl class="rows">
+                                <div><dt>Type</dt><dd>Shared dormitory</dd></div>
+                                <div><dt>Floor</dt><dd id="dormFloor">—</dd></div>
+                                <div><dt>Capacity</dt><dd id="dormCapacity">—</dd></div>
+                                <div><dt>Includes</dt><dd>Air-conditioning, Wi-Fi, shared bathroom, study desk, locker, weekly housekeeping</dd></div>
+                            </dl>
+                        </div>
+                    </section>
+
+                    <!-- Wi-Fi -->
+                    <section class="panel" aria-labelledby="wifiTitle">
+                        <div class="panel-head"><h2 id="wifiTitle">Wi-Fi</h2></div>
+                        <div class="panel-body">
+                            <dl class="rows">
+                                <div><dt>Network</dt><dd id="wifiNetwork">—</dd></div>
+                                <div><dt>Password</dt><dd><span class="mono" id="wifiPassword">—</span></dd></div>
+                            </dl>
+                            <p class="wifi-note" id="wifiNote">Wi-Fi details appear once your room is approved.</p>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col">
+                    <!-- Service Requests -->
+                    <section class="panel" aria-labelledby="reqTitle">
+                        <div class="panel-head">
+                            <h2 id="reqTitle">Service requests</h2>
+                            <button class="btn btn-primary btn-sm" type="button" id="newRequestBtn">New request</button>
+                        </div>
+                        <ul class="req-list" id="requestList">
+                            <li style="padding: 20px; text-align: center; color: var(--text-muted);">No active requests.</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Request dialog -->
+<dialog class="req-dialog" id="requestDialog">
+    <form id="requestForm" novalidate>
+        <h3 id="requestDialogTitle">New request</h3>
+        <label id="requestTypeWrap">Type
+            <select id="requestType">
+                <option value="maintenance">Maintenance</option>
+                <option value="housekeeping">Housekeeping</option>
+                <option value="other">Other</option>
+            </select>
+        </label>
+        <label>Details
+            <textarea id="requestDetails" rows="4" maxlength="500" placeholder="Tell us what you need"></textarea>
+        </label>
+        <p class="req-error" id="requestError" role="alert"></p>
+        <div class="req-actions">
+            <button type="button" class="btn" id="requestCancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="requestSubmit">Send request</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/logout-modal.js" defer></script>
+<script src="js/accommodation.js" defer></script>
+</body>
+</html>

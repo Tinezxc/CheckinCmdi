@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Room - Haven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/choose-room.css">
+<link rel="stylesheet" href="CSS/skeleton-loading.css">
+</head>
+<body>
+
+    <div class="room-selection-container">
+        <div class="card">
+            <div class="header">
+                <h1>Welcome to Haven</h1>
+                <p>Please choose a room to complete your registration.</p>
+            </div>
+
+            <!-- Dito lalabas yung mga rooms -->
+            <div id="roomGrid" class="room-options">
+                <p class="loading-text">Loading available rooms...</p>
+            </div>
+
+            <!-- ITO YUNG BUTTON NA HINAHANAP MO -->
+            <div class="footer-actions">
+                <a href="client-dashboard.html" style="margin-right: 16px; color: #4f5a53; font-size: 0.9rem;">Back to dashboard</a>
+                <button id="confirmRoomBtn" class="btn btn-primary" disabled>Confirm Selection</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script type="module" src="js/choose-room.js"></script>
+</body>
+</html>
