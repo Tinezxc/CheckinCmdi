@@ -1,0 +1,120 @@
+/* ==========================================================
+   HAVEN — Staff theme (shared refinement layer)
+   Load AFTER each page's own CSS. It only adds polish and the shared
+   components (empty states, skeletons, dialogs); it does not change layouts.
+   ========================================================== */
+
+/* ---------- Base polish ---------- */
+html { scroll-behavior: smooth; }
+body { text-rendering: optimizeLegibility; }
+::selection { background: rgba(75, 124, 92, .25); color: #12291f; }
+
+/* Slim, quiet scrollbars (tables, drawers, sidebar) */
+* { scrollbar-width: thin; scrollbar-color: #cfccc1 transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: #cfccc1; border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: #a9a69a; background-clip: content-box; border: 2px solid transparent; }
+
+/* One consistent keyboard focus ring */
+:focus-visible { outline: 2px solid #4b7c5c; outline-offset: 2px; }
+button:focus:not(:focus-visible) { outline: none; }
+
+/* Numbers line up in tables, KPIs and counters */
+td, th, .kpi-value, .count-badge, .tab-count, .badge { font-variant-numeric: tabular-nums; }
+
+/* ---------- Role switcher (locked for non-managers) ---------- */
+.role-select-wrap select:disabled { opacity: .85; cursor: not-allowed; }
+.role-label { transition: color .15s; }
+
+/* ---------- Cards, tables, buttons: subtle refinement ---------- */
+.card { transition: box-shadow .2s ease, border-color .2s ease; }
+.card:hover { box-shadow: 0 6px 20px rgba(27, 34, 30, .07), 0 1px 3px rgba(27, 34, 30, .05); }
+
+table tbody tr { transition: background-color .12s ease; }
+.btn { letter-spacing: .005em; }
+.btn:focus-visible { outline: 2px solid #4b7c5c; outline-offset: 2px; }
+.btn:disabled { filter: grayscale(.2); }
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus, textarea:focus {
+    border-color: #4b7c5c;
+    box-shadow: 0 0 0 3px rgba(75, 124, 92, .18);
+    outline: none;
+}
+input::placeholder, textarea::placeholder { color: #8a948d; }
+
+/* ---------- Toasts: success variant ---------- */
+.toast.success { border-left-color: #2f8f5b; }
+.toast-container { z-index: 300; }
+
+/* ---------- Empty states (HavenStaff.emptyState) ---------- */
+.haven-empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 40px 20px; text-align: center;
+}
+.haven-empty-icon {
+    width: 56px; height: 56px; margin-bottom: 10px;
+    display: grid; place-items: center; border-radius: 50%;
+    background: linear-gradient(135deg, #f1f6f1, #e4eae2); color: #4b7c5c;
+    box-shadow: 0 0 0 6px rgba(75, 124, 92, .07);
+}
+.haven-empty .empty-title { font-weight: 600; color: #1b221e; }
+.haven-empty .empty-sub { max-width: 340px; font-size: 13px; color: #6b756f; }
+
+/* ---------- Loading skeletons (HavenStaff.skeletonRows) ---------- */
+.skeleton-list { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
+.skeleton-row {
+    height: 44px; border-radius: 8px;
+    background: linear-gradient(90deg, #ecebe4 25%, #f6f5ef 45%, #ecebe4 65%);
+    background-size: 220% 100%;
+    animation: havenShimmer 1.3s ease-in-out infinite;
+}
+@keyframes havenShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+
+/* ---------- Confirmation dialog (HavenStaff.confirmDialog) ---------- */
+.haven-dialog-overlay {
+    position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: 16px;
+    background: rgba(20, 28, 24, .55); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+    opacity: 0; transition: opacity .18s ease;
+}
+.haven-dialog-overlay.open { opacity: 1; }
+.haven-dialog {
+    width: min(440px, 100%); padding: 26px 24px 20px; background: #fff; border: 1px solid #e5e3dc; border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(20, 28, 24, .25); font-family: inherit; color: #1b221e;
+    transform: translateY(10px) scale(.96); transition: transform .25s cubic-bezier(.175, .885, .32, 1.275);
+}
+.haven-dialog-overlay.open .haven-dialog { transform: none; }
+.haven-dialog h3 { margin: 0 0 8px; font-family: 'Playfair Display', Georgia, serif; font-size: 1.25rem; font-weight: 500; color: #1b3a2e; }
+.haven-dialog-msg { margin: 0 0 14px; font-size: .9rem; line-height: 1.55; color: #4a554e; }
+.haven-dialog-msg strong { color: #1b221e; }
+.haven-dialog-label { display: block; margin-bottom: 6px; font-size: .8rem; font-weight: 500; }
+.haven-dialog textarea {
+    display: block; width: 100%; margin-top: 6px; padding: 9px 11px; resize: vertical;
+    border: 1px solid #cfccc1; border-radius: 8px; font: inherit; font-size: .9rem; color: #1b221e; background: #fff;
+}
+.haven-dialog-err { min-height: 18px; margin: 4px 0 6px; font-size: .8rem; color: #9b1c1c; }
+.haven-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+/* self-contained buttons so the dialog looks right on every page */
+.haven-dialog .btn {
+    padding: 9px 16px; border-radius: 8px; border: 1px solid #cfccc1; background: #fff;
+    font: inherit; font-size: .85rem; font-weight: 600; color: #1b221e; cursor: pointer;
+    transition: background .15s, transform .1s;
+}
+.haven-dialog .btn:active { transform: scale(.98); }
+.haven-dialog .btn-ghost { border-color: transparent; background: transparent; color: #4a554e; }
+.haven-dialog .btn-ghost:hover { background: #f1f0ea; }
+.haven-dialog .btn-primary { background: #1b3a2e; border-color: #12291f; color: #fff; }
+.haven-dialog .btn-primary:hover { background: #12291f; }
+.haven-dialog .btn-danger { background: #9b1c1c; border-color: #7a1414; color: #fff; }
+.haven-dialog .btn-danger:hover { background: #7a1414; }
+.haven-dialog .required { color: #9b1c1c; }
+
+@media (max-width: 480px) {
+    .haven-dialog-actions { flex-direction: column-reverse; }
+    .haven-dialog .btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .skeleton-row, .haven-dialog, .haven-dialog-overlay { animation: none !important; transition: none !important; }
+}

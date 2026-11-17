@@ -139,8 +139,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================
-       SIGN IN LOGIC
+       SIGN IN LOGIC: PASSWORD -> EMAIL OTP
+       The Edge Function validates the password first and sends the OTP.
+       No browser session is created until the OTP is verified.
        ========================================== */
+    const LOGIN_CHALLENGE_KEY = 'haven_login_challenge';
+    const LOGIN_EMAIL_KEY = 'haven_login_email_masked';
+    const LOGIN_NEXT_KEY = 'haven_login_next';
+
+    function loginStartMessage(code) {
+        const messages = {
+            invalid_credentials: 'Incorrect email or password.',
+            email_not_confirmed: 'This email is not verified yet. Please contact the administrator.',
+            email_rate_limited: 'Too many OTP emails were requested. Please wait a few minutes.',
+            too_many_sends: 'You have requested too many OTP codes. Please try again later.',
+            send_failed: 'We could not send the verification code. Please try again.',
+            network: 'Could not reach the server. Check your connection and try again.',
+            account_unavailable: 'This account cannot sign in right now. Please contact the administrator.'
+        };
+        return messages[code] || 'Could not start secure sign-in. Please try again.';
+    }
+
     form?.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideAlert();
@@ -151,8 +170,11 @@ document.addEventListener('DOMContentLoaded', () => {
             shake();
             return;
         }
-
         if (!validateForm()) { shake(); return; }
+        if (!window.supabaseClient) {
+            showAlert('The authentication service is not ready. Refresh the page and try again.');
+            return;
+        }
 
         const label = loginBtn.querySelector('.btn-label');
         const spinner = loginBtn.querySelector('.btn-spinner');
@@ -165,40 +187,47 @@ document.addEventListener('DOMContentLoaded', () => {
         setLoading(true);
         try {
             const email = idInput.value.trim().toLowerCase();
+            const password = pwInput.value;
 
-            // 1. Sign in
-            const { data: authData, error: authError } = await window.supabaseClient.auth.signInWithPassword({
-                email: email, 
-                password: pwInput.value
+            const { data, error } = await window.supabaseClient.functions.invoke('dynamic-responder', {
+                body: { action: 'start_login', email, password }
             });
 
-            if (authError) { registerFailure(); throw authError; }
-
-            // 2. Fetch Profile
-            const { data: profile, error: profileError } = await window.supabaseClient
-                .from('profiles')
-                .select('role')
-                .eq('id', authData.user.id)
-                .single();
-
-            if (profileError || !profile) {
-                throw { friendly: 'We could not load your account. Please try again or contact the front desk.' };
+            if (error) {
+                registerFailure();
+                console.error('Start login OTP error:', error);
+                showAlert(friendlyAuthError(error));
+                shake();
+                return;
+            }
+            if (!data || !data.ok) {
+                if (data && data.code === 'invalid_credentials') registerFailure();
+                showAlert(loginStartMessage(data && data.code));
+                shake();
+                return;
+            }
+            if (!data.challenge_id) {
+                showAlert('The server did not return a verification challenge. Please try again.');
+                return;
             }
 
-            // 3. Route based on role (staff roles go to the staff console)
-            const role = String(profile.role || 'client').toLowerCase().trim();
-            if (STAFF_ROLES.includes(role)) cacheRole(authData.user.id, role);
+            // Clear an abandoned registration-link flow so it cannot take priority on the OTP page.
+            sessionStorage.removeItem('haven_reg_token');
+            sessionStorage.removeItem('haven_need_password');
 
-            // Redirect to the dashboard (client-dashboard.js asks guests without a room to choose one)
-            window.location.href = getDestination(role);
-
+            // Only the short-lived challenge ID and masked email are saved.
+            // The password is not placed in sessionStorage or the URL.
+            sessionStorage.setItem(LOGIN_CHALLENGE_KEY, data.challenge_id);
+            sessionStorage.setItem(LOGIN_EMAIL_KEY, email);
+            sessionStorage.setItem(LOGIN_NEXT_KEY, safeNextPage() || '');
+            window.location.href = 'verify-otp.html?flow=login';
         } catch (err) {
-            console.error('Login error:', err);
-            showAlert(err.friendly || friendlyAuthError(err));
+            console.error('Login OTP error:', err);
+            showAlert(friendlyAuthError(err));
             shake();
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     });
 
     /* ==========================================
