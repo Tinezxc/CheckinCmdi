@@ -205,23 +205,23 @@
                 </button>
 
                 <button class="kpi-card" data-filter="arrivals">
-                    <span class="kpi-label">Arrivals today</span>
+                    <span class="kpi-label">Pending room requests</span>
                     <span class="kpi-value">0</span>
-                    <span class="kpi-sub">0 already checked in</span>
+                    <span class="kpi-sub">Awaiting staff review</span>
                     <span class="kpi-spark spark-green"></span>
                 </button>
 
                 <button class="kpi-card" data-filter="departures">
                     <span class="kpi-label">Departures today</span>
                     <span class="kpi-value">0</span>
-                    <span class="kpi-sub">0 pending · 0 done</span>
+                    <span class="kpi-sub">Checkout date not stored</span>
                     <span class="kpi-spark spark-blue"></span>
                 </button>
 
                 <button class="kpi-card kpi-alert" data-filter="overdue">
                     <span class="kpi-label">Overdue check-outs</span>
                     <span class="kpi-value">0</span>
-                    <span class="kpi-sub">All clear</span>
+                    <span class="kpi-sub">Checkout date not configured</span>
                     <span class="kpi-spark spark-amber"></span>
                 </button>
 
@@ -239,7 +239,7 @@
                 <div class="main-col">
                     <section class="card queue-card" aria-labelledby="queueTitle">
                         <header class="card-header">
-                            <h3 id="queueTitle">Today's queue</h3>
+                            <h3 id="queueTitle">Room and guest queue</h3>
                             <div class="card-header-actions">
                                 <button class="btn-icon-label" id="exportCsvBtn" title="Export as CSV">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -255,7 +255,7 @@
                         <div class="card-body no-pad">
                             <div class="tabs" role="tablist" aria-label="Queue view">
                                 <button class="tab active" role="tab" aria-selected="true" data-tab="arrivals">
-                                    Arrivals <span class="tab-count">0</span>
+                                    Room requests <span class="tab-count">0</span>
                                 </button>
                                 <button class="tab" role="tab" aria-selected="false" data-tab="departures">
                                     Departures <span class="tab-count">0</span>
@@ -325,11 +325,23 @@
                 </div>
 
                 <div class="side-col">
+                    <section class="card" aria-labelledby="groupBookingsTitle">
+                        <header class="card-header">
+                            <h3 id="groupBookingsTitle">Group bookings</h3>
+                            <span class="count-badge count-blue" id="groupBookingsCount">0 active</span>
+                        </header>
+                        <div class="card-body no-pad">
+                            <ul class="group-booking-list" id="groupBookingList">
+                                <li class="empty-state"><p class="empty-title">Loading group bookings…</p></li>
+                            </ul>
+                        </div>
+                    </section>
+
                     <section class="card" aria-labelledby="overdueTitle">
                         <header class="card-header">
                             <h3 id="overdueTitle">
                                 Overdue check-outs
-                                <span class="count-badge count-amber">0</span>
+                                <span class="count-badge count-amber">N/A</span>
                             </h3>
                         </header>
                         <div class="card-body">
@@ -415,8 +427,8 @@
         </div>
     </div>
     <footer class="drawer-footer">
-        <button class="btn btn-outline">Change room</button>
-        <button class="btn btn-primary">Force check-out</button>
+        <button class="btn btn-outline" disabled>Change room</button>
+        <button class="btn btn-primary" disabled>Check-out tracking unavailable</button>
     </footer>
 </aside>
 

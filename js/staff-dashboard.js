@@ -1,485 +1,740 @@
-/* Haven staff console: dashboard behaviour.
-   Starts EMPTY: no sample guests, rooms, requests or activity.
-   Fill the data containers below (rooms, queue, overdue, requests, activity)
-   at runtime and call renderAll() to show them. */
+/* ==========================================================
+   CMDI / HAVEN - STAFF DASHBOARD
+   Real, read-only dashboard data from get_staff_dashboard_data()
+
+   Notes:
+   - RBAC is the only source of the current staff role.
+   - No browser-side role switching or simulated approvals.
+   - Check-out/overdue metrics remain unavailable because the
+     current schema does not include a checkout date field.
+   - All database reads go through the protected staff RPC.
+   ========================================================== */
 (() => {
-'use strict';
+    'use strict';
 
-const $  = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const initials = n => String(n).split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || '–';
-const PAGE_SIZE = 12;
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-/* ---------------- Labels ---------------- */
-const STATUS_LABEL = { 'pending': 'Pending', 'checked-in': 'Checked In', 'checked-out': 'Checked Out', 'overdue': 'Overdue' };
-const ROOM_LABEL = { 'occupied': 'Occupied', 'vacant-clean': 'Vacant clean', 'vacant-dirty': 'Vacant dirty', 'cleaning': 'Cleaning', 'maintenance': 'Maintenance', 'reserved': 'Reserved' };
+    const db = () => window.supabaseClient || null;
+    const PAGE_SIZE = 12;
+    const REFRESH_MS = 60000;
 
-/* ---------------- Data (empty) ---------------- */
-const rooms = {};                                            // { [number]: { number, floor, status, capacity?, history: [] } }
-const queue = { arrivals: [], departures: [], inhouse: [] }; // { guest, guestId, room, time, status }
-const overdue = [];                                          // { name, room, expected, days }
-const STAFF = ['Unassigned'];                                // names for the "Assign to" dropdown
-const requests = [];                                         // { id, title, room, guest, ago, priority, assignee }
-const activity = [];                                         // { who, html, at, cls }
+    const STATUS_LABEL = {
+        pending: 'Pending',
+        accepted: 'Accepted',
+        confirmed: 'Confirmed',
+        completed: 'Completed',
+        declined: 'Declined',
+        cancelled: 'Cancelled',
+        expired: 'Expired',
+        'checked-in': 'In-house',
+        'checked-out': 'Checked out',
+        'vacant-clean': 'Vacant clean',
+        'vacant-dirty': 'Vacant dirty',
+        occupied: 'Occupied',
+        cleaning: 'Cleaning',
+        maintenance: 'Maintenance',
+        reserved: 'Reserved',
+        overdue: 'Overdue'
+    };
 
-const staff = { name: 'Staff' };
-const state = { tab: 'arrivals', sortKey: null, sortDir: 1, page: 1, query: '', role: 'front-desk', kpi: null, touched: Date.now() };
-const ROLE_LABEL = { 'front-desk': 'Front desk', 'housekeeping': 'Housekeeping', 'manager': 'Manager' };
-const canAct = () => state.role !== 'housekeeping';
+    const ROOM_STATUSES = new Set([
+        'occupied', 'vacant-clean', 'vacant-dirty',
+        'cleaning', 'maintenance', 'reserved', 'overdue'
+    ]);
 
-/* ---------------- Helpers ---------------- */
-function toast(title, text, type) {
-    const box = $('#toastContainer');
-    const el = document.createElement('div');
-    el.className = 'toast' + (type === 'error' ? ' error' : '');
-    el.innerHTML = '<div class="toast-text"><strong>' + esc(title) + '</strong>' + (text ? esc(text) : '') + '</div>';
-    box.appendChild(el);
-    setTimeout(() => { el.classList.add('leaving'); setTimeout(() => el.remove(), 160); }, 3500);
-}
-function touch() { state.touched = Date.now(); tick(); }
-function logActivity(html, cls) {
-    activity.unshift({ who: staff.name, html, at: Date.now(), cls });
-    activity.length = Math.min(activity.length, 8);
-    renderActivity();
-}
-const rel = ms => { const m = Math.floor(ms / 60e3); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : Math.floor(m / 60) + ' hr ago'; };
-const toMin = t => { const m = /(\d+):(\d+)\s*(AM|PM)/.exec(t); return m ? (+m[1] % 12 + (m[3] === 'PM' ? 12 : 0)) * 60 + +m[2] : 0; };
-const guestInRoom = no => [...queue.departures, ...queue.arrivals, ...queue.inhouse].find(g => g.room === no && (g.status === 'checked-in' || g.status === 'overdue' || (queue.departures.includes(g) && g.status === 'pending')));
-const emptyBlock = (title, sub) => '<div class="empty-state"><p class="empty-title">' + esc(title) + '</p><p class="empty-sub">' + esc(sub) + '</p></div>';
+    const state = {
+        tab: 'arrivals',
+        sortKey: null,
+        sortDir: 1,
+        page: 1,
+        query: '',
+        touched: Date.now(),
+        loading: false,
+        currentRoom: null
+    };
 
-function setStaff(name) {
-    staff.name = name;
-    const ini = initials(name);
-    $$('.staff-avatar, .mobile-topbar .topbar-avatar, .topbar-actions .topbar-avatar').forEach(el => { el.textContent = ini; });
-    $('.staff-name').textContent = name;
-}
-/* Shows the signed-in staff member's real name (stays "Staff" if it can't be loaded) */
-async function loadStaff() {
-    const db = window.supabaseClient;
-    if (!db) return;
-    try {
-        const { data: { session } } = await db.auth.getSession();
-        if (!session) return;
-        const { data: p } = await db.from('profiles').select('full_name').eq('id', session.user.id).single();
-        if (p && p.full_name) setStaff(p.full_name);
-    } catch (e) { /* keep the placeholder */ }
-}
+    let staff = { id: null, name: 'Staff', role: null };
+    let rooms = {};
+    let queue = { arrivals: [], departures: [], inhouse: [] };
+    let requests = [];
+    let groups = [];
+    let refreshTimer = null;
 
-/* ---------------- Queue ---------------- */
-function rowsForTab(tab, q) {
-    q = q.trim().toLowerCase();
-    let list = queue[tab].filter(g => !q || (g.guest + ' ' + g.guestId + ' ' + g.room).toLowerCase().includes(q));
-    if (state.sortKey) {
-        const k = state.sortKey;
-        list = [...list].sort((a, b) => {
-            const A = k === 'time' ? toMin(a.time) : a[k], B = k === 'time' ? toMin(b.time) : b[k];
-            return (A > B ? 1 : A < B ? -1 : 0) * state.sortDir;
+    function esc(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;',
+            '"': '&quot;', "'": '&#39;'
+        })[char]);
+    }
+
+    function initials(name) {
+        return String(name || '')
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(part => part[0])
+            .join('')
+            .toUpperCase() || 'ST';
+    }
+
+    function formatDate(value) {
+        if (!value) return '—';
+        const date = new Date(value + (String(value).length === 10 ? 'T00:00:00' : ''));
+        if (Number.isNaN(date.getTime())) return String(value);
+        return date.toLocaleDateString(undefined, {
+            month: 'short', day: 'numeric', year: 'numeric'
         });
     }
-    return list;
-}
-function actionFor(g) {
-    if (!canAct()) return { act: 'view', label: 'View' };
-    if (state.tab === 'arrivals' && g.status === 'pending') return { act: 'checkin', label: 'Check in' };
-    if (state.tab === 'departures' && g.status === 'overdue') return { act: 'resolve', label: 'Resolve' };
-    if (state.tab === 'departures' && g.status === 'pending') return { act: 'checkout', label: 'Check out' };
-    return { act: 'view', label: 'View' };
-}
-function renderQueue() {
-    const all = rowsForTab(state.tab, state.query);
-    const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
-    state.page = Math.min(state.page, pages);
-    const start = (state.page - 1) * PAGE_SIZE;
-    const rows = all.slice(start, start + PAGE_SIZE);
 
-    $('#queueBody').innerHTML = rows.map(g => {
-        const a = actionFor(g);
-        return '<tr tabindex="0" data-room="' + g.room + '"><td><div class="guest-cell"><span class="guest-avatar">' + initials(g.guest) + '</span><span class="guest-name">' + esc(g.guest) + '</span></div></td>' +
-            '<td class="muted">' + esc(g.guestId) + '</td><td><strong>' + g.room + '</strong></td><td class="muted">' + esc(g.time) + '</td>' +
-            '<td><span class="status-pill ' + g.status + '"><span class="dot"></span>' + STATUS_LABEL[g.status] + '</span></td>' +
-            '<td class="col-actions"><button class="btn btn-sm" data-act="' + a.act + '" data-id="' + esc(g.guestId) + '">' + a.label + '</button></td></tr>';
-    }).join('');
-
-    const empty = $('#queueEmpty');
-    empty.hidden = rows.length > 0;
-    $('.empty-title', empty).textContent = state.query ? 'No guests match "' + state.query + '"' : 'No ' + ({ arrivals: 'arrivals', departures: 'departures', inhouse: 'in-house guests' })[state.tab] + ' today';
-    $('#queueInfo').textContent = all.length ? 'Showing ' + (start + 1) + '–' + (start + rows.length) + ' of ' + all.length : 'Showing 0 of 0';
-
-    const chev = d => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="' + d + '"></polyline></svg>';
-    let html = '<button class="page-btn" data-page="' + (state.page - 1) + '" aria-label="Previous page"' + (state.page === 1 ? ' disabled' : '') + '>' + chev('15 18 9 12 15 6') + '</button>';
-    for (let p = 1; p <= pages; p++) html += '<button class="page-btn' + (p === state.page ? ' active' : '') + '" data-page="' + p + '">' + p + '</button>';
-    html += '<button class="page-btn" data-page="' + (state.page + 1) + '" aria-label="Next page"' + (state.page === pages ? ' disabled' : '') + '>' + chev('9 18 15 12 9 6') + '</button>';
-    $('.pagination').innerHTML = html;
-
-    $$('.tab').forEach(t => {
-        const on = t.dataset.tab === state.tab;
-        t.classList.toggle('active', on); t.setAttribute('aria-selected', on);
-        $('.tab-count', t).textContent = queue[t.dataset.tab].length;
-    });
-    $$('.queue-table th.sortable').forEach(th => {
-        th.classList.remove('sort-asc', 'sort-desc');
-        if (th.dataset.sort === state.sortKey) th.classList.add(state.sortDir === 1 ? 'sort-asc' : 'sort-desc');
-    });
-}
-
-/* ---------------- KPIs ---------------- */
-function renderKpis() {
-    const k = f => $('.kpi-card[data-filter="' + f + '"]');
-    const done = queue.departures.filter(g => g.status === 'checked-out').length;
-
-    const beds = Object.values(rooms).reduce((n, r) => n + (r.capacity || 0), 0);
-    const occupied = queue.inhouse.length;
-    k('all').querySelector('.kpi-value').innerHTML = (beds ? Math.round(occupied / beds * 100) : 0) + '<span class="kpi-suffix">%</span>';
-    k('all').querySelector('.kpi-sub').textContent = occupied + ' of ' + beds + ' beds';
-
-    k('arrivals').querySelector('.kpi-value').textContent = queue.arrivals.length;
-    k('arrivals').querySelector('.kpi-sub').textContent = queue.arrivals.filter(g => g.status === 'checked-in').length + ' already checked in';
-    k('departures').querySelector('.kpi-value').textContent = queue.departures.length;
-    k('departures').querySelector('.kpi-sub').textContent = (queue.departures.length - done) + ' pending · ' + done + ' done';
-    k('overdue').querySelector('.kpi-value').textContent = overdue.length;
-    k('overdue').querySelector('.kpi-sub').textContent = overdue.length ? 'Requires attention' : 'All clear';
-    k('requests').querySelector('.kpi-value').textContent = requests.length;
-    k('requests').querySelector('.kpi-sub').textContent = requests.filter(r => r.priority === 'urgent').length + ' urgent';
-    $('#overdueTitle .count-badge').textContent = overdue.length;
-    $('#reqTitle .count-badge').textContent = requests.length + ' open';
-    $('#navReqBadge').textContent = requests.length;
-    $('#navReqBadge').hidden = !requests.length;
-    $$('.kpi-card').forEach(c => c.classList.toggle('active', c.dataset.filter === state.kpi));
-}
-
-/* ---------------- Overdue ---------------- */
-function renderOverdue() {
-    const list = $('#overdueList');
-    if (!overdue.length) { list.innerHTML = '<li class="empty-state"><p class="empty-title">No overdue check-outs</p><p class="empty-sub">Everything is on schedule.</p></li>'; return; }
-    const dis = canAct() ? '' : ' disabled';
-    list.innerHTML = overdue.map(o =>
-        '<li class="overdue-item"><div class="overdue-main"><span class="overdue-name">' + esc(o.name) + '</span>' +
-        '<span class="overdue-meta">Room ' + o.room + ' · Expected ' + esc(o.expected) + '</span>' +
-        '<span class="overdue-days">' + o.days + ' day' + (o.days > 1 ? 's' : '') + ' overdue</span></div>' +
-        '<div class="overdue-actions"><button class="btn btn-sm btn-outline" data-action="contact" data-guest="' + esc(o.name) + '"' + dis + '>Contact</button>' +
-        '<button class="btn btn-sm btn-outline" data-action="extend" data-guest="' + esc(o.name) + '"' + dis + '>Extend</button>' +
-        '<button class="btn btn-sm btn-danger" data-action="force" data-guest="' + esc(o.name) + '" data-room="' + o.room + '"' + dis + '>Force check-out</button></div></li>'
-    ).join('');
-}
-
-/* ---------------- Service requests ---------------- */
-function renderRequests() {
-    if (!requests.length) {
-        $('#reqQueue').innerHTML = '<li class="empty-state"><p class="empty-title">No open requests</p><p class="empty-sub">Guest requests will appear here.</p></li>';
-        return;
-    }
-    $('#reqQueue').innerHTML = requests.map(r =>
-        '<li class="req-item"><div class="req-head"><div><div class="req-title">' + esc(r.title) + '</div>' +
-        '<div class="req-meta">Room ' + r.room + ' · ' + esc(r.guest) + ' · ' + esc(r.ago) + '</div></div>' +
-        '<span class="status-pill ' + (r.priority === 'urgent' ? 'urgent' : 'pending') + '"><span class="dot"></span>' + (r.priority === 'urgent' ? 'Urgent' : 'Normal') + '</span></div>' +
-        '<div class="req-row"><label for="assign-' + r.id + '">Assign to</label><select class="req-select" id="assign-' + r.id + '" data-id="' + r.id + '"' + (canAct() ? '' : ' disabled') + '>' +
-        STAFF.map(s => '<option' + (s === r.assignee ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select></div></li>'
-    ).join('');
-}
-
-/* ---------------- Room board ---------------- */
-function renderRooms() {
-    const all = Object.values(rooms);
-    if (!all.length) {
-        $('#roomBoard').innerHTML = emptyBlock('No rooms to show', 'Rooms will appear here once they are added.');
-        return;
-    }
-    const floors = [...new Set(all.map(r => r.floor))].sort((a, b) => a - b);
-    let html = '';
-    floors.forEach(f => {
-        html += '<div class="room-floor"><h4>Floor ' + f + '</h4><div class="room-grid">';
-        all.filter(r => r.floor === f).forEach(r => {
-            html += '<button class="room-cell st-' + r.status + '" data-room="' + r.number + '" aria-label="Room ' + r.number + ', ' + ROOM_LABEL[r.status] + '">' + r.number + '<small>' + ROOM_LABEL[r.status] + '</small></button>';
+    function formatDateTime(value) {
+        if (!value) return '—';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return date.toLocaleString(undefined, {
+            month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
         });
-        html += '</div></div>';
-    });
-    $('#roomBoard').innerHTML = html;
-}
-
-/* ---------------- Activity ---------------- */
-function renderActivity() {
-    if (!activity.length) {
-        $('#activityList').innerHTML = '<li class="empty-state" style="grid-column: 1 / -1;"><p class="empty-title">No recent activity</p><p class="empty-sub">Check-ins, check-outs and updates will show up here.</p></li>';
-        return;
-    }
-    $('#activityList').innerHTML = activity.map(a =>
-        '<li class="activity-item"><div class="activity-avatar ' + (a.cls || '') + '">' + initials(a.who) + '</div><div class="activity-body"><p><strong>' + esc(a.who) + '</strong> ' + a.html + '</p><span class="activity-time">' + rel(Date.now() - a.at) + '</span></div></li>'
-    ).join('');
-}
-
-function renderAll() { renderQueue(); renderKpis(); renderOverdue(); renderRequests(); renderRooms(); renderActivity(); touch(); }
-
-/* ---------------- Overlays: drawer + confirm ---------------- */
-function openLayer(...els) { els.forEach(e => { e.hidden = false; }); requestAnimationFrame(() => els.forEach(e => e.classList.add('open'))); }
-function closeLayer(...els) { els.forEach(e => e.classList.remove('open')); setTimeout(() => els.forEach(e => { if (!e.classList.contains('open')) e.hidden = true; }), 200); }
-
-let drawerRoom = null;
-function openDrawer(no) {
-    const r = rooms[no]; if (!r) return;
-    drawerRoom = no;
-    const g = guestInRoom(no);
-    $('#roomDrawerTitle').textContent = 'Room ' + no;
-    $('#roomDrawerSub').textContent = 'Floor ' + r.floor;
-    $('#drawerGuestName').textContent = g ? g.guest : 'No current guest';
-    $('#drawerGuestMeta').textContent = g ? 'Guest ID ' + g.guestId + ' · In-house' : ROOM_LABEL[r.status];
-    $('.roommate-avatar', $('#roomDrawer')).textContent = g ? initials(g.guest) : '–';
-    $('#drawerStatus').textContent = ROOM_LABEL[r.status];
-    $('#drawerCapacity').textContent = r.capacity ? r.capacity + ' guests' : '—';
-    const hist = r.history.concat(['Status: ' + ROOM_LABEL[r.status]]);
-    $('.drawer-history').innerHTML = hist.slice(-5).reverse().map(h => '<li>' + esc(h) + '</li>').join('');
-    $('#roomDrawer .drawer-footer .btn-primary').disabled = !(g && canAct());
-    openLayer($('#roomDrawerOverlay'), $('#roomDrawer'));
-    $('#roomDrawerClose').focus();
-}
-const closeDrawer = () => closeLayer($('#roomDrawerOverlay'), $('#roomDrawer'));
-
-let confirmCtx = null;
-function openForce(name, room) {
-    confirmCtx = { name, room };
-    $('#confirmText').innerHTML = 'This will force <strong>' + esc(name) + '</strong> out of room <strong>' + room + '</strong>. This action cannot be undone.';
-    $('#confirmReason').value = ''; setReasonError('');
-    openLayer($('#confirmOverlay'));
-    $('#confirmReason').focus();
-}
-function setReasonError(msg) { $('#confirmReasonErr').textContent = msg; $('#confirmReason').closest('.form-group').classList.toggle('error', !!msg); }
-const closeConfirm = () => { confirmCtx = null; closeLayer($('#confirmOverlay')); };
-
-function checkOut(name, room, forced) {
-    [...queue.departures, ...queue.inhouse].filter(g => g.guest === name && g.room === room).forEach(g => { g.status = 'checked-out'; });
-    const i = overdue.findIndex(o => o.name === name); if (i > -1) overdue.splice(i, 1);
-    if (rooms[room]) { rooms[room].status = 'vacant-dirty'; rooms[room].history.push((forced ? 'Forced check-out: ' : 'Checked out: ') + name); }
-    logActivity((forced ? 'force checked out ' : 'checked out ') + '<strong>' + esc(name) + '</strong> from room <strong>' + room + '</strong>.');
-    toast(forced ? 'Force check-out complete' : 'Checked out', name + ' · room ' + room);
-    renderAll();
-}
-
-/* ---------------- Events ---------------- */
-$('#confirmSubmit').addEventListener('click', () => {
-    const reason = $('#confirmReason').value.trim();
-    if (reason.length < 5) { setReasonError('Please enter a reason (min 5 characters).'); return; }
-    const { name, room } = confirmCtx;
-    closeConfirm(); closeDrawer();
-    checkOut(name, room, true);
-});
-$('#confirmReason').addEventListener('input', () => setReasonError(''));
-$('#confirmCancel').addEventListener('click', closeConfirm);
-$('#confirmClose').addEventListener('click', closeConfirm);
-$('#confirmOverlay').addEventListener('click', e => { if (e.target.id === 'confirmOverlay') closeConfirm(); });
-$('#roomDrawerClose').addEventListener('click', closeDrawer);
-$('#roomDrawerOverlay').addEventListener('click', closeDrawer);
-$('#roomDrawer .drawer-footer .btn-outline').addEventListener('click', () => toast('Change room', 'Room changes are done from the Rooms page.'));
-$('#roomDrawer .drawer-footer .btn-primary').addEventListener('click', () => { const g = guestInRoom(drawerRoom); if (g) openForce(g.guest, g.room); });
-
-$('#queueBody').addEventListener('click', e => {
-    const btn = e.target.closest('button[data-act]');
-    if (!btn) { const tr = e.target.closest('tr'); if (tr) openDrawer(+tr.dataset.room); return; }
-    const g = Object.values(queue).flat().find(x => x.guestId === btn.dataset.id);
-    if (!g) return;
-    if (btn.dataset.act === 'view') openDrawer(g.room);
-    else if (btn.dataset.act === 'resolve') openForce(g.guest, g.room);
-    else if (btn.dataset.act === 'checkout') checkOut(g.guest, g.room, false);
-    else if (btn.dataset.act === 'checkin') {
-        g.status = 'checked-in';
-        if (rooms[g.room]) { rooms[g.room].status = 'occupied'; rooms[g.room].history.push('Checked in: ' + g.guest); }
-        logActivity('checked in <strong>' + esc(g.guest) + '</strong> to room <strong>' + g.room + '</strong>.');
-        toast('Checked in', g.guest + ' · room ' + g.room);
-        renderAll();
-    }
-});
-$('#queueBody').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'TR') openDrawer(+e.target.dataset.room); });
-
-$('.tabs').addEventListener('click', e => { const t = e.target.closest('.tab'); if (t) { state.tab = t.dataset.tab; state.page = 1; state.kpi = null; renderQueue(); renderKpis(); } });
-$('.queue-table thead').addEventListener('click', e => {
-    const th = e.target.closest('th.sortable'); if (!th) return;
-    state.sortDir = state.sortKey === th.dataset.sort ? -state.sortDir : 1;
-    state.sortKey = th.dataset.sort; state.page = 1; renderQueue();
-});
-$('.pagination').addEventListener('click', e => { const b = e.target.closest('[data-page]'); if (b && !b.disabled) { state.page = +b.dataset.page; renderQueue(); } });
-
-$('#globalSearch').addEventListener('input', e => {
-    state.query = e.target.value; state.page = 1;
-    if (state.query && !rowsForTab(state.tab, state.query).length) {
-        const hit = ['arrivals', 'departures', 'inhouse'].find(t => rowsForTab(t, state.query).length);
-        if (hit) state.tab = hit;
-    }
-    renderQueue();
-});
-
-$$('.kpi-card').forEach(c => c.addEventListener('click', () => {
-    const f = c.dataset.filter;
-    state.kpi = state.kpi === f ? null : f;
-    if (f === 'all') { state.tab = 'inhouse'; state.page = 1; }
-    if (f === 'arrivals' || f === 'departures') { state.tab = f; state.page = 1; }
-    renderQueue(); renderKpis();
-    if (f === 'overdue') $('#overdueTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if (f === 'requests') $('#reqTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
-}));
-
-$('#roomBoard').addEventListener('click', e => { const c = e.target.closest('.room-cell'); if (c) openDrawer(+c.dataset.room); });
-
-$('#overdueList').addEventListener('click', e => {
-    const b = e.target.closest('button[data-action]'); if (!b) return;
-    const name = b.dataset.guest, o = overdue.find(x => x.name === name); if (!o) return;
-    if (b.dataset.action === 'contact') toast('Contact request sent', 'Front desk will call ' + name + ' in room ' + o.room + '.');
-    if (b.dataset.action === 'force') openForce(name, o.room);
-    if (b.dataset.action === 'extend') {
-        overdue.splice(overdue.indexOf(o), 1);
-        const d = queue.departures.find(g => g.guest === name); if (d) d.status = 'pending';
-        logActivity('extended the stay of <strong>' + esc(name) + '</strong> in room <strong>' + o.room + '</strong>.');
-        toast('Stay extended', name + ' · room ' + o.room);
-        renderAll();
-    }
-});
-
-$('#reqQueue').addEventListener('change', e => {
-    const s = e.target.closest('.req-select'); if (!s) return;
-    const r = requests.find(x => x.id === +s.dataset.id); if (!r) return;
-    r.assignee = s.value;
-    if (s.value !== STAFF[0]) { logActivity('assigned <strong>' + esc(r.title) + '</strong> (room ' + r.room + ') to <strong>' + esc(s.value.split(' (')[0]) + '</strong>.', 'blue'); toast('Request assigned', r.title + ' → ' + s.value); }
-    touch();
-});
-
-$('#exportCsvBtn').addEventListener('click', () => {
-    const rows = rowsForTab(state.tab, state.query);
-    if (!rows.length) { toast('Nothing to export', 'The current list is empty.', 'error'); return; }
-    const csv = ['Guest,Guest ID,Room,Time,Status'].concat(rows.map(g => [g.guest, g.guestId, g.room, g.time, STATUS_LABEL[g.status]].map(v => '"' + String(v).replace(/"/g, '""') + '"').join(','))).join('\n');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-    a.download = 'queue-' + state.tab + '.csv'; a.click(); URL.revokeObjectURL(a.href);
-    toast('Exported', rows.length + ' rows saved as CSV.');
-});
-
-/* Notifications */
-const notifMenu = $('#notifMenu');
-$('#notifBtn').addEventListener('click', e => { e.stopPropagation(); notifMenu.hidden = !notifMenu.hidden; });
-document.addEventListener('click', e => { if (!notifMenu.hidden && !e.target.closest('.topbar-icon-wrap')) notifMenu.hidden = true; });
-$('.notif-menu-header .link-muted').addEventListener('click', () => {
-    $$('.notif-menu-list li').forEach(li => { li.classList.remove('unread'); const d = $('.notif-dot', li); if (d) d.classList.add('empty'); });
-    $('.icon-badge').hidden = true; $('#notifBtn').setAttribute('aria-label', 'Notifications, none unread');
-});
-
-/* Mobile sidebar */
-const sidebar = $('#sidebar'), sOverlay = $('#sidebarOverlay'), menuBtn = $('#menuToggle');
-function setMenu(open) { sidebar.classList.toggle('open', open); sOverlay.classList.toggle('open', open); menuBtn.setAttribute('aria-expanded', open); }
-menuBtn.addEventListener('click', () => setMenu(!sidebar.classList.contains('open')));
-sOverlay.addEventListener('click', () => setMenu(false));
-
-/* Roles */
-function applyRole(role) {
-    state.role = role; document.body.dataset.role = role;
-    $('#staffRoleLabel').textContent = $('#roleBreadcrumb').textContent = ROLE_LABEL[role];
-    $$('[data-role-required]').forEach(a => a.setAttribute('aria-disabled', role === 'manager' ? 'false' : 'true'));
-    renderQueue(); renderOverdue(); renderRequests();
-}
-$('#roleSelect').addEventListener('change', e => { applyRole(e.target.value); toast('Role changed', 'Now viewing as ' + ROLE_LABEL[e.target.value] + '.'); });
-document.addEventListener('click', e => { const a = e.target.closest('a[aria-disabled="true"]'); if (a) { e.preventDefault(); toast('Manager only', 'Switch to the Manager role to open this page.', 'error'); } });
-
-/* Shortcuts */
-$('#newCheckinBtn').addEventListener('click', () => { window.location.href = 'staff-checkin.html'; });
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { if (!$('#confirmOverlay').hidden) closeConfirm(); else if (!$('#roomDrawer').hidden) closeDrawer(); notifMenu.hidden = true; setMenu(false); return; }
-    if (e.metaKey || e.ctrlKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
-    if (e.key === '/') { e.preventDefault(); $('#globalSearch').focus(); }
-    if (e.key.toLowerCase() === 'n') $('#newCheckinBtn').click();
-});
-
-/* "Last updated" + relative times */
-function tick() {
-    const s = Math.floor((Date.now() - state.touched) / 1000);
-    $('#lastUpdated').textContent = 'Last updated ' + (s < 5 ? 'just now' : s < 60 ? s + 's ago' : Math.floor(s / 60) + 'm ago');
-}
-setInterval(() => { tick(); renderActivity(); }, 15000);
-setInterval(tick, 5000);
-
-applyRole('front-desk');
-renderAll();
-loadStaff();
-})();
-
-
-// Global function para sa pag-approve ng room (Pwede mong tawagin sa Console)
-window.approveGuestRoom = async function(guestId, roomNumber) {
-    const { data: profile, error: fetchErr } = await window.supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('id', guestId)
-        .single();
-
-    if (fetchErr || !profile) {
-        console.error("Guest not found");
-        return;
     }
 
-    // I-update ang profile: gawing official room, at burahin ang pending_room
-    const { error: updateErr } = await window.supabaseClient
-        .from('profiles')
-        .update({ 
-            room: roomNumber, 
-            pending_room: null 
-        })
-        .eq('id', guestId);
-
-    // I-update ang room status to occupied
-    await window.supabaseClient
-        .from('rooms')
-        .update({ status: 'occupied' })
-        .eq('room_number', roomNumber);
-
-    if (updateErr) {
-        console.error("Error approving:", updateErr);
-    } else {
-        console.log(`Approved! Guest is now in Room ${roomNumber}`);
+    function timeAgo(value) {
+        if (!value) return '—';
+        const ms = Date.now() - new Date(value).getTime();
+        if (!Number.isFinite(ms)) return '—';
+        const minutes = Math.max(0, Math.floor(ms / 60000));
+        if (minutes < 1) return 'Just now';
+        if (minutes < 60) return `${minutes} min ago`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours} hr ago`;
+        return `${Math.floor(hours / 24)} d ago`;
     }
-};
 
-// Function para sa pag-approve
-window.approveGuestRoom = async function(guestId, roomNumber) {
-    // 1. I-update ang Profile (gawing official room, alisin ang pending)
-    const { error: updateErr } = await window.supabaseClient
-        .from('profiles')
-        .update({ 
-            room: roomNumber, 
-            pending_room: null 
-        })
-        .eq('id', guestId);
+    function toast(title, message = '', type = 'info') {
+        if (window.HavenStaff?.toast) {
+            window.HavenStaff.toast(type, title, message);
+            return;
+        }
+        if (typeof window.showToast === 'function') {
+            window.showToast(type, title, message);
+            return;
+        }
+        console[type === 'error' ? 'error' : 'log'](title, message);
+    }
 
-    if (updateErr) return console.error("Error:", updateErr);
+    function statusLabel(status) {
+        const key = String(status || '').toLowerCase();
+        return STATUS_LABEL[key] || (key ? key.replaceAll('-', ' ') : 'Unknown');
+    }
 
-    // 2. I-update ang Room status
-    await window.supabaseClient
-        .from('rooms')
-        .update({ status: 'occupied' })
-        .eq('room_number', roomNumber);
+    function touch() {
+        state.touched = Date.now();
+        tick();
+    }
 
-    alert(`Successfully approved Room ${roomNumber}!`);
-    window.location.reload(); // I-refresh para mawala yung notification
-};
+    function showLoading() {
+        const body = $('#queueBody');
+        if (body) body.innerHTML = '<tr><td colspan="6" class="muted">Loading dashboard data…</td></tr>';
+        const board = $('#roomBoard');
+        if (board) board.innerHTML = '<div class="empty-state"><p class="empty-title">Loading rooms…</p></div>';
+    }
 
-// Auto-fetch notifications for staff
-document.addEventListener('DOMContentLoaded', async () => {
-    const { data: { session } } = await window.supabaseClient.auth.getSession();
-    if (!session) return;
+    function showPageError(message) {
+        const body = $('#queueBody');
+        if (body) body.replaceChildren();
+        const empty = $('#queueEmpty');
+        if (empty) {
+            empty.hidden = false;
+            $('.empty-title', empty).textContent = 'Dashboard data unavailable';
+            $('.empty-sub', empty).textContent = message;
+        }
+        if ($('#roomBoard')) {
+            $('#roomBoard').innerHTML =
+                '<div class="empty-state"><p class="empty-title">Could not load room data</p><p class="empty-sub">' + esc(message) + '</p></div>';
+        }
+        if ($('#lastUpdated')) $('#lastUpdated').textContent = 'Not connected';
+    }
 
-    // Makinig sa mga bagong notifications
-    window.supabaseClient
-        .channel('staff-notifications')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
-            const note = payload.new;
-            // Ipakita sa console at sa isang alert
-            console.log("NEW REQUEST:", note.message);
-            
-            // Para makita agad ng staff, mag-a-alert tayo na may request.
-            const confirmApprove = confirm(`NEW REQUEST:\n${note.message}\n\nClick OK to approve.`);
-            if (confirmApprove) {
-                // Kunin yung guest id mula sa user_id ng notification (na siyang guest id natin)
-                const guestId = note.user_id;
-                // Kunin yung room number mula sa message (basic parsing)
-                const roomMatch = note.message.match(/Room (\d+)/);
-                if (roomMatch) {
-                    window.approveGuestRoom(guestId, roomMatch[1]);
-                }
+    /* ==========================================================
+       LOAD DATABASE SNAPSHOT
+       ========================================================== */
+    async function loadDashboard({ silent = false } = {}) {
+        const client = db();
+        if (!client) {
+            showPageError('Supabase client is missing. Check js/supabase-client.js.');
+            return;
+        }
+        if (state.loading) return;
+        state.loading = true;
+        if (!silent) showLoading();
+
+        try {
+            const { data, error } = await client.rpc('get_staff_dashboard_data');
+            if (error) throw error;
+            if (!data || typeof data !== 'object') {
+                throw new Error('The staff dashboard RPC returned no data.');
             }
-        })
-        .subscribe();
-});
+
+            staff = data.staff || staff;
+            if (staff.full_name) setStaff(staff.full_name);
+
+            rooms = {};
+            (Array.isArray(data.rooms) ? data.rooms : []).forEach(room => {
+                const number = String(room.room_number ?? '');
+                if (!number) return;
+                rooms[number] = {
+                    id: room.id,
+                    number,
+                    floor: Number(room.floor || 0),
+                    type: room.type || 'Standard Shared Room',
+                    capacity: Number(room.capacity || 0),
+                    occupants: Number(room.occupants_count || 0),
+                    occupantNames: Array.isArray(room.occupant_names) ? room.occupant_names : [],
+                    status: ROOM_STATUSES.has(String(room.status)) ? String(room.status) : 'vacant-dirty',
+                    history: []
+                };
+            });
+
+            const roomRequests = (Array.isArray(data.room_requests) ? data.room_requests : []).map(item => ({
+                guest: item.guest || 'Guest',
+                guestId: item.guest_id || '—',
+                profileId: item.profile_id,
+                room: String(item.room_number || '—'),
+                time: item.check_in ? formatDate(item.check_in) : formatDateTime(item.created_at),
+                rawTime: item.check_in || item.created_at || '',
+                status: 'pending',
+                groupBookingId: item.group_booking_id || null,
+                groupSize: item.group_size || null
+            }));
+
+            const inHouse = (Array.isArray(data.in_house) ? data.in_house : []).map(item => ({
+                guest: item.guest || 'Guest',
+                guestId: item.guest_id || '—',
+                profileId: item.profile_id,
+                room: String(item.room_number || '—'),
+                time: item.check_in ? formatDate(item.check_in) : '—',
+                rawTime: item.check_in || '',
+                status: 'checked-in'
+            }));
+
+            queue = {
+                arrivals: roomRequests,
+                departures: [],
+                inhouse: inHouse
+            };
+
+            groups = Array.isArray(data.group_bookings) ? data.group_bookings : [];
+
+            const generalRequests = (Array.isArray(data.requests) ? data.requests : []).map(item => ({
+                id: String(item.id),
+                source: item.source || 'requests',
+                title: item.title || item.type || 'Guest request',
+                details: item.details || '',
+                room: item.room_number || '—',
+                guest: item.guest || 'Guest',
+                status: item.status || 'pending',
+                created_at: item.created_at
+            }));
+
+            const serviceRequests = (Array.isArray(data.service_requests) ? data.service_requests : []).map(item => ({
+                id: String(item.id),
+                source: item.source || 'service_requests',
+                title: item.title || item.type || 'Service request',
+                details: item.details || '',
+                room: item.room_number || '—',
+                guest: item.guest || 'Guest',
+                status: item.status || 'pending',
+                created_at: item.created_at
+            }));
+
+            requests = [...generalRequests, ...serviceRequests]
+                .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+            renderAll();
+            touch();
+        } catch (error) {
+            console.error('Staff dashboard load failed:', error);
+            if (!silent) showPageError(error.message || 'Unable to load staff dashboard data.');
+            toast('Dashboard data unavailable', error.message || 'Check the staff dashboard RPC and access permissions.', 'error');
+        } finally {
+            state.loading = false;
+        }
+    }
+
+    function setStaff(name) {
+        const text = name || 'Staff';
+        const avatar = initials(text);
+        $$('.staff-avatar, .mobile-topbar .topbar-avatar, .topbar-actions .topbar-avatar').forEach(node => {
+            node.textContent = avatar;
+        });
+        const nameNode = $('.staff-name');
+        if (nameNode) nameNode.textContent = text;
+    }
+
+    /* ==========================================================
+       QUEUE
+       ========================================================== */
+    function rowsForTab(tab, query = '') {
+        const q = query.trim().toLowerCase();
+        let rows = [...(queue[tab] || [])].filter(item => {
+            const haystack = `${item.guest} ${item.guestId} ${item.room}`.toLowerCase();
+            return !q || haystack.includes(q);
+        });
+
+        if (state.sortKey) {
+            const key = state.sortKey;
+            rows.sort((a, b) => {
+                const A = key === 'time' ? String(a.rawTime || '') : String(a[key] || '').toLowerCase();
+                const B = key === 'time' ? String(b.rawTime || '') : String(b[key] || '').toLowerCase();
+                return (A > B ? 1 : A < B ? -1 : 0) * state.sortDir;
+            });
+        }
+        return rows;
+    }
+
+    function renderQueue() {
+        const all = rowsForTab(state.tab, state.query);
+        const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+        state.page = Math.min(state.page, pages);
+        const start = (state.page - 1) * PAGE_SIZE;
+        const rows = all.slice(start, start + PAGE_SIZE);
+        const body = $('#queueBody');
+
+        body.innerHTML = rows.map(item => {
+            const room = esc(item.room);
+            const guest = esc(item.guest);
+            const guestId = esc(item.guestId);
+            const time = esc(item.time);
+            const label = statusLabel(item.status);
+            const statusClass = String(item.status || 'pending').replace(/[^a-z-]/g, '');
+            return `<tr tabindex="0" data-room="${room}" data-profile="${esc(item.profileId || '')}">
+                <td><div class="guest-cell"><span class="guest-avatar">${initials(item.guest)}</span><span class="guest-name">${guest}</span></div></td>
+                <td class="muted">${guestId}</td>
+                <td><strong>${room}</strong>${item.groupBookingId ? '<small class="queue-group-tag">Group booking</small>' : ''}</td>
+                <td class="muted">${time}</td>
+                <td><span class="status-pill ${statusClass}"><span class="dot"></span>${esc(label)}</span></td>
+                <td class="col-actions"><button type="button" class="btn btn-sm" data-act="view" data-room="${room}">View</button></td>
+            </tr>`;
+        }).join('');
+
+        const empty = $('#queueEmpty');
+        empty.hidden = rows.length > 0;
+        if (!rows.length) {
+            $('.empty-title', empty).textContent = state.query
+                ? `No guests match "${state.query}"`
+                : state.tab === 'arrivals'
+                    ? 'No pending room requests'
+                    : state.tab === 'inhouse'
+                        ? 'No in-house guests'
+                        : 'Departure tracking is not configured';
+            $('.empty-sub', empty).textContent = state.tab === 'departures'
+                ? 'The current profiles schema has no check-out date or expected departure field, so departures and overdue stays cannot be calculated yet.'
+                : state.tab === 'arrivals'
+                    ? 'Individual and confirmed group room requests will appear here when a client selects a room.'
+                    : 'Guests with an active room value will appear here.';
+        }
+
+        $('#queueInfo').textContent = all.length
+            ? `Showing ${start + 1}–${start + rows.length} of ${all.length}`
+            : 'Showing 0 of 0';
+
+        const chev = direction => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="${direction}"></polyline></svg>`;
+        let pagination = `<button class="page-btn" data-page="${state.page - 1}" aria-label="Previous page"${state.page === 1 ? ' disabled' : ''}>${chev('15 18 9 12 15 6')}</button>`;
+        for (let page = 1; page <= pages; page++) {
+            pagination += `<button class="page-btn${page === state.page ? ' active' : ''}" data-page="${page}">${page}</button>`;
+        }
+        pagination += `<button class="page-btn" data-page="${state.page + 1}" aria-label="Next page"${state.page === pages ? ' disabled' : ''}>${chev('9 18 15 12 9 6')}</button>`;
+        $('.pagination').innerHTML = pagination;
+
+        $$('.tab').forEach(tabButton => {
+            const on = tabButton.dataset.tab === state.tab;
+            tabButton.classList.toggle('active', on);
+            tabButton.setAttribute('aria-selected', String(on));
+            $('.tab-count', tabButton).textContent = (queue[tabButton.dataset.tab] || []).length;
+        });
+
+        $$('.queue-table th.sortable').forEach(th => {
+            th.classList.remove('sort-asc', 'sort-desc');
+            if (th.dataset.sort === state.sortKey) {
+                th.classList.add(state.sortDir === 1 ? 'sort-asc' : 'sort-desc');
+            }
+        });
+    }
+
+    /* ==========================================================
+       KPI STRIP
+       ========================================================== */
+    function renderKpis() {
+        const totalBeds = Object.values(rooms).reduce((sum, room) => sum + room.capacity, 0);
+        const occupiedBeds = Object.values(rooms).reduce((sum, room) => sum + Math.min(room.occupants, room.capacity || room.occupants), 0);
+        const occupancy = totalBeds > 0 ? Math.round(occupiedBeds / totalBeds * 100) : 0;
+        const openRequests = requests.filter(item => !['completed', 'cancelled', 'closed', 'resolved'].includes(String(item.status).toLowerCase()));
+
+        const allCard = $('.kpi-card[data-filter="all"]');
+        const arrivalsCard = $('.kpi-card[data-filter="arrivals"]');
+        const departuresCard = $('.kpi-card[data-filter="departures"]');
+        const overdueCard = $('.kpi-card[data-filter="overdue"]');
+        const requestsCard = $('.kpi-card[data-filter="requests"]');
+
+        if (allCard) {
+            $('.kpi-value', allCard).innerHTML = `${occupancy}<span class="kpi-suffix">%</span>`;
+            $('.kpi-sub', allCard).textContent = `${occupiedBeds} of ${totalBeds} beds`;
+        }
+        if (arrivalsCard) {
+            $('.kpi-value', arrivalsCard).textContent = queue.arrivals.length;
+            $('.kpi-sub', arrivalsCard).textContent = 'Pending room requests';
+        }
+        if (departuresCard) {
+            $('.kpi-value', departuresCard).textContent = '—';
+            $('.kpi-sub', departuresCard).textContent = 'Checkout date not stored';
+        }
+        if (overdueCard) {
+            $('.kpi-value', overdueCard).textContent = '—';
+            $('.kpi-sub', overdueCard).textContent = 'Cannot calculate without checkout date';
+        }
+        if (requestsCard) {
+            $('.kpi-value', requestsCard).textContent = openRequests.length;
+            $('.kpi-sub', requestsCard).textContent = 'Open guest and service requests';
+        }
+
+        const overdueBadge = $('#overdueTitle .count-badge');
+        if (overdueBadge) overdueBadge.textContent = 'N/A';
+        const requestBadge = $('#reqTitle .count-badge');
+        if (requestBadge) requestBadge.textContent = `${openRequests.length} open`;
+        const navBadge = $('#navReqBadge');
+        if (navBadge) {
+            navBadge.textContent = openRequests.length;
+            navBadge.hidden = openRequests.length === 0;
+        }
+        $$('.kpi-card').forEach(card => card.classList.remove('active'));
+        if (state.kpi) $(`.kpi-card[data-filter="${state.kpi}"]`)?.classList.add('active');
+    }
+
+    /* ==========================================================
+       OVERDUE / SERVICE REQUESTS / GROUP BOOKINGS
+       ========================================================== */
+    function renderOverdue() {
+        $('#overdueList').innerHTML =
+            '<li class="empty-state"><p class="empty-title">Checkout tracking unavailable</p><p class="empty-sub">The current profiles table has no checkout date or expected departure column. No overdue status will be invented.</p></li>';
+    }
+
+    function renderRequests() {
+        const list = $('#reqQueue');
+        const visible = requests.slice(0, 20);
+        if (!visible.length) {
+            list.innerHTML = '<li class="empty-state"><p class="empty-title">No guest or service requests</p><p class="empty-sub">Requests from the database will appear here.</p></li>';
+            return;
+        }
+
+        list.innerHTML = visible.map(item => {
+            const status = String(item.status || 'pending').toLowerCase();
+            const statusClass = status === 'urgent' ? 'urgent' : ['completed', 'resolved', 'closed'].includes(status) ? 'checked-in' : 'pending';
+            return `<li class="req-item">
+                <div class="req-head">
+                    <div>
+                        <div class="req-title">${esc(item.title)}</div>
+                        <div class="req-meta">Room ${esc(item.room)} · ${esc(item.guest)} · ${esc(timeAgo(item.created_at))}</div>
+                    </div>
+                    <span class="status-pill ${statusClass}"><span class="dot"></span>${esc(statusLabel(status))}</span>
+                </div>
+                ${item.details ? `<p class="req-meta req-details">${esc(item.details)}</p>` : ''}
+                <div class="req-meta req-source">${item.source === 'service_requests' ? 'Service request' : 'Guest request'}</div>
+            </li>`;
+        }).join('');
+    }
+
+    function renderGroups() {
+        const list = $('#groupBookingList');
+        if (!list) return;
+        const countBadge = $('#groupBookingsCount');
+        if (countBadge) countBadge.textContent = `${groups.length} active`;
+
+        if (!groups.length) {
+            list.innerHTML = '<li class="empty-state"><p class="empty-title">No active group bookings</p><p class="empty-sub">Group bookings appear here after a client creates an invitation or confirms all members.</p></li>';
+            return;
+        }
+
+        list.innerHTML = groups.map(group => {
+            const members = Array.isArray(group.members) ? group.members : [];
+            const accepted = members.filter(member => ['accepted', 'confirmed', 'completed'].includes(String(member.status).toLowerCase())).length;
+            const status = String(group.status || 'inviting').toLowerCase();
+            return `<li class="group-booking-item">
+                <div class="group-booking-top">
+                    <div>
+                        <strong>${esc(group.group_name || 'CMDI Group')}</strong>
+                        <span>Room ${esc(group.room_number || '—')} · Floor ${esc(group.floor ?? '—')}</span>
+                    </div>
+                    <span class="status-pill ${status === 'confirmed' ? 'checked-in' : 'pending'}"><span class="dot"></span>${esc(statusLabel(status))}</span>
+                </div>
+                <div class="group-booking-meta">${Number(group.group_size || members.length)} members · ${accepted} accepted</div>
+                <ul class="group-member-mini">${members.map(member => `<li><span>${esc(member.name || 'CMDI Member')}</span><small>${esc(statusLabel(member.status))}</small></li>`).join('')}</ul>
+                ${group.hold_expires_at && ['inviting', 'ready'].includes(status) ? `<small class="group-hold-note">Temporary hold expires ${esc(formatDateTime(group.hold_expires_at))}</small>` : ''}
+            </li>`;
+        }).join('');
+    }
+
+    /* ==========================================================
+       ROOM BOARD AND DETAILS DRAWER
+       ========================================================== */
+    function renderRooms() {
+        const all = Object.values(rooms);
+        const board = $('#roomBoard');
+        if (!all.length) {
+            board.innerHTML = '<div class="empty-state"><p class="empty-title">No rooms to show</p><p class="empty-sub">The rooms table currently has no records.</p></div>';
+            return;
+        }
+
+        const floors = [...new Set(all.map(room => room.floor))].sort((a, b) => a - b);
+        let html = '';
+        floors.forEach(floor => {
+            html += `<div class="room-floor"><h4>Floor ${floor}</h4><div class="room-grid">`;
+            all.filter(room => room.floor === floor).forEach(room => {
+                const status = ROOM_STATUSES.has(room.status) ? room.status : 'vacant-dirty';
+                html += `<button type="button" class="room-cell st-${status}" data-room="${esc(room.number)}" aria-label="Room ${esc(room.number)}, ${esc(statusLabel(status))}">${esc(room.number)}<small>${esc(statusLabel(status))} · ${room.occupants}/${room.capacity}</small></button>`;
+            });
+            html += '</div></div>';
+        });
+        board.innerHTML = html;
+    }
+
+    function openLayer(...elements) {
+        elements.forEach(element => { element.hidden = false; });
+        requestAnimationFrame(() => elements.forEach(element => element.classList.add('open')));
+    }
+
+    function closeLayer(...elements) {
+        elements.forEach(element => element.classList.remove('open'));
+        setTimeout(() => elements.forEach(element => {
+            if (!element.classList.contains('open')) element.hidden = true;
+        }), 200);
+    }
+
+    function openDrawer(roomNumber) {
+        const room = rooms[String(roomNumber)];
+        if (!room) return;
+        state.currentRoom = String(roomNumber);
+
+        const currentGuests = queue.inhouse.filter(item => item.room === String(roomNumber));
+        const pendingGuests = queue.arrivals.filter(item => item.room === String(roomNumber));
+        const displayGuests = currentGuests.length ? currentGuests : pendingGuests;
+
+        $('#roomDrawerTitle').textContent = `Room ${room.number}`;
+        $('#roomDrawerSub').textContent = `Floor ${room.floor} · ${room.type}`;
+        $('#drawerGuestName').textContent = displayGuests.length
+            ? displayGuests.map(item => item.guest).join(', ')
+            : 'No current guest';
+        $('#drawerGuestMeta').textContent = currentGuests.length
+            ? `${currentGuests.length} in-house guest(s)`
+            : pendingGuests.length
+                ? `${pendingGuests.length} pending room request(s)`
+                : statusLabel(room.status);
+        $('.roommate-avatar', $('#roomDrawer')).textContent = displayGuests.length ? initials(displayGuests[0].guest) : '–';
+        $('#drawerStatus').textContent = statusLabel(room.status);
+        $('#drawerCapacity').textContent = `${room.occupants} / ${room.capacity} beds occupied`;
+        $('.drawer-history').innerHTML = '<li>Historical room events are not stored in the current dashboard schema.</li>';
+
+        const forceButton = $('#roomDrawer .drawer-footer .btn-primary');
+        forceButton.disabled = true;
+        forceButton.textContent = 'Check-out tracking unavailable';
+        forceButton.title = 'The current schema has no checkout date or secure checkout function.';
+
+        $('#roomDrawer .drawer-footer .btn-outline').disabled = true;
+        openLayer($('#roomDrawerOverlay'), $('#roomDrawer'));
+        $('#roomDrawerClose').focus();
+    }
+
+    function closeDrawer() {
+        closeLayer($('#roomDrawerOverlay'), $('#roomDrawer'));
+        state.currentRoom = null;
+    }
+
+    function renderActivity() {
+        $('#activityList').innerHTML =
+            '<li class="empty-state" style="grid-column:1/-1;"><p class="empty-title">Activity log is not connected yet</p><p class="empty-sub">The audit_log table schema has not been confirmed for dashboard display. Staff actions will not be simulated here.</p></li>';
+    }
+
+    function renderAll() {
+        renderQueue();
+        renderKpis();
+        renderOverdue();
+        renderRequests();
+        renderGroups();
+        renderRooms();
+        renderActivity();
+    }
+
+    /* ==========================================================
+       CSV EXPORT
+       ========================================================== */
+    function exportQueue() {
+        const rows = rowsForTab(state.tab, state.query);
+        if (!rows.length) {
+            toast('Nothing to export', 'The current queue is empty.', 'error');
+            return;
+        }
+        const headers = ['Guest', 'Guest ID', 'Room', 'Date', 'Status'];
+        const data = [headers, ...rows.map(item => [item.guest, item.guestId, item.room, item.time, statusLabel(item.status)])];
+        const csv = data.map(columns => columns.map(value => '"' + String(value ?? '').replace(/"/g, '""') + '"').join(',')).join('\n');
+        const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `cmdi-${state.tab}-queue.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+        toast('Exported', `${rows.length} records exported.`);
+    }
+
+    /* ==========================================================
+       EVENTS
+       ========================================================== */
+    function bindEvents() {
+        const menuBtn = $('#menuToggle');
+        const sidebar = $('#sidebar');
+        const sidebarOverlay = $('#sidebarOverlay');
+        const setMenu = open => {
+            sidebar.classList.toggle('open', open);
+            sidebarOverlay.classList.toggle('open', open);
+            menuBtn.setAttribute('aria-expanded', String(open));
+        };
+
+        menuBtn.addEventListener('click', () => setMenu(!sidebar.classList.contains('open')));
+        sidebarOverlay.addEventListener('click', () => setMenu(false));
+
+        $('.tabs').addEventListener('click', event => {
+            const tabButton = event.target.closest('.tab');
+            if (!tabButton) return;
+            state.tab = tabButton.dataset.tab;
+            state.page = 1;
+            state.kpi = null;
+            renderQueue();
+            renderKpis();
+        });
+
+        $('.queue-table thead').addEventListener('click', event => {
+            const th = event.target.closest('th.sortable');
+            if (!th) return;
+            state.sortDir = state.sortKey === th.dataset.sort ? -state.sortDir : 1;
+            state.sortKey = th.dataset.sort;
+            state.page = 1;
+            renderQueue();
+        });
+
+        $('.pagination').addEventListener('click', event => {
+            const button = event.target.closest('[data-page]');
+            if (!button || button.disabled) return;
+            state.page = Number(button.dataset.page);
+            renderQueue();
+        });
+
+        $('#globalSearch').addEventListener('input', event => {
+            state.query = event.target.value;
+            state.page = 1;
+            renderQueue();
+        });
+
+        $$('.kpi-card').forEach(card => card.addEventListener('click', () => {
+            const filter = card.dataset.filter;
+            if (filter === 'all') state.tab = 'inhouse';
+            if (filter === 'arrivals') state.tab = 'arrivals';
+            if (filter === 'departures') state.tab = 'departures';
+            if (filter === 'overdue') {
+                $('#overdueTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            if (filter === 'requests') {
+                $('#reqTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            state.page = 1;
+            renderQueue();
+            renderKpis();
+        }));
+
+        $('#queueBody').addEventListener('click', event => {
+            const button = event.target.closest('button[data-act="view"]');
+            const row = event.target.closest('tr[data-room]');
+            const roomNumber = button?.dataset.room || row?.dataset.room;
+            if (roomNumber) openDrawer(roomNumber);
+        });
+
+        $('#queueBody').addEventListener('keydown', event => {
+            if (event.key === 'Enter' && event.target.matches('tr[data-room]')) {
+                openDrawer(event.target.dataset.room);
+            }
+        });
+
+        $('#roomBoard').addEventListener('click', event => {
+            const cell = event.target.closest('.room-cell');
+            if (cell) openDrawer(cell.dataset.room);
+        });
+
+        $('#roomDrawerClose').addEventListener('click', closeDrawer);
+        $('#roomDrawerOverlay').addEventListener('click', closeDrawer);
+        $('#roomDrawer .drawer-footer .btn-outline').addEventListener('click', () => {
+            toast('Room changes unavailable', 'Use the Rooms module after its secure room-change workflow is configured.', 'info');
+        });
+        $('#roomDrawer .drawer-footer .btn-primary').addEventListener('click', () => {
+            toast('Check-out unavailable', 'The current database schema does not yet include checkout tracking or a secure checkout function.', 'error');
+        });
+
+        $('#exportCsvBtn').addEventListener('click', exportQueue);
+
+        $('#newCheckinBtn').addEventListener('click', () => {
+            window.location.href = 'staff-checkin.html';
+        });
+
+        // The RBAC module owns the role selector. Do not add client-side role simulation here.
+        document.addEventListener('click', event => {
+            const disabledLink = event.target.closest('a[aria-disabled="true"]');
+            if (disabledLink) {
+                event.preventDefault();
+                toast('Access restricted', 'Your verified staff role does not have permission to open this page.', 'error');
+            }
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                if (!$('#roomDrawer').hidden) closeDrawer();
+                setMenu(false);
+            }
+            if (event.ctrlKey || event.metaKey || event.altKey) return;
+            if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '')) return;
+            if (event.key === '/') {
+                event.preventDefault();
+                $('#globalSearch').focus();
+            }
+            if (event.key.toLowerCase() === 'n') $('#newCheckinBtn').click();
+        });
+    }
+
+    function tick() {
+        const seconds = Math.max(0, Math.floor((Date.now() - state.touched) / 1000));
+        const label = seconds < 5 ? 'just now' : seconds < 60 ? `${seconds}s ago` : `${Math.floor(seconds / 60)}m ago`;
+        const lastUpdated = $('#lastUpdated');
+        if (lastUpdated) lastUpdated.textContent = `Last updated ${label}`;
+    }
+
+    async function init() {
+        bindEvents();
+
+        // RBAC verifies the actual profile role and OTP-protected staff access.
+        if (window.RBAC?.ready) await window.RBAC.ready;
+
+        if (!window.RBAC || typeof window.RBAC.realRole !== 'function' || !window.RBAC.realRole()) {
+            showPageError('This page requires an active CMDI staff account. Current profiles contain no staff role yet.');
+            return;
+        }
+
+        await loadDashboard();
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = setInterval(() => loadDashboard({ silent: true }), REFRESH_MS);
+        setInterval(tick, 5000);
+        window.addEventListener('beforeunload', () => {
+            if (refreshTimer) clearInterval(refreshTimer);
+        });
+    }
+
+    init().catch(error => {
+        console.error('Staff dashboard initialization failed:', error);
+        showPageError(error.message || 'The staff dashboard could not be initialized.');
+    });
+})();

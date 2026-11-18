@@ -728,3 +728,72 @@ button.topbar-avatar:hover { background: var(--green-light); }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+/* ==========================================================
+   CMDI DASHBOARD DATA PANELS
+   ========================================================== */
+.group-booking-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+.group-booking-item {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.group-booking-item:last-child { border-bottom: 0; }
+.group-booking-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+.group-booking-top > div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.group-booking-top strong { font-size: 13px; }
+.group-booking-top span,
+.group-booking-meta,
+.group-hold-note {
+    color: var(--text-2);
+    font-size: 12px;
+}
+.group-booking-meta { margin-top: 8px; }
+.group-member-mini {
+    list-style: none;
+    margin-top: 8px;
+    display: grid;
+    gap: 5px;
+}
+.group-member-mini li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+}
+.group-member-mini small {
+    color: var(--text-3);
+    text-transform: capitalize;
+}
+.group-hold-note {
+    display: block;
+    margin-top: 8px;
+    color: var(--status-amber-fg);
+}
+.queue-group-tag {
+    display: block;
+    margin-top: 3px;
+    color: var(--green-accent);
+    font-size: 10px;
+    font-weight: 600;
+}
+.req-details {
+    overflow-wrap: anywhere;
+}
+.req-source {
+    font-size: 11px;
+    color: var(--text-3);
+}
