@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Staff Dashboard - Haven</title>
+<title>CMDI Staff Dashboard | Hotel Check-In</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/staff-theme.css">
 <link rel="stylesheet" href="CSS/staff-dashboard.css">
 <link rel="stylesheet" href="CSS/notification.css">
-<link rel="stylesheet" href="CSS/staff-theme.css">
 </head>
 <body data-role="front-desk">
 
@@ -24,17 +24,17 @@
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
         </button>
-        <span class="mobile-brand">Check-in Accommodation System</span>
+        <span class="mobile-brand">CMDI HOTEL</span>
         <div class="topbar-avatar">ST</div>
     </header>
 
     <!-- ============ SIDEBAR ============ -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
-            <div class="logo-box">H</div>
+            <div class="logo-box">C</div>
             <div class="logo-text">
-                <span class="logo-title">haven</span>
-                <span class="logo-subtitle">STAFF CONSOLE</span>
+                <span class="logo-title">CMDI</span>
+                <span class="logo-subtitle">HOTEL OPERATIONS</span>
             </div>
         </div>
 
@@ -144,9 +144,10 @@
         <!-- ============ TOPBAR ============ -->
         <header class="topbar">
             <div class="topbar-title">
-                <h1 class="app-title">Check-in Accommodation System</h1>
+                <span class="app-eyebrow">CMDI HOTEL OPERATIONS</span>
+                <h1 class="app-title">Hotel Check-In</h1>
                 <p class="app-subtitle">
-                    Staff console · <span id="roleBreadcrumb">Front desk</span>
+                    Staff workspace · <span id="roleBreadcrumb">Front desk</span>
                     · <span class="last-updated" id="lastUpdated">Last updated just now</span>
                 </p>
             </div>
@@ -194,6 +195,15 @@
         </header>
 
         <div class="dashboard-content">
+
+            <section class="dashboard-welcome" aria-label="Dashboard overview">
+                <div class="dashboard-welcome-copy">
+                    <span class="welcome-kicker">OPERATIONS OVERVIEW</span>
+                    <h2>Good day, team.</h2>
+                    <p>Here’s the latest room and guest activity across CMDI.</p>
+                </div>
+                <div class="welcome-status"><span class="welcome-status-dot"></span>Live dashboard</div>
+            </section>
 
             <!-- ============ KPI ROW ============ -->
             <section class="kpi-row" aria-label="Key performance indicators">
@@ -376,8 +386,8 @@
             </div>
 
             <footer class="dashboard-footer">
-                <span>Haven · Staff console</span>
-                <span>© 2026 Check-in Accommodation System</span>
+                <span>CMDI · Staff console</span>
+                <span>© 2026 CMDI Hotel Check-In</span>
             </footer>
 
         </div>
