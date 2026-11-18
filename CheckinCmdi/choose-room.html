@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Choose Room - CMDI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="CSS/choose-room.css">
+    <link rel="stylesheet" href="CSS/skeleton-loading.css">
+</head>
+<body>
+    <main class="room-selection-container">
+        <section class="card">
+            <header class="header">
+                <p class="eyebrow">CMDI HOTEL CHECK-IN</p>
+                <h1>Welcome to Haven</h1>
+                <p>Select an available room. Booking options will appear when you choose a room.</p>
+            </header>
+
+            <div id="pageNotice" class="notice hidden" role="alert"></div>
+
+            <section id="roomArea" class="room-area">
+                <div class="room-list-heading">
+                    <div>
+                        <h2>Available rooms</h2>
+                        <p>Select a room to view details and booking options.</p>
+                    </div>
+                    <span class="room-selection-hint">Choose a room to continue</span>
+                </div>
+
+                <div id="roomGrid" class="room-options">
+                    <p class="loading-text">Loading available rooms...</p>
+                </div>
+            </section>
+
+            <button type="button" id="reopenGroupDrawerBtn" class="reopen-group-button hidden">
+                View group invitation status
+            </button>
+        </section>
+
+        <!-- Drawer backdrop -->
+        <button
+            type="button"
+            id="drawerBackdrop"
+            class="drawer-backdrop"
+            aria-label="Close room details panel"
+            tabindex="-1">
+        </button>
+
+        <!-- Right-side room details drawer; becomes a bottom sheet on mobile -->
+        <aside
+            id="roomDrawer"
+            class="room-drawer"
+            aria-hidden="true"
+            aria-labelledby="drawerTitle"
+            tabindex="-1">
+
+            <div class="drawer-header">
+                <div>
+                    <p class="drawer-eyebrow">CMDI ROOM SELECTION</p>
+                    <h2 id="drawerTitle">Room details</h2>
+                </div>
+                <button type="button" id="closeRoomDrawerBtn" class="drawer-close-button" aria-label="Close room details">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="drawer-scroll">
+                <!-- Room preview and booking form -->
+                <section id="drawerBookingSection" class="drawer-booking-section">
+                    <div id="selectedRoomSummary" class="selected-room-summary">
+                        <div class="selected-room-empty">
+                            <span class="empty-room-icon" aria-hidden="true">⌂</span>
+                            <strong>Select a room</strong>
+                            <p>Room details and booking options will appear here.</p>
+                        </div>
+                    </div>
+
+                    <div class="drawer-section-divider"></div>
+
+                    <div class="drawer-section-title">
+                        <h3>Choose booking type</h3>
+                        <p>Select individual booking or invite CMDI friends.</p>
+                    </div>
+
+                    <section class="booking-mode" aria-label="Booking type">
+                        <button type="button" id="individualModeBtn" class="mode-card active" aria-pressed="true">
+                            <span class="mode-icon" aria-hidden="true">♙</span>
+                            <span class="mode-copy">
+                                <strong>Individual</strong>
+                                <small>Book a bed for yourself.</small>
+                            </span>
+                        </button>
+                        <button type="button" id="groupModeBtn" class="mode-card" aria-pressed="false">
+                            <span class="mode-icon" aria-hidden="true">♧</span>
+                            <span class="mode-copy">
+                                <strong>Group booking</strong>
+                                <small>Invite CMDI friends.</small>
+                            </span>
+                        </button>
+                    </section>
+
+                    <section id="groupSetup" class="group-setup hidden">
+                        <div class="section-heading">
+                            <div>
+                                <h3>Invite your group</h3>
+                                <p>You are included automatically. Invite existing, verified CMDI client accounts.</p>
+                            </div>
+                            <span class="hold-pill">30 min hold</span>
+                        </div>
+
+                        <label for="inviteeEmailEntry">Invite CMDI friends</label>
+
+                        <div class="recipient-entry" id="recipientEntry">
+                            <div id="inviteeEmailChips" class="recipient-chips" aria-live="polite" aria-label="Added invitation recipients"></div>
+                            <input
+                                type="text"
+                                id="inviteeEmailEntry"
+                                class="recipient-text-input"
+                                inputmode="email"
+                                autocomplete="off"
+                                autocapitalize="none"
+                                spellcheck="false"
+                                placeholder="Add CMDI email address..."
+                                aria-label="CMDI friend's email address">
+                            <button type="button" id="addInviteeEmailBtn" class="recipient-add-button">Add</button>
+                        </div>
+
+                        <!-- Hidden field preserves the existing JavaScript/API contract. -->
+                        <input type="hidden" id="inviteeEmails" value="">
+
+                        <div class="recipient-footer">
+                            <p class="field-help">Type an email and press Enter or Add. Paste multiple addresses separated by commas. Only existing, verified CMDI client accounts can accept.</p>
+                            <div class="recipient-counts">
+                                <span id="inviteeCount">0 friends added</span>
+                                <span id="groupMemberCount">1 member total</span>
+                            </div>
+                        </div>
+
+                        <p id="groupInputError" class="inline-error" role="alert"></p>
+                        <div class="group-summary" id="groupSummary">Select a room and add your invited members to see the group size.</div>
+                    </section>
+
+                    <footer id="footerActions" class="footer-actions">
+                        <a href="client-dashboard.html" class="back-link">Back to dashboard</a>
+                        <button id="confirmRoomBtn" class="btn btn-primary" disabled>Confirm Selection</button>
+                    </footer>
+                </section>
+
+                <!-- Group status uses the same drawer, after the group is created -->
+                <section id="groupStatusPanel" class="group-status-panel hidden" aria-live="polite">
+                    <div class="status-topline">
+                        <span class="hold-pill">Temporary room hold</span>
+                        <span id="groupStatusBadge" class="status-badge">INVITING</span>
+                    </div>
+
+                    <h2>Group invitation status</h2>
+                    <p id="groupCreatedMessage" class="status-description">Your invitation requests have been created.</p>
+
+                    <div class="status-meta">
+                        <div><span>Room</span><strong id="statusRoomNumber">—</strong></div>
+                        <div><span>Group size</span><strong id="statusGroupSize">—</strong></div>
+                        <div><span>Hold expires</span><strong id="statusCountdown">—</strong></div>
+                    </div>
+
+                    <div class="member-list-heading">
+                        <h3>Members</h3>
+                        <button type="button" id="refreshGroupStatusBtn" class="small-button">Refresh</button>
+                    </div>
+
+                    <div id="groupMemberList" class="member-list">
+                        <p class="muted-text">Loading members...</p>
+                    </div>
+
+                    <div id="manualLinksPanel" class="manual-links-panel hidden">
+                        <strong>Email delivery needs attention</strong>
+                        <p>Share each link only with the matching CMDI account.</p>
+                        <div id="manualInvitationLinks" class="manual-invitation-links"></div>
+                    </div>
+
+                    <div id="replacementArea" class="replacement-area hidden">
+                        <label for="replacementEmail">Invite a replacement CMDI member</label>
+                        <div class="replacement-row">
+                            <input id="replacementEmail" type="email" maxlength="254" placeholder="friend@example.com" autocomplete="email">
+                            <button type="button" id="sendReplacementBtn" class="small-button">Send invite</button>
+                        </div>
+                        <p id="replacementMessage" class="field-help" role="status"></p>
+                    </div>
+
+                    <p id="statusMessage" class="inline-error" role="alert"></p>
+
+                    <div class="status-actions">
+                        <button type="button" id="confirmGroupBtn" class="btn btn-primary hidden">Confirm group booking</button>
+                        <button type="button" id="cancelGroupBtn" class="btn btn-secondary">Cancel group booking</button>
+                        <a href="client-dashboard.html" class="back-link">Back to dashboard</a>
+                    </div>
+                </section>
+            </div>
+        </aside>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script type="module" src="js/choose-room.js"></script>
+</body>
+</html>
