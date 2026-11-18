@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Staff Dashboard - Haven</title>
+<title>CMDI Staff Dashboard | Hotel Check-In</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/staff-theme.css">
 <link rel="stylesheet" href="CSS/staff-dashboard.css">
 <link rel="stylesheet" href="CSS/notification.css">
-<link rel="stylesheet" href="CSS/staff-theme.css">
 </head>
-<body data-role="front-desk">
+<body>
 
 <div class="dashboard-layout">
 
@@ -24,32 +24,30 @@
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
         </button>
-        <span class="mobile-brand">Check-in Accommodation System</span>
+        <span class="mobile-brand">CMDI HOTEL</span>
         <div class="topbar-avatar">ST</div>
     </header>
 
     <!-- ============ SIDEBAR ============ -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
-            <div class="logo-box">H</div>
+            <div class="logo-box">C</div>
             <div class="logo-text">
-                <span class="logo-title">haven</span>
-                <span class="logo-subtitle">STAFF CONSOLE</span>
+                <span class="logo-title">CMDI</span>
+                <span class="logo-subtitle">HOTEL OPERATIONS</span>
             </div>
         </div>
 
-        <div class="role-switcher">
-            <label for="roleSelect" class="role-label">Signed in as</label>
-            <div class="role-select-wrap">
-                <select id="roleSelect" aria-label="Switch role">
-                    <option value="front-desk" selected>Front desk</option>
-                    <option value="housekeeping">Housekeeping</option>
-                    <option value="manager">Manager</option>
-                </select>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="6 9 12 15 18 9"></polyline>
+        <div class="role-switcher assigned-role-card" aria-label="Assigned staff role">
+            <span class="role-label">ASSIGNED ROLE</span>
+            <div class="assigned-role-value-wrap">
+                <span class="assigned-role-value" id="assignedRoleValue">Verifying access…</span>
+                <svg class="assigned-role-lock" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="10" width="18" height="11" rx="2"></rect>
+                    <path d="M7 10V7a5 5 0 0 1 10 0v3"></path>
                 </svg>
             </div>
+            <span class="assigned-role-note">Assigned by CMDI management</span>
         </div>
 
         <nav class="sidebar-nav" aria-label="Main navigation">
@@ -144,9 +142,10 @@
         <!-- ============ TOPBAR ============ -->
         <header class="topbar">
             <div class="topbar-title">
-                <h1 class="app-title">Check-in Accommodation System</h1>
+                <span class="app-eyebrow">CMDI HOTEL OPERATIONS</span>
+                <h1 class="app-title">Hotel Check-In</h1>
                 <p class="app-subtitle">
-                    Staff console · <span id="roleBreadcrumb">Front desk</span>
+                    Staff workspace · <span id="roleBreadcrumb">Front desk</span>
                     · <span class="last-updated" id="lastUpdated">Last updated just now</span>
                 </p>
             </div>
@@ -161,7 +160,7 @@
                     <kbd class="search-kbd">/</kbd>
                 </div>
 
-                <button class="btn btn-primary" id="newCheckinBtn">
+                <button class="btn btn-primary" id="newCheckinBtn" data-permission="checkin.do">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -195,10 +194,19 @@
 
         <div class="dashboard-content">
 
+            <section class="dashboard-welcome" aria-label="Dashboard overview">
+                <div class="dashboard-welcome-copy">
+                    <span class="welcome-kicker">OPERATIONS OVERVIEW</span>
+                    <h2>Good day, team.</h2>
+                    <p>Here’s the latest room and guest activity across CMDI.</p>
+                </div>
+                <div class="welcome-status"><span class="welcome-status-dot"></span>Live dashboard</div>
+            </section>
+
             <!-- ============ KPI ROW ============ -->
             <section class="kpi-row" aria-label="Key performance indicators">
                 <button class="kpi-card" data-filter="all">
-                    <span class="kpi-label">Occupancy</span>
+                    <span class="kpi-label">Bed allocation</span>
                     <span class="kpi-value">0<span class="kpi-suffix">%</span></span>
                     <span class="kpi-sub">0 of 0 beds</span>
                     <span class="kpi-spark spark-green"></span>
@@ -241,6 +249,12 @@
                         <header class="card-header">
                             <h3 id="queueTitle">Room and guest queue</h3>
                             <div class="card-header-actions">
+                                <button class="btn-icon-label" id="refreshDashboardBtn" type="button" title="Refresh live dashboard data" aria-label="Refresh dashboard data">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"></path>
+                                    </svg>
+                                    Refresh
+                                </button>
                                 <button class="btn-icon-label" id="exportCsvBtn" title="Export as CSV">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -261,18 +275,19 @@
                                     Departures <span class="tab-count">0</span>
                                 </button>
                                 <button class="tab" role="tab" aria-selected="false" data-tab="inhouse">
-                                    In-house <span class="tab-count">0</span>
+                                    Assigned guests <span class="tab-count">0</span>
                                 </button>
                             </div>
+                            <p class="booking-review-hint" id="bookingReviewHint">Front Desk reviews pending room requests. Manager can monitor the queue but cannot approve or reject.</p>
 
                             <div class="table-wrap">
-                                <table class="queue-table" aria-label="Today's queue">
+                                <table class="queue-table" aria-label="Staff room booking review queue">
                                     <thead>
                                         <tr>
                                             <th class="sortable" data-sort="guest" scope="col">Guest</th>
                                             <th class="sortable" data-sort="guestId" scope="col">Guest ID</th>
                                             <th class="sortable" data-sort="room" scope="col">Room</th>
-                                            <th class="sortable" data-sort="time" scope="col">Time</th>
+                                            <th class="sortable" data-sort="time" scope="col">Requested / check-in</th>
                                             <th scope="col">Status</th>
                                             <th scope="col" class="col-actions">Actions</th>
                                         </tr>
@@ -376,8 +391,8 @@
             </div>
 
             <footer class="dashboard-footer">
-                <span>Haven · Staff console</span>
-                <span>© 2026 Check-in Accommodation System</span>
+                <span>CMDI · Staff console</span>
+                <span>© 2026 CMDI Hotel Check-In</span>
             </footer>
 
         </div>
@@ -431,6 +446,33 @@
         <button class="btn btn-primary" disabled>Check-out tracking unavailable</button>
     </footer>
 </aside>
+
+<!-- ============ BOOKING REVIEW DIALOG ============ -->
+<div class="modal-overlay" id="bookingReviewOverlay" hidden>
+    <div class="modal booking-review-modal" role="dialog" aria-modal="true" aria-labelledby="bookingReviewTitle">
+        <header class="modal-header">
+            <h3 id="bookingReviewTitle">Review room request</h3>
+            <button class="modal-close" id="bookingReviewClose" type="button" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div class="modal-body">
+            <p class="modal-text" id="bookingReviewText"></p>
+            <div class="form-group" id="bookingReviewReasonWrap" hidden>
+                <label for="bookingReviewReason">Reason for rejection <span class="required">*</span></label>
+                <textarea id="bookingReviewReason" rows="3" minlength="5" maxlength="500" placeholder="Explain why this room request is being rejected (at least 5 characters)…"></textarea>
+                <span class="error-msg" id="bookingReviewReasonError"></span>
+            </div>
+            <p class="booking-review-warning" id="bookingReviewWarning">This action will update the booking and room assignment in the database.</p>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-ghost" id="bookingReviewCancel" type="button">Cancel</button>
+            <button class="btn btn-primary" id="bookingReviewSubmit" type="button">Confirm</button>
+        </footer>
+    </div>
+</div>
 
 <!-- ============ CONFIRM DIALOG ============ -->
 <div class="modal-overlay" id="confirmOverlay" hidden>

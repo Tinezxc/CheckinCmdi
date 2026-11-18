@@ -3,35 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Login - Horizon Vista Homes</title>
+    <meta name="theme-color" content="#1b3a2e">
+    <title>CMDI Hotel Check-In | Sign In</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- SIGURADUHIN NA GANITO ANG LINK SA CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
-
-    <div class="login-container">
-
-        <!-- Left Side: Login Form -->
-        <div class="login-side">
-            <div class="logo">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 12H5V22H19V12H22L12 2Z" stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round"/>
-                    <path d="M9 22V16H15V22" stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round"/>
-                </svg>
-                <div class="logo-text">
-                    <span class="logo-title">HORIZON</span>
-                    <span class="logo-subtitle">VISTA HOMES</span>
-                </div>
-            </div>
+    <main class="login-container">
+        <!-- Login form -->
+        <section class="login-side" aria-label="CMDI account sign in">
+            <a class="logo" href="index.html" aria-label="CMDI Hotel Check-In home">
+                <span class="logo-mark" aria-hidden="true">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 12H5V22H19V12H22L12 2Z" stroke="#1b3a2e" stroke-width="1.6" stroke-linejoin="round"/>
+                        <path d="M9 22V16H15V22" stroke="#1b3a2e" stroke-width="1.6" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span class="logo-text">
+                    <span class="logo-title">CMDI</span>
+                    <span class="logo-subtitle">HOTEL CHECK-IN</span>
+                </span>
+            </a>
 
             <div class="login-card" id="loginCard">
                 <div class="login-header">
-                    <h1>Login</h1>
-                    <p>Please enter your details</p>
+                    <span class="login-eyebrow">WELCOME TO CMDI</span>
+                    <h1>Welcome back</h1>
+                    <p>Sign in to continue to your account.</p>
                 </div>
 
                 <div class="alert alert-success" id="registeredNotice" hidden role="status">
@@ -41,7 +42,7 @@
 
                 <form class="login-form" id="loginForm" novalidate>
                     <div class="form-group">
-                        <label for="registration-id">Email</label>
+                        <label for="registration-id">Email address</label>
                         <input type="email" id="registration-id" placeholder="you@example.com" autocomplete="email">
                         <span class="error-msg" data-error-for="registration-id"></span>
                     </div>
@@ -62,7 +63,6 @@
                         <a href="#" class="forgot-password" onclick="openModal(event)">Forgot password?</a>
                     </div>
 
-                    <!-- DAPAT NANDIYAN ITO -->
                     <button type="submit" class="btn-signin" id="loginBtn">
                         <span class="btn-label">Sign in</span>
                         <span class="btn-spinner" hidden aria-label="Loading"></span>
@@ -70,35 +70,50 @@
                 </form>
             </div>
 
-            <!-- DAPAT NANDIYAN DIN ITO -->
             <div class="signup-prompt">
-                Are you new? <a href="register.html">Create an Account</a>
+                New to CMDI? <a href="register.html">Create an Account</a>
             </div>
-        </div>
 
-        <!-- Right Side: Background Image -->
-        <div class="image-side"></div>
+            <p class="login-privacy-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
+                Secure access to your CMDI account
+            </p>
+        </section>
 
-    </div>
+        <!-- Decorative hotel image panel -->
+        <aside class="image-side" aria-label="CMDI hospitality">
+            <div class="image-overlay-content">
+                <span class="image-kicker">CMDI HOTEL CHECK-IN</span>
+                <h2>A smoother stay<br>starts here.</h2>
+                <p>Comfort, care, and a more seamless check-in experience.</p>
+                <div class="image-feature">
+                    <span class="image-feature-dot"></span>
+                    A welcoming place to settle in
+                </div>
+            </div>
+            <div class="image-bottom-note">YOUR STAY, MADE SIMPLE</div>
+        </aside>
+    </main>
 
+    <!-- Forgot password modal. Existing popup JavaScript hooks are preserved. -->
     <div class="modal-overlay" id="forgotModal">
-        <div class="modal-card">
-            <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+            <button type="button" class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
             <div class="modal-header">
-                <div class="modal-icon">✦</div>
-                <h2>Forgot Password?</h2>
+                <div class="modal-icon" aria-hidden="true">✦</div>
+                <h2 id="forgotTitle">Forgot password?</h2>
                 <p>Enter your registered email and we'll send you a link to reset your password.</p>
             </div>
             <form class="modal-form" onsubmit="handleSubmit(event)">
                 <div class="form-group">
-                    <label for="reset-email">Email Address</label>
-                    <input type="email" id="reset-email" placeholder="you@example.com" required>
+                    <label for="reset-email">Email address</label>
+                    <input type="email" id="reset-email" placeholder="you@example.com" required autocomplete="email">
                 </div>
-                <button type="submit" class="btn-submit">Send Reset Link</button>
+                <button type="submit" class="btn-submit">Send reset link</button>
             </form>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/pop-up.js" defer></script>

@@ -17,7 +17,7 @@
 
     const db = () => window.supabaseClient || null;
     const PAGE_SIZE = 12;
-    const REFRESH_MS = 60000;
+    const REFRESH_MS = 45000;
 
     const STATUS_LABEL = {
         pending: 'Pending',
@@ -27,7 +27,8 @@
         declined: 'Declined',
         cancelled: 'Cancelled',
         expired: 'Expired',
-        'checked-in': 'In-house',
+        'checked-in': 'Checked in',
+        'room-assigned': 'Room assigned',
         'checked-out': 'Checked out',
         'vacant-clean': 'Vacant clean',
         'vacant-dirty': 'Vacant dirty',
@@ -51,7 +52,13 @@
         query: '',
         touched: Date.now(),
         loading: false,
-        currentRoom: null
+        currentRoom: null,
+        currentReview: null,
+        reviewDecision: null,
+        summary: {},
+        visibility: {},
+        approvalQueueError: null,
+        lastSuccessfulFetch: 0
     };
 
     let staff = { id: null, name: 'Staff', role: null };
@@ -176,6 +183,10 @@
 
             staff = data.staff || staff;
             if (staff.full_name) setStaff(staff.full_name);
+            state.summary = data.summary && typeof data.summary === 'object' ? data.summary : {};
+            state.visibility = data.visibility && typeof data.visibility === 'object'
+                ? data.visibility
+                : { guest_details: false, room_requests: false, group_bookings: false, guest_requests: false, assigned_guests: false, service_scope: 'none' };
 
             rooms = {};
             (Array.isArray(data.rooms) ? data.rooms : []).forEach(room => {
@@ -187,44 +198,64 @@
                     floor: Number(room.floor || 0),
                     type: room.type || 'Standard Shared Room',
                     capacity: Number(room.capacity || 0),
-                    occupants: Number(room.occupants_count || 0),
-                    occupantNames: Array.isArray(room.occupant_names) ? room.occupant_names : [],
+                    occupants: Number(room.assigned_count ?? room.occupants_count ?? 0),
                     status: ROOM_STATUSES.has(String(room.status)) ? String(room.status) : 'vacant-dirty',
                     history: []
                 };
             });
 
-            const roomRequests = (Array.isArray(data.room_requests) ? data.room_requests : []).map(item => ({
+            // Manager may monitor the review queue; Front Desk may approve/reject.
+            let reviewRows = [];
+            state.approvalQueueError = null;
+            if (['manager', 'front-desk'].includes(String(staff.role || '').toLowerCase())) {
+                const { data: reviewData, error: reviewError } = await client.rpc('get_staff_room_booking_review_queue');
+                if (reviewError) {
+                    state.approvalQueueError = reviewError.message || 'Could not load the booking review queue.';
+                } else {
+                    reviewRows = Array.isArray(reviewData) ? reviewData : [];
+                }
+            }
+
+            const roomRequests = reviewRows.map(item => ({
+                reviewId: item.review_id,
+                requestType: item.request_type,
                 guest: item.guest || 'Guest',
                 guestId: item.guest_id || '—',
-                profileId: item.profile_id,
-                room: String(item.room_number || '—'),
-                time: item.check_in ? formatDate(item.check_in) : formatDateTime(item.created_at),
-                rawTime: item.check_in || item.created_at || '',
-                status: 'pending',
+                profileId: item.profile_id || null,
                 groupBookingId: item.group_booking_id || null,
-                groupSize: item.group_size || null
+                groupSize: Number(item.group_size || 1),
+                members: Array.isArray(item.members) ? item.members : [],
+                gender: item.gender || null,
+                room: String(item.room_number || '—'),
+                time: item.check_in ? formatDate(item.check_in) : formatDateTime(item.requested_at),
+                rawTime: item.check_in || item.requested_at || '',
+                requestedAt: item.requested_at || null,
+                status: item.status || 'pending'
             }));
 
-            const inHouse = (Array.isArray(data.in_house) ? data.in_house : []).map(item => ({
-                guest: item.guest || 'Guest',
-                guestId: item.guest_id || '—',
-                profileId: item.profile_id,
-                room: String(item.room_number || '—'),
-                time: item.check_in ? formatDate(item.check_in) : '—',
-                rawTime: item.check_in || '',
-                status: 'checked-in'
-            }));
+            const assignedGuests = (state.visibility.assigned_guests && Array.isArray(data.assigned_guests)
+                ? data.assigned_guests
+                : []).map(item => ({
+                    guest: item.guest || 'Guest details restricted',
+                    guestId: item.guest_id || '—',
+                    profileId: item.profile_id || null,
+                    room: String(item.room_number || '—'),
+                    time: item.check_in ? formatDate(item.check_in) : '—',
+                    rawTime: item.check_in || '',
+                    status: 'room-assigned'
+                }));
 
             queue = {
                 arrivals: roomRequests,
                 departures: [],
-                inhouse: inHouse
+                inhouse: assignedGuests
             };
 
-            groups = Array.isArray(data.group_bookings) ? data.group_bookings : [];
+            groups = state.visibility.group_bookings && Array.isArray(data.group_bookings)
+                ? data.group_bookings
+                : [];
 
-            const generalRequests = (Array.isArray(data.requests) ? data.requests : []).map(item => ({
+            const generalRequests = (state.visibility.guest_requests && Array.isArray(data.requests) ? data.requests : []).map(item => ({
                 id: String(item.id),
                 source: item.source || 'requests',
                 title: item.title || item.type || 'Guest request',
@@ -241,7 +272,7 @@
                 title: item.title || item.type || 'Service request',
                 details: item.details || '',
                 room: item.room_number || '—',
-                guest: item.guest || 'Guest',
+                guest: item.guest || 'Guest details restricted',
                 status: item.status || 'pending',
                 created_at: item.created_at
             }));
@@ -250,7 +281,12 @@
                 .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
             renderAll();
+            state.lastSuccessfulFetch = Date.now();
             touch();
+            if (state.approvalQueueError) {
+                console.error('Booking review queue unavailable:', state.approvalQueueError);
+                toast('Booking queue unavailable', state.approvalQueueError, 'error');
+            }
         } catch (error) {
             console.error('Staff dashboard load failed:', error);
             if (!silent) showPageError(error.message || 'Unable to load staff dashboard data.');
@@ -291,6 +327,11 @@
         return rows;
     }
 
+    function canApproveBookings() {
+        return String(staff.role || '').toLowerCase() === 'front-desk'
+            && !!window.RBAC?.can?.('bookings.approve');
+    }
+
     function renderQueue() {
         const all = rowsForTab(state.tab, state.query);
         const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
@@ -298,6 +339,7 @@
         const start = (state.page - 1) * PAGE_SIZE;
         const rows = all.slice(start, start + PAGE_SIZE);
         const body = $('#queueBody');
+        const canApprove = state.tab === 'arrivals' && canApproveBookings();
 
         body.innerHTML = rows.map(item => {
             const room = esc(item.room);
@@ -306,13 +348,22 @@
             const time = esc(item.time);
             const label = statusLabel(item.status);
             const statusClass = String(item.status || 'pending').replace(/[^a-z-]/g, '');
-            return `<tr tabindex="0" data-room="${room}" data-profile="${esc(item.profileId || '')}">
+            const groupTag = item.requestType === 'group'
+                ? `<small class="queue-group-tag">Group · ${Number(item.groupSize || 1)} members</small>`
+                : '';
+            const actions = canApprove && item.status === 'pending'
+                ? `<div class="booking-actions">
+                    <button type="button" class="btn btn-approve" data-review-action="approve" data-review-id="${esc(item.reviewId)}">Approve</button>
+                    <button type="button" class="btn btn-reject" data-review-action="reject" data-review-id="${esc(item.reviewId)}">Reject</button>
+                   </div>`
+                : `<button type="button" class="btn btn-sm" data-act="view" data-room="${room}">View</button>`;
+            return `<tr tabindex="0" data-room="${room}" data-profile="${esc(item.profileId || '')}" data-review-id="${esc(item.reviewId || '')}">
                 <td><div class="guest-cell"><span class="guest-avatar">${initials(item.guest)}</span><span class="guest-name">${guest}</span></div></td>
                 <td class="muted">${guestId}</td>
-                <td><strong>${room}</strong>${item.groupBookingId ? '<small class="queue-group-tag">Group booking</small>' : ''}</td>
+                <td><strong>${room}</strong>${groupTag}</td>
                 <td class="muted">${time}</td>
                 <td><span class="status-pill ${statusClass}"><span class="dot"></span>${esc(label)}</span></td>
-                <td class="col-actions"><button type="button" class="btn btn-sm" data-act="view" data-room="${room}">View</button></td>
+                <td class="col-actions">${actions}</td>
             </tr>`;
         }).join('');
 
@@ -322,15 +373,21 @@
             $('.empty-title', empty).textContent = state.query
                 ? `No guests match "${state.query}"`
                 : state.tab === 'arrivals'
-                    ? 'No pending room requests'
+                    ? (state.approvalQueueError ? 'Booking review queue unavailable' : 'No pending room requests')
                     : state.tab === 'inhouse'
-                        ? 'No in-house guests'
+                        ? (state.visibility.assigned_guests === false ? 'Guest assignment details are restricted' : 'No assigned guests')
                         : 'Departure tracking is not configured';
             $('.empty-sub', empty).textContent = state.tab === 'departures'
-                ? 'The current profiles schema has no check-out date or expected departure field, so departures and overdue stays cannot be calculated yet.'
+                ? 'The current profiles table has no check-out date or expected departure column, so departures and overdue stays cannot be calculated yet.'
                 : state.tab === 'arrivals'
-                    ? 'Individual and confirmed group room requests will appear here when a client selects a room.'
-                    : 'Guests with an active room value will appear here.';
+                    ? (state.approvalQueueError
+                        ? state.approvalQueueError
+                        : (canApproveBookings()
+                            ? 'Individual requests and complete group requests will appear here for Front Desk review.'
+                            : 'Front Desk can approve or reject pending room requests. Manager can monitor this queue.'))
+                    : state.tab === 'inhouse' && state.visibility.assigned_guests === false
+                        ? 'Individual guest assignment details are limited to Front Desk and Manager roles.'
+                        : 'Clients with a room or assigned-room value appear here. This is a room allocation list, not confirmation of physical check-in.';
         }
 
         $('#queueInfo').textContent = all.length
@@ -338,36 +395,40 @@
             : 'Showing 0 of 0';
 
         const chev = direction => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="${direction}"></polyline></svg>`;
-        let pagination = `<button class="page-btn" data-page="${state.page - 1}" aria-label="Previous page"${state.page === 1 ? ' disabled' : ''}>${chev('15 18 9 12 15 6')}</button>`;
-        for (let page = 1; page <= pages; page++) {
-            pagination += `<button class="page-btn${page === state.page ? ' active' : ''}" data-page="${page}">${page}</button>`;
-        }
-        pagination += `<button class="page-btn" data-page="${state.page + 1}" aria-label="Next page"${state.page === pages ? ' disabled' : ''}>${chev('9 18 15 12 9 6')}</button>`;
-        $('.pagination').innerHTML = pagination;
+        const pagination = $('.pagination');
+        pagination.innerHTML = `<button class="page-btn" data-page="${Math.max(1, state.page - 1)}" aria-label="Previous page" ${state.page <= 1 ? 'disabled' : ''}>${chev('15 18 9 12 15 6')}</button>
+            <button class="page-btn active" disabled>${state.page} / ${pages}</button>
+            <button class="page-btn" data-page="${Math.min(pages, state.page + 1)}" aria-label="Next page" ${state.page >= pages ? 'disabled' : ''}>${chev('9 18 15 12 9 6')}</button>`;
 
         $$('.tab').forEach(tabButton => {
-            const on = tabButton.dataset.tab === state.tab;
-            tabButton.classList.toggle('active', on);
-            tabButton.setAttribute('aria-selected', String(on));
+            const active = tabButton.dataset.tab === state.tab;
+            tabButton.classList.toggle('active', active);
+            tabButton.setAttribute('aria-selected', active ? 'true' : 'false');
             $('.tab-count', tabButton).textContent = (queue[tabButton.dataset.tab] || []).length;
         });
 
-        $$('.queue-table th.sortable').forEach(th => {
-            th.classList.remove('sort-asc', 'sort-desc');
-            if (th.dataset.sort === state.sortKey) {
-                th.classList.add(state.sortDir === 1 ? 'sort-asc' : 'sort-desc');
-            }
-        });
+        const hint = $('#bookingReviewHint');
+        if (hint) {
+            hint.textContent = canApproveBookings()
+                ? 'You are signed in as Front Desk. Approve or reject each individual request or complete group booking after reviewing room capacity and eligibility.'
+                : 'Front Desk approves or rejects pending room requests. Manager can monitor this queue; other roles do not receive guest booking details.';
+        }
     }
 
     /* ==========================================================
        KPI STRIP
        ========================================================== */
     function renderKpis() {
-        const totalBeds = Object.values(rooms).reduce((sum, room) => sum + room.capacity, 0);
-        const occupiedBeds = Object.values(rooms).reduce((sum, room) => sum + Math.min(room.occupants, room.capacity || room.occupants), 0);
-        const occupancy = totalBeds > 0 ? Math.round(occupiedBeds / totalBeds * 100) : 0;
-        const openRequests = requests.filter(item => !['completed', 'cancelled', 'closed', 'resolved'].includes(String(item.status).toLowerCase()));
+        const metrics = state.summary || {};
+        const roomList = Object.values(rooms);
+        const totalBedsFallback = roomList.reduce((sum, room) => sum + room.capacity, 0);
+        const allocatedBedsFallback = roomList.reduce((sum, room) => sum + Math.min(room.occupants, room.capacity || room.occupants), 0);
+        const totalBeds = Number.isFinite(Number(metrics.total_beds)) ? Number(metrics.total_beds) : totalBedsFallback;
+        const allocatedBeds = Number.isFinite(Number(metrics.allocated_beds)) ? Number(metrics.allocated_beds) : allocatedBedsFallback;
+        const allocationPercent = Number.isFinite(Number(metrics.allocation_percent))
+            ? Number(metrics.allocation_percent)
+            : (totalBeds > 0 ? Math.round(allocatedBeds / totalBeds * 100) : 0);
+        const openRequests = requests.filter(item => !['completed', 'cancelled', 'closed', 'resolved', 'rejected'].includes(String(item.status).toLowerCase()));
 
         const allCard = $('.kpi-card[data-filter="all"]');
         const arrivalsCard = $('.kpi-card[data-filter="arrivals"]');
@@ -376,12 +437,12 @@
         const requestsCard = $('.kpi-card[data-filter="requests"]');
 
         if (allCard) {
-            $('.kpi-value', allCard).innerHTML = `${occupancy}<span class="kpi-suffix">%</span>`;
-            $('.kpi-sub', allCard).textContent = `${occupiedBeds} of ${totalBeds} beds`;
+            $('.kpi-value', allCard).innerHTML = `${allocationPercent}<span class="kpi-suffix">%</span>`;
+            $('.kpi-sub', allCard).textContent = `${allocatedBeds} allocated of ${totalBeds} beds`;
         }
         if (arrivalsCard) {
-            $('.kpi-value', arrivalsCard).textContent = queue.arrivals.length;
-            $('.kpi-sub', arrivalsCard).textContent = 'Pending room requests';
+            $('.kpi-value', arrivalsCard).textContent = state.approvalQueueError ? '—' : queue.arrivals.length;
+            $('.kpi-sub', arrivalsCard).textContent = 'Pending room booking reviews';
         }
         if (departuresCard) {
             $('.kpi-value', departuresCard).textContent = '—';
@@ -393,7 +454,7 @@
         }
         if (requestsCard) {
             $('.kpi-value', requestsCard).textContent = openRequests.length;
-            $('.kpi-sub', requestsCard).textContent = 'Open guest and service requests';
+            $('.kpi-sub', requestsCard).textContent = 'Open requests visible to your role';
         }
 
         const overdueBadge = $('#overdueTitle .count-badge');
@@ -489,7 +550,7 @@
             html += `<div class="room-floor"><h4>Floor ${floor}</h4><div class="room-grid">`;
             all.filter(room => room.floor === floor).forEach(room => {
                 const status = ROOM_STATUSES.has(room.status) ? room.status : 'vacant-dirty';
-                html += `<button type="button" class="room-cell st-${status}" data-room="${esc(room.number)}" aria-label="Room ${esc(room.number)}, ${esc(statusLabel(status))}">${esc(room.number)}<small>${esc(statusLabel(status))} · ${room.occupants}/${room.capacity}</small></button>`;
+                html += `<button type="button" class="room-cell st-${status}" data-room="${esc(room.number)}" aria-label="Room ${esc(room.number)}, ${esc(statusLabel(status))}">${esc(room.number)}<small>${esc(statusLabel(status))} · ${room.occupants}/${room.capacity} beds allocated</small></button>`;
             });
             html += '</div></div>';
         });
@@ -513,23 +574,25 @@
         if (!room) return;
         state.currentRoom = String(roomNumber);
 
-        const currentGuests = queue.inhouse.filter(item => item.room === String(roomNumber));
+        const assignedGuests = queue.inhouse.filter(item => item.room === String(roomNumber));
         const pendingGuests = queue.arrivals.filter(item => item.room === String(roomNumber));
-        const displayGuests = currentGuests.length ? currentGuests : pendingGuests;
+        const displayGuests = assignedGuests.length ? assignedGuests : pendingGuests;
 
         $('#roomDrawerTitle').textContent = `Room ${room.number}`;
         $('#roomDrawerSub').textContent = `Floor ${room.floor} · ${room.type}`;
-        $('#drawerGuestName').textContent = displayGuests.length
-            ? displayGuests.map(item => item.guest).join(', ')
-            : 'No current guest';
-        $('#drawerGuestMeta').textContent = currentGuests.length
-            ? `${currentGuests.length} in-house guest(s)`
-            : pendingGuests.length
+        $('#drawerGuestName').textContent = !state.visibility.guest_details
+            ? 'Guest details restricted'
+            : displayGuests.length ? displayGuests.map(item => item.guest).join(', ') : 'No assigned guest';
+        $('#drawerGuestMeta').textContent = !state.visibility.guest_details
+            ? 'Individual guest details are not available for your role.'
+            : assignedGuests.length
+                ? `${assignedGuests.length} assigned guest(s)`
+                : pendingGuests.length
                 ? `${pendingGuests.length} pending room request(s)`
                 : statusLabel(room.status);
         $('.roommate-avatar', $('#roomDrawer')).textContent = displayGuests.length ? initials(displayGuests[0].guest) : '–';
         $('#drawerStatus').textContent = statusLabel(room.status);
-        $('#drawerCapacity').textContent = `${room.occupants} / ${room.capacity} beds occupied`;
+        $('#drawerCapacity').textContent = `${room.occupants} / ${room.capacity} beds allocated`;
         $('.drawer-history').innerHTML = '<li>Historical room events are not stored in the current dashboard schema.</li>';
 
         const forceButton = $('#roomDrawer .drawer-footer .btn-primary');
@@ -560,6 +623,104 @@
         renderGroups();
         renderRooms();
         renderActivity();
+    }
+
+    /* ==========================================================
+       FRONT DESK BOOKING REVIEW ACTIONS
+       ========================================================== */
+    function openBookingReview(reviewId, decision) {
+        if (!canApproveBookings()) {
+            toast('Access restricted', 'Only Front Desk can approve or reject room bookings.', 'error');
+            return;
+        }
+        const item = queue.arrivals.find(row => String(row.reviewId) === String(reviewId));
+        if (!item || item.status !== 'pending') {
+            toast('Request unavailable', 'This booking is no longer pending. Refresh the dashboard.', 'error');
+            return;
+        }
+
+        state.currentReview = item;
+        state.reviewDecision = decision;
+        const isGroup = item.requestType === 'group';
+        const title = decision === 'approve' ? 'Approve room booking?' : 'Reject room booking?';
+        const memberNames = (item.members || [])
+            .map(member => String(member.name || '').trim())
+            .filter(Boolean);
+        const details = [
+            isGroup
+                ? `Group booking for Room ${item.room} (${item.groupSize} members, led by ${item.guest})`
+                : `${item.guest} requested Room ${item.room}`,
+            item.gender ? `Gender: ${item.gender}` : '',
+            item.time && item.time !== '—' ? `Preferred check-in: ${item.time}` : '',
+            isGroup && memberNames.length ? `Members: ${memberNames.join(', ')}` : ''
+        ].filter(Boolean);
+        const subject = details.join('\n');
+
+        $('#bookingReviewTitle').textContent = title;
+        $('#bookingReviewText').textContent = subject;
+        $('#bookingReviewReasonWrap').hidden = decision !== 'reject';
+        $('#bookingReviewReason').value = '';
+        $('#bookingReviewReasonError').textContent = '';
+        $('#bookingReviewWarning').textContent = decision === 'approve'
+            ? 'Approval will assign this room to the guest or every member of the group. Room capacity and gender eligibility will be checked again by Supabase.'
+            : 'Rejection will release the pending room request. A reason is required and the action will be recorded in the audit log.';
+        const submit = $('#bookingReviewSubmit');
+        submit.textContent = decision === 'approve' ? 'Approve booking' : 'Reject booking';
+        submit.dataset.decision = decision;
+        submit.disabled = false;
+        openLayer($('#bookingReviewOverlay'));
+        if (decision === 'reject') $('#bookingReviewReason').focus();
+        else submit.focus();
+    }
+
+    function closeBookingReview() {
+        closeLayer($('#bookingReviewOverlay'));
+        state.currentReview = null;
+        state.reviewDecision = null;
+    }
+
+    async function submitBookingReview() {
+        const item = state.currentReview;
+        const decision = state.reviewDecision;
+        if (!item || !decision || !canApproveBookings()) return;
+
+        const reason = $('#bookingReviewReason').value.trim();
+        if (decision === 'reject' && reason.length < 5) {
+            $('#bookingReviewReasonError').textContent = 'Please enter a reason with at least 5 characters.';
+            $('#bookingReviewReason').focus();
+            return;
+        }
+
+        const submit = $('#bookingReviewSubmit');
+        submit.disabled = true;
+        submit.textContent = decision === 'approve' ? 'Approving…' : 'Rejecting…';
+
+        try {
+            const client = db();
+            if (!client) throw new Error('Supabase client is unavailable.');
+            const { data, error } = await client.rpc('review_staff_room_booking', {
+                p_review_id: item.reviewId,
+                p_decision: decision,
+                p_reason: decision === 'reject' ? reason : null
+            });
+            if (error) throw error;
+            if (data && data.ok === false) throw new Error(data.message || data.error || 'The booking review failed.');
+
+            closeBookingReview();
+            toast(
+                decision === 'approve' ? 'Booking approved' : 'Booking rejected',
+                decision === 'approve'
+                    ? `Room ${item.room} ${item.requestType === 'group' ? `was assigned to ${item.groupSize} group members` : 'was assigned to the guest'}.`
+                    : `Room ${item.room} request was rejected and released.`,
+                decision === 'approve' ? 'success' : 'info'
+            );
+            await loadDashboard();
+        } catch (error) {
+            console.error('Booking review failed:', error);
+            toast('Booking review failed', error.message || 'Please refresh and try again.', 'error');
+            submit.disabled = false;
+            submit.textContent = decision === 'approve' ? 'Approve booking' : 'Reject booking';
+        }
     }
 
     /* ==========================================================
@@ -650,6 +811,13 @@
         }));
 
         $('#queueBody').addEventListener('click', event => {
+            const reviewButton = event.target.closest('button[data-review-action]');
+            if (reviewButton) {
+                event.preventDefault();
+                event.stopPropagation();
+                openBookingReview(reviewButton.dataset.reviewId, reviewButton.dataset.reviewAction);
+                return;
+            }
             const button = event.target.closest('button[data-act="view"]');
             const row = event.target.closest('tr[data-room]');
             const roomNumber = button?.dataset.room || row?.dataset.room;
@@ -678,11 +846,36 @@
 
         $('#exportCsvBtn').addEventListener('click', exportQueue);
 
+        $('#refreshDashboardBtn')?.addEventListener('click', () => {
+            const button = $('#refreshDashboardBtn');
+            if (state.loading) return;
+            button.disabled = true;
+            button.classList.add('is-loading');
+            loadDashboard().finally(() => {
+                button.disabled = false;
+                button.classList.remove('is-loading');
+            });
+        });
+
+        $('#bookingReviewClose').addEventListener('click', closeBookingReview);
+        $('#bookingReviewCancel').addEventListener('click', closeBookingReview);
+        $('#bookingReviewOverlay').addEventListener('click', event => {
+            if (event.target === $('#bookingReviewOverlay')) closeBookingReview();
+        });
+        $('#bookingReviewSubmit').addEventListener('click', submitBookingReview);
+        $('#bookingReviewReason').addEventListener('input', () => {
+            $('#bookingReviewReasonError').textContent = '';
+        });
+
         $('#newCheckinBtn').addEventListener('click', () => {
+            if (!window.RBAC?.can?.('checkin.do')) {
+                toast('Access restricted', 'Your assigned role cannot process check-ins.', 'error');
+                return;
+            }
             window.location.href = 'staff-checkin.html';
         });
 
-        // The RBAC module owns the role selector. Do not add client-side role simulation here.
+        // The RBAC module owns the immutable assigned-role identity and page permissions.
         document.addEventListener('click', event => {
             const disabledLink = event.target.closest('a[aria-disabled="true"]');
             if (disabledLink) {
@@ -716,18 +909,25 @@
     async function init() {
         bindEvents();
 
-        // RBAC verifies the actual profile role and OTP-protected staff access.
         if (window.RBAC?.ready) await window.RBAC.ready;
-
         if (!window.RBAC || typeof window.RBAC.realRole !== 'function' || !window.RBAC.realRole()) {
-            showPageError('This page requires an active CMDI staff account. Current profiles contain no staff role yet.');
+            showPageError('This page requires an active CMDI staff account with a verified role.');
             return;
         }
+        if (!window.RBAC.init({ active: 'dashboard' })) return;
 
         await loadDashboard();
         if (refreshTimer) clearInterval(refreshTimer);
         refreshTimer = setInterval(() => loadDashboard({ silent: true }), REFRESH_MS);
         setInterval(tick, 5000);
+        const refreshIfStale = () => {
+            if (document.visibilityState === 'hidden' || state.loading) return;
+            if (!state.lastSuccessfulFetch || Date.now() - state.lastSuccessfulFetch >= REFRESH_MS) {
+                loadDashboard({ silent: true });
+            }
+        };
+        window.addEventListener('focus', refreshIfStale);
+        document.addEventListener('visibilitychange', refreshIfStale);
         window.addEventListener('beforeunload', () => {
             if (refreshTimer) clearInterval(refreshTimer);
         });
