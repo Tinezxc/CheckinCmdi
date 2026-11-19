@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+
+    <title>Account Verification - CMDI</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="./CSS/verify-otp.css">
+</head>
+
+<body>
+
+    <main class="otp-wrapper">
+
+        <header class="otp-header">
+            <h1>CMDI Account Verification</h1>
+        </header>
+
+        <section class="otp-card" id="otpCard" aria-live="polite">
+
+            <div class="card-drag-handle" aria-hidden="true"></div>
+
+            <!-- STEP 1: CHECKING REGISTRATION LINK -->
+            <div class="otp-content" id="stepChecking">
+
+                <div class="loading-spinner"></div>
+
+                <h2 class="otp-title">Checking your link</h2>
+
+                <p class="otp-subtitle">
+                    Please wait while we verify your registration.
+                </p>
+
+            </div>
+
+            <!-- STEP 2: INVALID REGISTRATION LINK -->
+            <div class="otp-content hidden" id="stepInvalid">
+
+                <div class="status-icon error-icon">!</div>
+
+                <h2 class="otp-title" id="invalidTitle">
+                    Registration link unavailable
+                </h2>
+
+                <p class="otp-subtitle" id="invalidText">
+                    Please check your email and open the latest registration link.
+                </p>
+
+                <a href="index.html" class="otp-back-link">
+                    Return to Login
+                </a>
+
+            </div>
+
+            <!-- STEP 3: SEND REGISTRATION OTP -->
+            <div class="otp-content hidden" id="stepSend">
+
+                <div class="otp-icon">✉</div>
+
+                <h2 class="otp-title">Verify your email</h2>
+
+                <p class="otp-subtitle">
+                    Hi <strong id="greetName">there</strong>!
+                    Send a 6-digit verification code to:
+                </p>
+
+                <p class="otp-email" id="maskedEmail">
+                    your registered email
+                </p>
+
+                <div class="otp-actions">
+                    <button
+                        type="button"
+                        class="otp-primary-button"
+                        id="sendOtpBtn">
+                        Send Verification Code
+                    </button>
+                </div>
+
+                <p class="otp-message" id="sendError" role="alert"></p>
+
+            </div>
+
+            <!-- STEP 4: OTP INPUT (REGISTRATION + LOGIN) -->
+            <div class="otp-content hidden" id="stepInput">
+
+                <div class="otp-icon">🔐</div>
+
+                <h2 class="otp-title" id="otpTitle">
+                    OTP Verification
+                </h2>
+
+                <p class="otp-subtitle" id="otpInfo">
+                    Enter the 6-digit code sent to your email.
+                </p>
+
+                <p class="otp-email" id="displayEmail">
+                    your email
+                </p>
+
+                <form id="otpForm" autocomplete="one-time-code">
+
+                    <div class="otp-inputs" aria-label="Six-digit verification code">
+
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1" autocomplete="one-time-code" autofocus>
+
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2">
+
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3">
+
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4">
+
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5">
+
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6">
+
+                    </div>
+
+                    <p class="otp-message" id="otpError" role="alert"></p>
+
+                    <div class="otp-links" id="resendRow">
+
+                        <span id="resendInfo">
+                            Didn't get the code?
+                        </span>
+
+                        <button type="button" id="resendBtn">
+                            Resend Code
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- STEP 5: CREATE PASSWORD -->
+            <div class="otp-content hidden" id="stepPassword">
+
+                <div class="otp-icon">🔑</div>
+
+                <h2 class="otp-title">Create your password</h2>
+
+                <p class="otp-subtitle">
+                    Your email is verified. Create a password to finish your CMDI account setup.
+                </p>
+
+                <form id="passwordForm" autocomplete="on">
+
+                    <div class="otp-field-group">
+
+                        <label for="newPassword">
+                            New Password
+                        </label>
+
+                        <input
+                            class="otp-form-field"
+                            id="newPassword"
+                            type="password"
+                            minlength="8"
+                            autocomplete="new-password"
+                            placeholder="Enter your password"
+                            required>
+
+                    </div>
+
+                    <div class="otp-field-group">
+
+                        <label for="confirmPassword">
+                            Confirm Password
+                        </label>
+
+                        <input
+                            class="otp-form-field"
+                            id="confirmPassword"
+                            type="password"
+                            minlength="8"
+                            autocomplete="new-password"
+                            placeholder="Confirm your password"
+                            required>
+
+                    </div>
+
+                    <p class="otp-helper">
+                        Use at least 8 characters, including uppercase, lowercase, a number, and a symbol.
+                    </p>
+
+                    <p class="otp-message" id="passwordError" role="alert"></p>
+
+                    <div class="otp-actions">
+
+                        <button
+                            type="submit"
+                            class="otp-primary-button"
+                            id="savePasswordBtn">
+                            Save Password
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- STEP 6: SUCCESS -->
+            <div class="otp-content hidden" id="stepSuccess">
+
+                <div class="status-icon success-icon">
+                    ✓
+                </div>
+
+                <h2 class="otp-title" id="successTitle">
+                    Verification Successful
+                </h2>
+
+                <p class="otp-subtitle" id="successText">
+                    You may continue.
+                </p>
+
+                <div class="otp-actions">
+
+                    <button
+                        type="button"
+                        class="otp-primary-button"
+                        id="continueBtn">
+                        Continue
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <footer class="otp-footer">
+            <p>CMDI Hotel Check-In System</p>
+            <span>Secure Account Verification</span>
+        </footer>
+
+    </main>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Client -->
+    <script src="js/supabase-client.js"></script>
+
+    <!-- OTP JavaScript -->
+    <script src="js/verify-otp.js" defer></script>
+
+</body>
+</html>
