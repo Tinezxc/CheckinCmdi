@@ -1,0 +1,17 @@
+/* Keep the assigned role read-only while preserving all Requests navigation. */
+.role-select-wrap.is-locked select,
+.role-select-wrap select:disabled {
+    opacity: 1;
+    color: #fff;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: rgba(255,255,255,.09);
+    border-color: rgba(255,255,255,.18);
+    -webkit-text-fill-color: #fff;
+}
+.role-select-wrap.is-locked svg { color: var(--green-bright, #9ac6a6); }
+.role-switcher:has(.role-select-wrap.is-locked) { cursor: default; user-select: none; }
+.assigned-role-value { font-weight: 700; }
+.assigned-role-lock { color: var(--green-bright, #9ac6a6); }
+/* Do not disable Requests: access is filtered by the authenticated role. */
+.nav-item[data-nav-key="requests"] { pointer-events: auto; opacity: 1; cursor: pointer; }
